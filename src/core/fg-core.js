@@ -3,6 +3,7 @@
    Para ligar a um servidor, basta substituir FGCore.db e FGCore.media mantendo as mesmas funções. */
 (function () {
   'use strict';
+  var Date = window.LDate || window.Date; // hora de Lisboa (src/core/lisboa.js)
   var KEY = 'fg-app-v1', SKEY = 'fg-sessao', LKEY = 'fg-bloqueio';
 
   var CONTAS = [

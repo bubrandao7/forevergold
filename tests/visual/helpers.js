@@ -28,11 +28,11 @@ async function rotas(page, origin) {
 }
 
 /* Abre a referência ('ref') ou a app nova ('app'), com o relógio fixo e Math.random com semente. */
-export async function open(page, which, { conta = null, pins = {}, extra = null } = {}) {
+export async function open(page, which, { conta = null, pins = {}, extra = null, now = NOW } = {}) {
   const url = which === 'ref' ? REF : APP;
   await rotas(page, new URL(url).origin);
   await page.addInitScript(() => { let s = 12345; Math.random = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; });
-  await page.clock.setFixedTime(new Date(NOW));
+  await page.clock.setFixedTime(new Date(now));
   await page.goto(url);
   await pronta(page);
   // 1.ª carga criou o seed; agora junto códigos e sessão e recarrego
@@ -94,8 +94,8 @@ export function escreve(nome, ext, txt) { fs.writeFileSync(path.join(OUT, nome +
 
 /* Abre as duas páginas e devolve [ref, app] */
 export async function par(browser, opts = {}) {
-  const mk = async () => (await browser.newContext({ viewport: opts.viewport || { width: 390, height: 844 }, reducedMotion: opts.motion ? 'no-preference' : 'reduce', locale: 'pt-PT', timezoneId: 'Europe/Lisbon' })).newPage();
-  const ref = await mk(), app = await mk();
+  const mk = async (tz) => (await browser.newContext({ viewport: opts.viewport || { width: 390, height: 844 }, reducedMotion: opts.motion ? 'no-preference' : 'reduce', locale: 'pt-PT', timezoneId: tz })).newPage();
+  const ref = await mk('Europe/Lisbon'), app = await mk(opts.tzApp || 'Europe/Lisbon'); // tzApp: fuso do telemóvel da app nova
   for (const [w, p] of [['ref', ref], ['app', app]]) { p.__motion = !!opts.motion; p.on('pageerror', (e) => console.log(w, 'pageerror:', e.message.slice(0, 300))); await open(p, w, opts); }
   return { ref, app };
 }

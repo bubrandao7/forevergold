@@ -1,5 +1,6 @@
 import React from 'react';
 import Template from './ui/Template.jsx';
+import { LDate as Date } from './core/lisboa.js';
 
 export default class App extends React.Component {
   state = {
