@@ -100,3 +100,22 @@ test('cliente: vê no ecrã, sem recarregar, quando a loja muda o estado de uma 
   await loja.getByText('Estado alterado para «Vendida».').waitFor();
   await expect(cli.getByText('Vendida').first()).toBeVisible({ timeout: 8000 });
 });
+
+test('vencedora do mês: o aviso criado na base chega como banner e abre o Lucro do mês', async ({ browser }) => {
+  const p = await telemovel(browser);
+  await entra(p, 'foreverfilipe');
+  await sql("insert into public.avisos (id, tipo, titulo, corpo) values ('mes-teste', 'mes', 'Vencedora de outubro', 'Valbom ganhou outubro com 12,5 pontos.') on conflict (id) do nothing");
+  await expect(p.getByText('Vencedora de outubro')).toBeVisible({ timeout: 8000 });
+  await expect(p.getByText('Valbom ganhou outubro com 12,5 pontos.').first()).toBeVisible();
+  await p.getByText('Vencedora de outubro').first().click();
+  await expect(p.getByRole('button', { name: /^cotação diária/i })).toHaveCount(0);      // saiu do hub…
+  await expect(p.getByText(/Temporada|temporada/).first()).toBeVisible();               // …e está no Lucro do mês
+});
+
+test('abrir a app a partir de uma notificação (/?ir=cot) vai direto à Cotação', async ({ browser }) => {
+  const p = await telemovel(browser);
+  await entra(p, 'forevervalbom');
+  await p.goto('/?ir=cot'); await p.waitForSelector('[data-scroll]');
+  await expect(p.getByRole('button', { name: 'Mês anterior' })).toBeVisible({ timeout: 8000 });
+  expect(new URL(p.url()).search).toBe('');                                               // o parâmetro sai do endereço
+});
