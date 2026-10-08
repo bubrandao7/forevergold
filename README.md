@@ -21,6 +21,8 @@ O projeto `xngfnysjvjnfgvxxcsnc` (Irlanda, plano gratuito) já tem a base de dad
 
 ---
 
+**Publicação (Vercel/Netlify):** o `vercel.json` e o `netlify.toml` compilam em modo `online`, que lê os valores públicos de `.env.online` (`VITE_FG_URL`, `VITE_FG_KEY`, `VITE_FG_VAPID`). Têm prioridade sobre as variáveis `VITE_SUPABASE_*` do alojamento, por isso não é preciso configurar variáveis no Vercel. Para outro projeto Supabase, edite `.env.online`.
+
 ## 1. Correr em local
 
 Precisa de Node 20 ou mais recente.
