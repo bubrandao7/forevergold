@@ -117,3 +117,15 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+# Node / Vite
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+supabase/.temp/
+test-results/
+playwright-report/
+tests/visual/__out__/
+dist-servidor/
+test-results-servidor/

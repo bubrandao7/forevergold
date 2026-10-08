@@ -1,0 +1,38 @@
+{
+  "name": "forevergold",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4173",
+    "convert": "node tools/dc2jsx.mjs",
+    "test:visual": "playwright test",
+    "test:sql": "node --test --test-timeout=120000 tests/rls/*.test.mjs",
+    "test:e2e": "node --test --test-timeout=120000 tests/e2e/*.test.mjs",
+    "test": "npm run test:sql && npm run test:functions && npm run test:e2e && npm run test:servidor && npm run test:visual",
+    "test:functions": "node --experimental-strip-types --no-warnings --test --test-timeout=120000 tests/functions/*.test.mjs",
+    "test:servidor": "playwright test -c playwright.servidor.config.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "bcryptjs": "^2.4.3",
+    "htmlparser2": "^9.1.0",
+    "pg": "^8.23.1",
+    "pixelmatch": "^5.3.0",
+    "pngjs": "^7.0.0",
+    "serve": "^14.2.6",
+    "vite": "^5.4.21",
+    "vite-plugin-pwa": "^2.0.0",
+    "workbox-precaching": "^7.4.1",
+    "workbox-routing": "^7.4.1",
+    "ws": "^8.22.0"
+  }
+}
