@@ -13,6 +13,8 @@ O aspeto, os textos, as animações e o comportamento são os do protótipo em `
 | PWA instalável, abre sem rede | feito |
 | Capacitor (App Store / Play Store) | não feito (Fase D, só se for pedido) |
 
+**Site público da loja** (montra, loja online por WhatsApp, lojas e contactos): pasta [`site/`](site/README.md), independente da app.
+
 ---
 
 ## Estado do projeto Supabase da ForeverGold
