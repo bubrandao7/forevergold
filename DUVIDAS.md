@@ -1,3 +1,22 @@
+# Decisões da Bu (resolvem as dúvidas abaixo)
+
+1. **Plano gratuito do Supabase.** Limite de vídeo passa a **50 MB** (o texto do aviso passa a dizer 50 MB). Ver nota na resposta.
+2. **Código inicial igual para todas as contas.** O código inicial é definido no servidor por script (não fica escrito no repositório) e cada pessoa pode mudá-lo depois em Perfil › alterar código. Isto também resolve o "primeiro uso aberto": nenhuma conta fica sem código.
+3. **Toast de falha ao guardar:** passa a começar por «Erro». Texto: *«Erro ao guardar. Verifique a ligação e tente outra vez.»*
+4. **Título da notificação urgente:** «Aviso urgente · Nome» (como no protótipo).
+5. **Lucro do mês:** sem notificação. Sai do banner, do push e da lista de avisos.
+6. **Notificações novas:** vencedora de cada mês (no fecho do mês) e vencedora da temporada (no fim do jogo, 31 de dezembro). Textos propostos na secção «Textos novos a aprovar».
+7. **Sem rede:** aviso discreto com símbolo de rede e o texto «Sem ligação à internet».
+8. **Fuso horário:** Lisboa em todo o lado, também no ecrã.
+9. **iPhone:** explicado à Bu no chat; o texto da instrução mantém-se como proposto.
+
+## Textos novos a aprovar
+- Sem rede: «Sem ligação à internet»
+- Vencedora do mês (push, título «Vencedora de <mês>»): «<Loja> ganhou <mês> com <N,N> pontos.» (empate: «<Loja A> e <Loja B> ganharam…»). Não há notificação se ninguém pontuou.
+- Vencedora da temporada (título «Vencedora de <ano>»): «<Loja> ganhou a temporada <ano> com <N,N> pontos. Parabéns!»
+
+---
+
 # Dúvidas
 
 Coisas do protótipo ou do pedido que me parecem erradas, ambíguas ou em conflito. **Não mudei nada**: em cada ponto fica o comportamento por omissão que vou seguir se não disseres o contrário.
