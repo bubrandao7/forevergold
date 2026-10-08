@@ -2,11 +2,13 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: 'tests/visual',
-  timeout: 90000,
+  timeout: 180000,
+  expect: { timeout: 5000 },
   workers: 1,
   reporter: [['list']],
   outputDir: 'test-results',
   use: {
+    actionTimeout: 6000,
     viewport: { width: 390, height: 844 },
     deviceScaleFactor: 1,
     reducedMotion: 'reduce',

@@ -55,6 +55,8 @@ export async function pronta(page) {
 
 export async function assenta(page) {
   await page.evaluate(() => document.getAnimations().forEach((a) => { try { a.finish(); } catch (e) {} }));
+  // os ponteiros do relógio só recebem o transform no tique seguinte; esperar por isso evita corridas
+  await page.waitForFunction(() => [...document.querySelectorAll('[data-hand]')].every((e) => e.hasAttribute('transform')), null, { timeout: 3000 }).catch(() => {});
   await page.waitForTimeout(150);
 }
 
@@ -92,7 +94,7 @@ export async function par(browser, opts) {
 }
 
 /* Aplica a mesma ação nas duas páginas */
-export async function ambos(pg, fn) { await fn(pg.ref); await fn(pg.app); await assenta(pg.ref); await assenta(pg.app); }
+export async function ambos(pg, fn) { await Promise.all([fn(pg.ref), fn(pg.app)]); await Promise.all([assenta(pg.ref), assenta(pg.app)]); }
 
 /* Compara DOM e pixels; devolve texto de erro ou '' */
 export async function igual(pg, nome, mask = []) {
