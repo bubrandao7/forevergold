@@ -63,7 +63,7 @@ async function carrega(c, d) {
   await c.query("set session_replication_role = replica"); // dados históricos: sem triggers
   await c.query('delete from public.pub_partilhas; delete from public.pub; delete from public.lucro;');
   for (const p of d.pub) {
-    await c.query(`insert into public.pub (id, autor, at, titulo, texto) values ($1, 'foreverbu', to_timestamp($2/1000.0), 'T', 'x')`, [p.id, p.at]);
+    await c.query(`insert into public.pub (id, autor, at, titulo, texto) values ($1, 'foreverbu', to_timestamp($2/1000.0), 'Título', 'x')`, [p.id, p.at]);
     for (const [l, t] of Object.entries(p.partilhas)) await c.query(`insert into public.pub_partilhas (pub, loja, conta, at) values ($1, $2, $3, to_timestamp($4/1000.0))`, [p.id, l, 'forever' + l, t]);
   }
   for (const y of Object.keys(d.lucro)) for (const l of Object.keys(d.lucro[y])) for (const m of Object.keys(d.lucro[y][l]))
@@ -72,7 +72,7 @@ async function carrega(c, d) {
 }
 
 test('SQL = protótipo, em várias datas e com dados aleatórios', async () => {
-  const b = await novaBase('fg_pontos'); const c = b.c;
+  const b = await novaBase('fg_pontos'); const c = b.c; try {
   const agoras = ['2026-10-08T14:30:00+01:00', '2026-11-01T00:00:30+00:00', '2026-12-31T23:30:00+00:00', '2027-01-01T00:30:00+00:00', '2027-06-15T10:00:00+01:00', '2028-03-02T09:00:00+00:00'];
   let k = 0;
   for (const ag of agoras) for (let rep = 0; rep < 3; rep++) {
@@ -101,21 +101,21 @@ test('SQL = protótipo, em várias datas e com dados aleatórios', async () => {
       });
     }
   }
-  await c.end();
+  } finally { await c.end(); }
 });
 
 test('regras pontuais: bónus só no mês, sem publicidade não há bónus, antes de outubro de 2026 não há pontos', async () => {
-  const b = await novaBase('fg_pontos2'); const c = b.c;
+  const b = await novaBase('fg_pontos2'); const c = b.c; try {
   await c.query("set session_replication_role = replica");
   await c.query('delete from public.pub; delete from public.lucro');
   // outubro 2026: 2 publicidades; valbom partilhou as duas no mês; stovidio só uma; riotinto partilhou uma já em novembro (não conta)
-  await c.query(`insert into public.pub (id, autor, at, titulo, texto) values ('a','foreverbu','2026-10-03 12:00+01','A','x'),('b','foreverbu','2026-10-20 12:00+01','B','x')`);
+  await c.query(`insert into public.pub (id, autor, at, titulo, texto) values ('a','foreverbu','2026-10-03 12:00+01','Aa','x'),('b','foreverbu','2026-10-20 12:00+01','Bb','x')`);
   await c.query(`insert into public.pub_partilhas (pub, loja, conta, at) values
     ('a','valbom','forevervalbom','2026-10-04 10:00+01'),('b','valbom','forevervalbom','2026-10-21 10:00+01'),
     ('a','stovidio','foreverstovidio','2026-10-04 10:00+01'),
     ('a','riotinto','foreverriotinto','2026-10-05 10:00+01'),('b','riotinto','foreverriotinto','2026-11-02 10:00+00')`);
   // setembro 2026 (antes do início): lucro e publicidade que não contam
-  await c.query(`insert into public.pub (id, autor, at, titulo, texto) values ('s','foreverbu','2026-09-10 12:00+01','S','x')`);
+  await c.query(`insert into public.pub (id, autor, at, titulo, texto) values ('s','foreverbu','2026-09-10 12:00+01','Ss','x')`);
   await c.query(`insert into public.pub_partilhas (pub, loja, conta, at) values ('s','valbom','forevervalbom','2026-09-11 10:00+01')`);
   await c.query(`insert into public.lucro (ano, mes, loja, valor, autor) values (2026, 9, 'valbom', 99999, 'forevervalbom'), (2026, 10, 'valbom', 12450.5, 'forevervalbom'), (2026, 10, 'arrifana', 12450.5, 'foreverarrifana')`);
   await c.query("set session_replication_role = origin");
@@ -129,5 +129,5 @@ test('regras pontuais: bónus só no mês, sem publicidade não há bónus, ante
   assert.equal(r.winners[10].st, 'jogo'); assert.deepEqual(r.winners[10].ids, []);
   // empate: ordem fixa das lojas
   assert.deepEqual(r.std.slice(0, 2).map((s) => s.id), ['valbom', 'arrifana']);
-  await c.end();
+  } finally { await c.end(); }
 });
