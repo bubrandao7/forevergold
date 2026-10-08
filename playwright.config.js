@@ -9,6 +9,7 @@ export default defineConfig({
   outputDir: 'test-results',
   use: {
     actionTimeout: 6000,
+    serviceWorkers: 'block',
     viewport: { width: 390, height: 844 },
     deviceScaleFactor: 1,
     reducedMotion: 'reduce',

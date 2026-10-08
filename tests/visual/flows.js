@@ -11,6 +11,7 @@ export function runner(pg) {
   return { run, erros };
 }
 
+export const ri = (re) => (p) => p.getByRole('button', { name: re }).first().click();
 export const btn = (p, re) => p.getByRole('button', { name: re }).first();
 export const clica = (re) => (p) => btn(p, re).click();
 export const tab = (nome) => (p) => p.getByRole('button', { name: new RegExp('^' + nome, 'i') }).last().click();

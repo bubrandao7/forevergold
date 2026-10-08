@@ -3,6 +3,7 @@
    e repete as regras do runtime: ver PLANO.md §3.1.
    Saídas: src/ui/Template.jsx e src/ui/pseudo.css (gerados, não editar à mão). */
 import { chromium } from '@playwright/test';
+import { chromiumPath } from './browser.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,7 +13,7 @@ const src = fs.readFileSync(path.join(root, 'referencia/ForeverGold App.dc.html'
 const open = /<x-dc(?:\s[^>]*)?>/.exec(src);
 const tpl = src.slice(open.index + open[0].length, src.lastIndexOf('</x-dc>'));
 
-const browser = await chromium.launch({ executablePath: process.env.PW_CHROMIUM || undefined });
+const browser = await chromium.launch({ executablePath: chromiumPath() });
 const page = await browser.newPage();
 const out = await page.evaluate((html) => {
   /* --- cópia de support.js (encodeCase) --- */

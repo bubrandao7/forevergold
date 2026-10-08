@@ -54,7 +54,14 @@ export async function pronta(page) {
 }
 
 export async function assenta(page) {
-  await page.evaluate(() => document.getAnimations().forEach((a) => { try { a.finish(); } catch (e) {} }));
+  if (page.__motion) {
+    // modo com movimento: espera as contagens e congela tudo no mesmo instante (WAAPI e SMIL)
+    await page.waitForTimeout(1800);
+    await page.evaluate(() => {
+      document.getAnimations().forEach((a) => { try { a.pause(); a.currentTime = 4000; } catch (e) {} });
+      document.querySelectorAll('svg').forEach((s) => { try { s.pauseAnimations(); s.setCurrentTime(4); } catch (e) {} });
+    });
+  } else await page.evaluate(() => document.getAnimations().forEach((a) => { try { a.finish(); } catch (e) {} }));
   // os ponteiros do relógio só recebem o transform no tique seguinte; esperar por isso evita corridas
   await page.waitForFunction(() => [...document.querySelectorAll('[data-hand]')].every((e) => e.hasAttribute('transform')), null, { timeout: 3000 }).catch(() => {});
   await page.waitForTimeout(150);
@@ -67,7 +74,7 @@ export async function dom(page) {
     const clone = root.cloneNode(true);
     clone.querySelectorAll('x-dc, script, template, link, meta, style').forEach((n) => n.remove());
     clone.querySelectorAll('*').forEach((n) => n.removeAttribute('data-dc-tpl'));
-    let h = clone.innerHTML.replace(/<!--[\s\S]*?-->/g, '');
+    let h = clone.innerHTML.replace(/<!--[\s\S]*?-->/g, '').replace(/blob:[^"')\s]+/g, 'blob:X');
     const map = {}; let n = 0;
     h = h.replace(/\bscp[0-9a-z]+\b/g, (m) => (map[m] = map[m] || 'P' + n++));
     return h;
@@ -86,10 +93,10 @@ export function compararPng(a, b, nome) {
 export function escreve(nome, ext, txt) { fs.writeFileSync(path.join(OUT, nome + ext), txt); }
 
 /* Abre as duas páginas e devolve [ref, app] */
-export async function par(browser, opts) {
-  const mk = async () => (await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce', locale: 'pt-PT', timezoneId: 'Europe/Lisbon' })).newPage();
+export async function par(browser, opts = {}) {
+  const mk = async () => (await browser.newContext({ viewport: opts.viewport || { width: 390, height: 844 }, reducedMotion: opts.motion ? 'no-preference' : 'reduce', locale: 'pt-PT', timezoneId: 'Europe/Lisbon' })).newPage();
   const ref = await mk(), app = await mk();
-  for (const [w, p] of [['ref', ref], ['app', app]]) { p.on('pageerror', (e) => console.log(w, 'pageerror:', e.message.slice(0, 300))); await open(p, w, opts); }
+  for (const [w, p] of [['ref', ref], ['app', app]]) { p.__motion = !!opts.motion; p.on('pageerror', (e) => console.log(w, 'pageerror:', e.message.slice(0, 300))); await open(p, w, opts); }
   return { ref, app };
 }
 
