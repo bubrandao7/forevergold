@@ -6,6 +6,8 @@ let b;
 before(async () => { b = await novaBase('fg_rls'); });
 after(async () => { await b.c.end(); });
 
+/* escreve dados históricos como superutilizador, sem gatilhos (os gatilhos impedem de forjar datas) */
+const historico = async (sql) => { await b.c.query('begin'); try { await b.c.query('set local session_replication_role = replica'); await b.c.query(sql); await b.c.query('commit'); } catch (e) { await b.c.query('rollback'); throw e; } };
 const rows = (conta, sql, params) => como(b, conta, async (q) => (await q(sql, params)).rows);
 const count = async (conta, t) => Number((await rows(conta, `select count(*)::int as n from public.${t}`))[0].n);
 
@@ -131,7 +133,7 @@ test('publicidade: só a BU escreve; lojas partilham no próprio mês', async ()
   assert.match(await falha(b, 'foreverbu', `insert into public.pub_partilhas (pub, loja, conta) values ('u1','valbom','foreverbu')`), /row-level security/);
   assert.equal((await como(b, 'foreverriotinto', (q) => q(`delete from public.pub_partilhas where pub = 'u1' and loja = 'valbom'`))).rowCount, 0);
   // mês fechado: publicidade de há 40 dias
-  await como(b, 'service', (q) => q(`insert into public.pub (id, autor, titulo, texto) values ('u9','foreverbu','Antiga','x'); update public.pub set at = now() - interval '40 days' where id = 'u9'`));
+  await historico(`insert into public.pub (id, autor, titulo, texto, at) values ('u9','foreverbu','Antiga','x', now() - interval '40 days')`);
   assert.match(await falha(b, 'forevervalbom', `insert into public.pub_partilhas (pub, loja, conta) values ('u9','valbom','forevervalbom')`), /fecharam/);
   await como(b, 'forevervalbom', (q) => q(`delete from public.pub_partilhas where pub = 'u1'`), { manter: true });
 });
@@ -161,4 +163,16 @@ test('apagar exemplos: só linhas ex; só equipa', async () => {
   assert.equal(await n('cotacoes', 'where ex'), 0);
   assert.ok(await n('cotacoes') >= 1);
   assert.equal(await n('pub', 'where ex'), 0);
+});
+
+test('a BU apaga uma publicidade antiga com vistos (os vistos saem em cascata)', async () => {
+  await historico(`insert into public.pub (id, autor, titulo, texto, at) values ('u10','foreverbu','Antiga com vistos','x', now() - interval '40 days');
+    insert into public.pub_partilhas (pub, loja, conta, at) values ('u10','valbom','forevervalbom', now() - interval '39 days')`);
+  const r = await como(b, 'foreverbu', (q) => q(`delete from public.pub where id = 'u10'`), { manter: true });
+  assert.equal(r.rowCount, 1);
+  assert.equal((await b.c.query(`select count(*)::int n from public.pub_partilhas where pub = 'u10'`)).rows[0].n, 0);
+  // e uma loja continua sem poder retirar o visto de um mês fechado
+  await historico(`insert into public.pub (id, autor, titulo, texto, at) values ('u11','foreverbu','Antiga 2','x', now() - interval '40 days');
+    insert into public.pub_partilhas (pub, loja, conta, at) values ('u11','valbom','forevervalbom', now() - interval '39 days')`);
+  assert.match(await falha(b, 'forevervalbom', `delete from public.pub_partilhas where pub = 'u11'`), /fecharam/);
 });

@@ -85,7 +85,8 @@ create trigger pub_upd before update on public.pub for each row execute function
 create function fg.t_partilhas() returns trigger language plpgsql as $$
 begin
   if tg_op = 'DELETE' then
-    if not fg.pub_do_mes_corrente(old.pub) then
+    -- se a própria publicidade está a ser apagada (em cascata), os vistos saem com ela, em qualquer mês
+    if exists (select 1 from public.pub where id = old.pub) and not fg.pub_do_mes_corrente(old.pub) then
       raise exception 'Os vistos desse mês já fecharam.' using errcode = '22023';
     end if;
     return old;
