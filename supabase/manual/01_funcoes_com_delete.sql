@@ -70,3 +70,6 @@ end $$;
 revoke execute on function public.fg_apagar_peca(text) from public;
 grant execute on function public.fg_apagar_peca(text) to authenticated;
 
+
+-- limpeza de um teste meu
+drop function if exists public.fg_teste_diag();
