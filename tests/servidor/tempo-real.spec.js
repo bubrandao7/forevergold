@@ -14,6 +14,7 @@ const tab = (page, n) => page.getByRole('button', { name: new RegExp('^' + n, 'i
 const telemovel = async (browser) => (await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce', serviceWorkers: 'block' })).newPage();
 const enviar = async (page, txt) => { await page.getByPlaceholder(/Escreva (para toda a equipa|o aviso urgente)…/).fill(txt); await page.locator('button', { hasText: /enviar/i }).first().click().catch(() => page.getByPlaceholder(/Escreva/).press('Enter')); };
 
+test.beforeAll(async () => { await fetch(API + '/__test/reset'); });
 test.beforeEach(async () => { await sql('update public.pins set tentativas = 0, bloqueado_ate = null'); });
 
 test('chat: a mensagem de um telemóvel chega ao outro, com banner; urgente em vermelho', async ({ browser }) => {

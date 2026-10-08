@@ -68,6 +68,10 @@ export async function iniciaFalso({ porta = 3110, portaPg = 3120, db = 'fg_brows
       const { sql, params } = JSON.parse((await ler(req)).toString());
       try { const r = await base.c.query(sql, params || []); return resp(res, 200, { rows: r.rows, rowCount: r.rowCount }); } catch (e) { return resp(res, 400, { erro: e.message }); }
     }
+    if (p === '/__test/reset') { // volta ao estado inicial (dados de exemplo), sem mexer nos códigos
+      await base.c.query("truncate public.pecas, public.chat, public.cotacoes, public.lucro, public.pub, public.vistos, public.avisos, public.avisos_enviados cascade; delete from public.fg_meta where chave = 'seed'; select fg.seed();");
+      ficheiros.clear(); return resp(res, 200, { ok: true });
+    }
     if (p === '/__test/ficheiros') return resp(res, 200, [...ficheiros.keys()]);
     if (p === '/__test/pin' && req.method === 'POST') { const { conta, pin } = JSON.parse((await ler(req)).toString()); return resp(res, 200, await pins.adminRepor({ conta, pin })); }
     return false; // /rest/v1 → PostgREST

@@ -24,6 +24,7 @@ async function entra(page, conta, pin = '2727') {
 }
 const tab = (page, n) => page.getByRole('button', { name: new RegExp('^' + n, 'i') }).last().click();
 
+test.beforeAll(async () => { await fetch(API + '/__test/reset'); });
 test.beforeEach(async () => { await sql('update public.pins set tentativas = 0, bloqueado_ate = null'); });
 
 test('cliente: entra sem código e vê lojas e peças vindas do servidor', async ({ page }) => {
