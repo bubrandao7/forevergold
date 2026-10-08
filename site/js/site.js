@@ -70,7 +70,7 @@
     return '<header class="topo" id="topo"><div class="wrap topo__in">' +
       '<a class="marca" href="#inicio" data-ir="inicio" aria-label="Forevergold, voltar ao início">' + logoS('marca__s') + logoW('marca__w') + '</a>' +
       '<nav class="nav" aria-label="Secções do site">' + navLinks() + '</nav>' +
-      '<div class="topo__acoes"><button class="icone-btn" data-act="cesto" aria-label="Abrir o carrinho">' + IC.saco + '<span class="carrinho-n" data-cesto-n>0</span></button>' +
+      '<div class="topo__acoes">' + (S.produtos.length ? '<button class="icone-btn" data-act="cesto" aria-label="Abrir o carrinho">' + IC.saco + '<span class="carrinho-n" data-cesto-n>0</span></button>' : '') +
       '<button class="icone-btn menu-btn" data-act="menu" aria-label="Abrir o menu">' + IC.menu + '</button></div>' +
       '</div></header>' +
       '<div class="menu" id="menu" aria-hidden="true"><div class="menu__topo"><span class="marca">' + logoS('marca__s') + '</span><button class="icone-btn" data-act="menu-fechar" aria-label="Fechar o menu">' + IC.fechar + '</button></div><nav aria-label="Menu">' + navLinks() + '</nav></div>';
@@ -92,7 +92,7 @@
       '<p class="kicker sobe2" style="--d:.1s">' + esc(S.hero.kicker) + '</p>' +
       '<h1 class="hero__h">' + tituloHero(S.hero.titulo) + '</h1>' +
       '<p class="hero__sub sobe2" style="--d:.9s">' + esc(S.hero.sub) + '</p>' +
-      '<div class="botoes sobe2" style="--d:1.1s"><a class="btn btn--ouro" href="#compra" data-ir="compra">Vender ouro ou prata</a><a class="btn btn--linha" href="#loja" data-ir="loja">Ver artigos à venda</a></div>' +
+      '<div class="botoes sobe2" style="--d:1.1s"><a class="btn btn--ouro" href="#compra" data-ir="compra">Vender ouro ou prata</a>' + (S.produtos.length ? '<a class="btn btn--linha" href="#loja" data-ir="loja">Ver artigos à venda</a>' : '<a class="btn btn--linha" href="#lojas" data-ir="lojas">Encontrar uma loja</a>') + '</div>' +
       '</div><div class="hero__simbolo" aria-hidden="true"><svg viewBox="-70 -70 ' + (LOGO.symw + 140) + ' 1140">' +
       '<ellipse class="hs-halo" cx="' + LOGO.symw / 2 + '" cy="500" rx="' + (LOGO.symw / 2 + 60) + '" ry="560"/>' +
       '<path class="hs-cheio" fill-rule="evenodd" d="' + LOGO.sym.join('') + '"/>' +
@@ -211,6 +211,10 @@
     return l.length ? l.map(cartao).join('') : '<p class="vazio">Ainda não há artigos nesta secção. Fale connosco para saber o que temos em loja.</p>';
   }
   function loja() {
+    if (!S.produtos.length) {
+      return '<section class="sec tema-claro" id="loja"><div class="wrap"><div class="pilha"><p class="kicker" data-r>Em loja</p><h2 class="h2" data-r style="--d:.08s">' + esc(S.loja.titulo) + '</h2><p class="txt" data-r style="--d:.16s">' + esc(S.loja.texto) + '</p>' +
+        '<div class="botoes" data-r style="--d:.24s"><a class="btn btn--whats" data-wa="Olá, Forevergold! Gostava de saber que artigos têm disponíveis." target="_blank" rel="noopener" href="#">' + IC.whats + 'Falar pelo WhatsApp</a><a class="btn btn--linha" href="#lojas" data-ir="lojas">Ver as lojas</a></div></div></div></section>';
+    }
     const n = (c) => S.produtos.filter((p) => p.cat === c).length;
     const abas = [{ id: 'todos', nome: 'Tudo', q: S.produtos.length }].concat(CATS.map((c) => ({ id: c.id, nome: c.nome, q: n(c.id) })))
       .map((c) => '<button type="button" role="tab" class="aba" data-aba="' + c.id + '" aria-selected="' + (c.id === abaLoja) + '">' + c.nome + '<sup>' + c.q + '</sup></button>').join('');
