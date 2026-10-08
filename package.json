@@ -11,7 +11,7 @@
     "test:visual": "playwright test",
     "test:sql": "node --test --test-timeout=120000 tests/rls/*.test.mjs",
     "test:e2e": "node --test --test-timeout=120000 tests/e2e/*.test.mjs",
-    "test": "npm run test:sql && npm run test:functions && npm run test:e2e && npm run test:visual",
+    "test": "npm run test:sql && npm run test:functions && npm run test:e2e && npm run test:servidor && npm run test:visual",
     "test:functions": "node --experimental-strip-types --no-warnings --test --test-timeout=120000 tests/functions/*.test.mjs",
     "test:servidor": "playwright test -c playwright.servidor.config.js"
   },

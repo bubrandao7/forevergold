@@ -107,7 +107,6 @@ O protótipo decide "hoje", "mês atual" e "mês fechado" pela hora do telemóve
 ## Coisas do protótipo que reparei (não mudei)
 - «Apagar os dados de exemplo» também apaga peças de exemplo onde só se mudou o estado (Disponível, Reservada, Vendida), porque mudar o estado não tira a marca de exemplo; só editar a peça é que tira.
 - Corrigir uma cotação ou um lucro volta a gerar aviso aos outros (no lucro já não, por decisão da Bu).
-- Na lista de avisos, o texto da cotação mostra a hora de quem a escreveu, não a de quem a lê.
 
 ## O que só se confirma no projeto Supabase a sério
 Ver `README.md`, secção 9: tempo real com dois telemóveis, fotografias e publicidade no Storage, push num telemóvel, e a recusa de leitura ao cliente.
