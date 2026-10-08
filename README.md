@@ -15,6 +15,12 @@ O aspeto, os textos, as animações e o comportamento são os do protótipo em `
 
 ---
 
+## Estado do projeto Supabase da ForeverGold
+
+O projeto `xngfnysjvjnfgvxxcsnc` (Irlanda, plano gratuito) já tem a base de dados, as permissões, o Storage, o Realtime, as 5 Edge Functions e os 8 códigos criados. Foi preparado com o conector do Supabase e não com `supabase db push`, por isso **não corra `db push` neste projeto** (o histórico de migrações tem outros nomes e tentaria criar tudo outra vez). Para um projeto novo e vazio, siga as secções 2 a 6.
+
+---
+
 ## 1. Correr em local
 
 Precisa de Node 20 ou mais recente.

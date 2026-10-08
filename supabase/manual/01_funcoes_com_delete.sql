@@ -73,3 +73,8 @@ grant execute on function public.fg_apagar_peca(text) to authenticated;
 
 -- limpeza de um teste meu
 drop function if exists public.fg_teste_diag();
+
+-- fechar a porta ao visitante sem sessão (o Supabase dá estas permissões por omissão)
+revoke execute on function public.fg_apagar_exemplos() from anon;
+revoke execute on function public.fg_guardar_peca(jsonb) from anon;
+revoke execute on function public.fg_apagar_peca(text) from anon;
