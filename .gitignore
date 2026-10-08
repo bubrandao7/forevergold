@@ -127,3 +127,5 @@ supabase/.temp/
 test-results/
 playwright-report/
 tests/visual/__out__/
+dist-servidor/
+test-results-servidor/
