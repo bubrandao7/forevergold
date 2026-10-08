@@ -79,3 +79,35 @@ O protótipo decide "hoje", "mês atual" e "mês fechado" pela hora do telemóve
 - Registar o lucro de novo no mesmo mês (corrigir) também refresca `at` e gera banner, igual ao protótipo.
 - No protótipo, "Esqueci" repõe o código em qualquer telemóvel. Com servidor isso seria uma porta aberta, por isso a regra do teu briefing ("cada um repõe o seu no próprio telemóvel") passa a ser aplicada de verdade (secção 5.1 do plano).
 - O `.gitignore` do repositório é um modelo de Flutter; vou acrescentar as entradas de Node/Vite/`.env`.
+
+---
+
+# Notas da implementação (Fases A a C)
+
+## O que mudou em relação ao protótipo (só o que a Bu decidiu)
+- **Lucro do mês sem notificação**: já não gera banner, aviso na lista de avisos nem push. Por coerência, também deixou de contar nos números de «novas» (selo de Equipa e do cartão «Lucro do mês»). O selo «Falta registar o lucro de <mês>» mantém-se.
+- **Vencedora do mês e da temporada**: no fecho de cada mês e a 1 de janeiro, a equipa toda recebe push e fica um aviso na lista de avisos (toque abre o Lucro do mês). Textos: «Vencedora de outubro» / «Valbom ganhou outubro com 12,5 pontos.»; empate: «Rio Tinto e Arrifana ganharam novembro com 9,0 pontos.»; temporada: «Vencedora de 2026» / «Valbom ganhou a temporada 2026 com 45,3 pontos. Parabéns!». Se ninguém pontuou, não avisa.
+- **Sem ligação**: pílula no topo «Sem ligação à internet» com símbolo de rede cortado, no estilo do banner.
+- **Hora de Lisboa** em todo o ecrã (testado com telemóveis em Dubai e Los Angeles em viragens de mês e de ano).
+- **Vídeo de publicidade até 50 MB** no modo servidor (plano gratuito do Supabase). Em modo local mantém-se 80 MB.
+- **Erro ao guardar**: «Erro ao guardar. Verifique a ligação e tente outra vez.» (toast e, nos formulários, o mesmo texto).
+- **Código inicial** igual para todas, definido por script (não está escrito em nenhum ficheiro do projeto).
+- **iPhone**: o texto das notificações passa a explicar «Partilhar › Adicionar ao ecrã principal» quando se abre no Safari sem a app instalada (texto proposto na dúvida 9).
+
+## Textos novos que a Bu ainda não viu
+- Botão «Entendi» no aviso «Este telemóvel não está associado a esta conta. / Peça ao Filipe para repor o código.» (o aviso já aparece com os dois botões «Cancelar» e «Entendi»; se preferir outra palavra, diga).
+
+## Decisões técnicas que tomei sozinho
+- **Bloqueio**: manteve-se 5 tentativas → 30 s (como no protótipo). Não pus o aumento progressivo (5 min, 1 h, 24 h) porque o texto «daqui a N s» ficaria estranho com tempos longos. Com um código partilhado por todos ele protege pouco de qualquer forma; se quiser, ativo-o.
+- **Notificações em primeiro plano**: com a app aberta e à vista não aparece push (já há o banner); a notificação do sistema só aparece com a app escondida ou fechada. Cada novo aviso volta a tocar (`renotify`), mesmo com a mesma etiqueta do protótipo.
+- **Fotografias e vídeos órfãos**: se o envio de uma fotografia acaba mas a gravação da peça falha logo a seguir, o ficheiro fica no Storage sem peça. Ocupa pouco e não se vê; não limpo automaticamente.
+- **Primeira carga com muita coisa**: o chat e as cotações carregam-se todos (como no protótipo) em páginas de 1000. Se um dia o chat tiver dezenas de milhares de mensagens, convém carregar só as últimas.
+- **Antes de 1 de outubro de 2026**, o ecrã do Lucro do mês deixaria registar e o servidor recusa (o protótipo aceitava e apagava em silêncio ao recarregar). Hoje já passou essa data, por isso não se nota.
+
+## Coisas do protótipo que reparei (não mudei)
+- «Apagar os dados de exemplo» também apaga peças de exemplo onde só se mudou o estado (Disponível, Reservada, Vendida), porque mudar o estado não tira a marca de exemplo; só editar a peça é que tira.
+- Corrigir uma cotação ou um lucro volta a gerar aviso aos outros (no lucro já não, por decisão da Bu).
+- Na lista de avisos, o texto da cotação mostra a hora de quem a escreveu, não a de quem a lê.
+
+## O que só se confirma no projeto Supabase a sério
+Ver `README.md`, secção 9: tempo real com dois telemóveis, fotografias e publicidade no Storage, push num telemóvel, e a recusa de leitura ao cliente.

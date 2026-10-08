@@ -1,7 +1,7 @@
 # ForeverGold — plano técnico
 
-Estado: **proposta, ainda sem código.** Para aprovação antes da Fase A.
-Dúvidas que precisam de resposta tua: ver `DUVIDAS.md`.
+Estado: **Fases A, B e C feitas e testadas em local** (ver `README.md` para o estado e para o que falta confirmar no Supabase a sério). Fase D (Capacitor) só se for pedida.
+Decisões da Bu e pontos em aberto: ver `DUVIDAS.md`. Algumas escolhas mudaram em relação a este plano depois das respostas da Bu (lucro sem notificação, vencedoras, hora de Lisboa, 50 MB, código inicial igual); o `DUVIDAS.md` tem a lista.
 
 Regra de ouro: aspeto, textos, animações e comportamento = protótipo (`referencia/`). Só se muda a camada técnica por baixo.
 
