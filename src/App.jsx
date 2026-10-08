@@ -19,12 +19,18 @@ export default class App extends React.Component {
     this.reduz = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
     this.onResize = () => this.setState({ vw: window.innerWidth, vh: window.innerHeight });
     window.addEventListener('resize', this.onResize);
+    this.onNet = () => { this.setState({ offline: !navigator.onLine }); if (navigator.onLine) this.recarrega(); };
+    this.onVis = () => { if (!document.hidden) this.recarrega(); };
+    window.addEventListener('online', this.onNet); window.addEventListener('offline', this.onNet);
+    document.addEventListener('visibilitychange', this.onVis);
     this.boot();
   }
   componentWillUnmount() {
     clearTimeout(this._bt); clearInterval(this._tick); clearTimeout(this._toastT); clearTimeout(this._banT); clearTimeout(this._copT);
     cancelAnimationFrame(this._raf); cancelAnimationFrame(this._braf);
     window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('online', this.onNet); window.removeEventListener('offline', this.onNet);
+    document.removeEventListener('visibilitychange', this.onVis);
     if (this.unsub) this.unsub();
     Object.values(this.urls || {}).forEach((u) => { try { URL.revokeObjectURL(u); } catch (e) {} });
   }
@@ -43,6 +49,7 @@ export default class App extends React.Component {
   boot() {
     if (!window.FGCore || !window.FG_LOGO || !window.FG_GLIFOS) { this._bt = setTimeout(() => this.boot(), 50); return; }
     const C = this.C = window.FGCore;
+    if (C.modo === 'servidor') { this.bootServidor(); return; }
     this.data = C.db.load();
     this.lastNotif = Date.now();
     this.unsub = C.db.subscribe(() => this.sync());
@@ -52,8 +59,59 @@ export default class App extends React.Component {
     if (acc) Object.assign(up, { screen: 'app', user: acc.id, accIdx: C.CONTAS.indexOf(acc) });
     this.setState(up, () => { if (!acc) this.setAcc(1); this.fx(); this.clock(); });
   }
+  /* Arranque com servidor: sessão guardada, dados, tempo real e estado das contas (para o ecrã de entrada). */
+  async bootServidor() {
+    const C = this.C;
+    this._tick = setInterval(() => this.tick(), 1000);
+    let conta = null;
+    try { conta = await C.auth.restaurar(); } catch (e) {}
+    const guardada = C.sessao.get();
+    const acc = C.CONTAS.find((a) => a.id === (conta || (guardada === 'cliente' ? 'cliente' : null)));
+    if (!acc) C.sessao.del();
+    C.repo.definirConta(acc || null);
+    this.data = C.repo.vazio();
+    await this.carregaTudo();
+    const up = { ready: true, vw: window.innerWidth, vh: window.innerHeight, now: Date.now(), offline: !navigator.onLine };
+    if (acc) Object.assign(up, { screen: 'app', user: acc.id, accIdx: C.CONTAS.indexOf(acc) });
+    this.lastNotif = Date.now();
+    this.ligaTempoReal(acc);
+    this.setState(up, () => { if (!acc) this.setAcc(1); this.fx(); this.clock(); });
+  }
+  /* (re)carrega do servidor para o mesmo objeto this.data (o tempo real e os commits partilham-no) */
+  async carregaTudo() {
+    const C = this.C;
+    try {
+      const d = await C.repo.carregar();
+      Object.keys(d).forEach((k) => { this.data[k] = d[k]; });
+    } catch (e) { console.warn('[carregar]', e); }
+    try {
+      const est = await C.auth.estado();
+      this.data.pins = {};
+      Object.keys(est).forEach((id) => { if (est[id].temPin) this.data.pins[id] = {}; C.bloqueio.set(id, { fails: 0, until: est[id].bloqueadoAte }); });
+    } catch (e) { console.warn('[estado das contas]', e); }
+  }
+  ligaTempoReal(acc) {
+    const C = this.C;
+    if (this.unsub) this.unsub();
+    this.unsub = C.rt.subscreve(C.sb, this.data, C.reg, { staff: !!acc && acc.tipo !== 'cliente', aposEvento: (t) => { if (t === 'lucro' || t === 'pub' || t === 'pub_partilhas') this.refreshClass(); this.sync(); }, aposReligar: () => this.recarrega() });
+  }
+  refreshClass() {
+    clearTimeout(this._cl);
+    this._cl = setTimeout(async () => {
+      try { this.data.class = await this.C.repo.classificacao(); this.setState((s) => ({ rev: s.rev + 1 })); } catch (e) { /* sem ligação */ }
+    }, 250);
+  }
+  async recarrega() {
+    if (this.C.modo !== 'servidor' || !this.data || !this.C.repo.R || this._rec) return;
+    this._rec = true;
+    try { await this.carregaTudo(); this.setState((s) => ({ rev: s.rev + 1 })); } finally { this._rec = false; }
+  }
   tick() {
     const n = Date.now(), st = this.state, up = {};
+    if (this.C && this.C.modo === 'servidor' && this.data && this.C.repo.R.staff) {
+      const d = new Date(n), k = d.getFullYear() * 12 + d.getMonth();
+      if (this._mk !== k) { if (this._mk != null) this.refreshClass(); this._mk = k; } // virou o mês: a classificação muda
+    }
     if (st.lockUntil && st.lockUntil <= n) { up.lockUntil = 0; up.pinMsg = ''; }
     if (st.lockUntil > n || n - st.now >= 20000 || up.lockUntil === 0) up.now = n;
     if (Object.keys(up).length) this.setState(up);
@@ -69,7 +127,34 @@ export default class App extends React.Component {
   }
 
   /* ---------- dados ---------- */
-  commit(fn) {
+  /* commit(fn, op): aplica fn já (o ecrã atualiza) e, com servidor, envia op() por ordem; se falhar, repõe do servidor e avisa.
+     commitA é igual mas espera pela resposta do servidor (formulários com ficheiros: só fecham se tiver ficado guardado). */
+  commit(fn, op) {
+    if (this.C.modo === 'servidor') {
+      try { fn(this.data); } catch (e) { this.toastMsg('Erro ao guardar. Verifique a ligação e tente outra vez.'); return false; }
+      this.setState((s) => ({ rev: s.rev + 1 }));
+      if (op) this.fila(op).catch(() => {});
+      return true;
+    }
+    return this.commitLocal(fn);
+  }
+  async commitA(fn, op) {
+    if (this.C.modo !== 'servidor') return this.commitLocal(fn);
+    try { fn(this.data); } catch (e) { return false; }
+    this.setState((s) => ({ rev: s.rev + 1 }));
+    try { await this.fila(op); return true; } catch (e) { return false; }
+  }
+  fila(op) {
+    const p = (this._q || Promise.resolve()).then(() => op());
+    this._q = p.catch(() => {});
+    return p.catch((e) => {
+      console.warn('[gravar]', e);
+      this.toastMsg('Erro ao guardar. Verifique a ligação e tente outra vez.');
+      this.recarrega();
+      throw e;
+    });
+  }
+  commitLocal(fn) {
     const snap = JSON.stringify(this.data);
     try { fn(this.data); this.C.db.save(this.data); }
     catch (e) {
@@ -82,7 +167,7 @@ export default class App extends React.Component {
     return true;
   }
   sync() {
-    this.data = this.C.db.load();
+    if (this.C.modo !== 'servidor') this.data = this.C.db.load();
     const me = this.me();
     if (this.state.screen === 'app' && this.staff(me)) {
       const novos = this.feed(me.id).filter((i) => i.at > this.lastNotif);
@@ -104,7 +189,7 @@ export default class App extends React.Component {
     if (this.urls[id]) return this.urls[id];
     if (!this.pend[id]) {
       this.pend[id] = 1;
-      this.C.media.get(id).then((b) => { if (b) { this.urls[id] = URL.createObjectURL(b); this.forceUpdate(); } }).catch(() => {});
+      this.C.media.url(id).then((u) => { if (u) { this.urls[id] = u; this.forceUpdate(); } }).catch(() => { setTimeout(() => { delete this.pend[id]; }, 15000); });
     }
     return '';
   }
@@ -116,20 +201,15 @@ export default class App extends React.Component {
       out.push({ k: 'cot', at: c.at, by: c.by, ref: k, kind: 'Cotação diária', body: C.pad(dt.getDate()) + '/' + C.pad(dt.getMonth() + 1) + ': ' + this.cotResumo(c) + ' · ' + this.nome(c.by) + (c.nota ? '. ' + c.nota : '') });
     });
     d.pub.forEach((p) => out.push({ k: 'pub', at: p.at, by: p.by, kind: 'Publicidade', body: 'Nova publicação: ' + (p.titulo || 'sem título') }));
-    Object.keys(d.lucro).forEach((y) => Object.keys(d.lucro[y]).forEach((l) => Object.keys(d.lucro[y][l]).forEach((m) => {
-      const e = d.lucro[y][l][m];
-      if (e && e.at) out.push({ k: 'lucro', at: e.at, by: e.by, kind: 'Lucro do mês', body: (d.lojas[l] ? d.lojas[l].nome : l) + ' registou o lucro de ' + C.MESES[m - 1] + '.' });
-    })));
+    /* o lucro do mês não gera avisos (decisão da Bu) */
     return out.filter((i) => i.by !== meId).sort((a, b) => b.at - a.at);
   }
   unread(meId) {
     const d = this.data, s = d.seen[meId] || {}, o = (x) => x.by !== meId;
-    const n = new Date(this.state.now), mes0 = new Date(n.getFullYear(), n.getMonth(), 1).getTime();
     const chat = d.chat.filter((m) => o(m) && m.at > (s.chat || 0)).length;
     const cot = Object.values(d.cot).filter((c) => o(c) && c.at > (s.cot || 0)).length;
     const pub = d.pub.filter((p) => o(p) && p.at > (s.pub || 0)).length;
-    let lucro = 0;
-    Object.values(d.lucro).forEach((Y) => Object.values(Y).forEach((L) => Object.values(L).forEach((e) => { if (e && o(e) && e.at > Math.max(s.lucro || 0, mes0)) lucro++; })));
+    const lucro = 0; /* o lucro do mês não gera avisos (decisão da Bu) */
     return { chat, cot, pub, lucro };
   }
   markSeen(k) {
@@ -137,9 +217,16 @@ export default class App extends React.Component {
     const u = this.unread(me), kinds = k === 'all' ? ['chat', 'cot', 'pub', 'lucro'] : [k];
     if (!kinds.some((x) => u[x] > 0)) return;
     const t = Date.now();
-    this.commit((d) => { const s = Object.assign({}, d.seen[me]); kinds.forEach((x) => { s[x] = t; }); d.seen[me] = s; });
+    this.commit((d) => { const s = Object.assign({}, d.seen[me]); kinds.forEach((x) => { s[x] = t; }); d.seen[me] = s; }, () => this.C.repo.vistos.mark(kinds));
+  }
+  /* Com servidor, os pontos vêm da função SQL fg_classificacao (a regra do jogo vive só lá). */
+  stdServidor(y) {
+    const C = this.C, d = this.data, k = d.class && d.class[y];
+    if (k) return k.std;
+    return C.LOJAS_ORDEM.map((id) => ({ id, nome: d.lojas[id].nome, lp: 0, bonus: 0, pts: 0, meses: Object.fromEntries(Array.from({ length: 12 }, (_, i) => [i + 1, { v: null, b: 0, sh: 0, total: 0 }])) }));
   }
   standings(y) {
+    if (this.C.modo === 'servidor') return this.stdServidor(y);
     const C = this.C, d = this.data, L = d.lucro[y] || {};
     const pubs = d.pub.filter((p) => new Date(p.at).getFullYear() === Number(y));
     return C.LOJAS_ORDEM.map((id) => {
@@ -157,6 +244,7 @@ export default class App extends React.Component {
     }).sort((a, b) => b.pts - a.pts);
   }
   winners(y, std) {
+    if (this.C.modo === 'servidor' && this.data.class && this.data.class[y]) return this.data.class[y].winners;
     const n = new Date(this.state.now), cy = n.getFullYear(), cm = n.getMonth() + 1, S = std || this.standings(y);
     return Array.from({ length: 12 }, (_, i) => {
       const m = i + 1, st = !this.C.emJogo(+y, m) ? 'fora' : +y < cy || (+y === cy && m < cm) ? 'fechado' : +y === cy && m === cm ? 'jogo' : 'futuro';
@@ -218,8 +306,22 @@ export default class App extends React.Component {
   }
 
   /* ---------- entrada ---------- */
+  /* com servidor: que contas já têm código e quais estão bloqueadas (pode ter mudado noutro telemóvel) */
+  async refreshEstado() {
+    const C = this.C;
+    try {
+      const est = await C.auth.estado();
+      Object.keys(est).forEach((id) => { if (est[id].temPin) this.data.pins[id] = {}; else delete this.data.pins[id]; C.bloqueio.set(id, { fails: 0, until: est[id].bloqueadoAte }); });
+      const st = this.state, a = C.CONTAS[st.accIdx];
+      if (st.screen === 'login' && !st.changing && !st.pin && a && a.tipo !== 'cliente') {
+        const b = C.bloqueio.get(a.id), stage = this.data.pins[a.id] ? 'enter' : 'new', lock = b.until > Date.now() ? b.until : 0;
+        if ((st.stage === 'enter' || st.stage === 'new') && (st.stage !== stage || st.lockUntil !== lock)) this.setState({ stage, lockUntil: lock });
+      }
+    } catch (e) { /* sem ligação: fica o que já se sabia */ }
+  }
   setAcc(i) {
     const C = this.C, n = C.CONTAS.length, idx = ((i % n) + n) % n, a = C.CONTAS[idx], b = C.bloqueio.get(a.id);
+    if (C.modo === 'servidor') this.refreshEstado();
     this.setState({ accIdx: idx, pin: '', first: '', pinMsg: '', stage: this.data.pins[a.id] ? 'enter' : 'new', lockUntil: b.until > Date.now() ? b.until : 0, changing: false }, () => {
       const el = document.querySelector('[data-acc-name]');
       if (el && el.animate && !this.reduz) el.animate([{ opacity: 0, transform: 'translateY(12px) scale(.94)' }, { opacity: 1, transform: 'none' }], { duration: 460, easing: 'cubic-bezier(.2,.8,.1,1)' });
@@ -243,6 +345,7 @@ export default class App extends React.Component {
   async submitPin(pin) {
     const C = this.C, st = this.state, a = C.CONTAS[st.accIdx];
     try {
+      if (C.modo === 'servidor') { await this.submitPinServidor(pin, st, a); return; }
       if (st.stage === 'enter') {
         const rec = this.data.pins[a.id], h = rec ? await C.hashPin(pin, rec.salt) : null;
         if (rec && h === rec.hash) {
@@ -266,11 +369,55 @@ export default class App extends React.Component {
       }
     } finally { this._checking = false; }
   }
-  loginOk(id) {
+  /* Código com servidor: a verificação, o bloqueio (5 tentativas → 30 s) e a escolha do código são feitos no servidor. */
+  async submitPinServidor(pin, st, a) {
+    const C = this.C;
+    if (st.stage === 'enter') {
+      const r = await C.auth.entrar(a.id, pin, { verificar: st.changing });
+      if (r.ok) {
+        C.bloqueio.set(a.id, { fails: 0, until: 0 });
+        if (st.changing) { this.setState({ stage: 'new', pin: '', pinMsg: '' }); return; }
+        await this.loginOk(a.id); return;
+      }
+      if (r.restantes == null && !r.bloqueadoAte) { this.toastMsg('Erro ao guardar. Verifique a ligação e tente outra vez.'); this.setState({ pin: '' }); return; }
+      let msg = 'Código errado. ' + (r.restantes === 1 ? 'Resta 1 tentativa.' : 'Restam ' + r.restantes + ' tentativas.');
+      if (r.bloqueadoAte) msg = '';
+      this.shake();
+      this.setState({ pin: '', pinMsg: msg, lockUntil: r.bloqueadoAte > Date.now() ? r.bloqueadoAte : 0, now: Date.now() });
+    } else if (st.stage === 'new') {
+      this.setState({ stage: 'confirm', first: pin, pin: '' });
+    } else {
+      if (pin !== st.first) { this.shake(); this.setState({ stage: 'new', first: '', pin: '', pinMsg: 'Os dois códigos não são iguais. Escolha outra vez.' }); return; }
+      const r = await C.auth.definirPin(a.id, pin);
+      if (!r.ok) { this.shake(); this.toastMsg('Erro ao guardar. Verifique a ligação e tente outra vez.'); this.setState({ pin: '' }); return; }
+      this.data.pins[a.id] = {};
+      this.toastMsg(st.changing ? 'Código alterado.' : 'Código guardado. Use-o sempre que entrar.');
+      await this.loginOk(a.id);
+    }
+  }
+  async loginOk(id) {
+    if (this.C.modo === 'servidor') {
+      const C = this.C, acc = C.CONTAS.find((x) => x.id === id);
+      C.repo.definirConta(acc);
+      Object.keys(this.data).forEach((k) => { delete this.data[k]; }); Object.assign(this.data, C.repo.vazio());
+      await this.carregaTudo();
+      this.ligaTempoReal(acc);
+    }
     this.C.sessao.set(id); this.lastNotif = Date.now();
     this.setState({ screen: 'app', user: id, tab: 'inicio', loja: null, equipa: null, sheet: null, pin: '', first: '', pinMsg: '', changing: false, banner: null, cotD: null, lucroVer: null });
   }
-  logout() { this.C.sessao.del(); this.setState({ screen: 'login', user: null, sheet: null, banner: null }, () => this.setAcc(this.state.accIdx)); }
+  async logout() {
+    const C = this.C;
+    C.sessao.del();
+    if (C.modo === 'servidor') {
+      await C.auth.sair();
+      C.repo.definirConta(null);
+      Object.keys(this.data).forEach((k) => { delete this.data[k]; }); Object.assign(this.data, C.repo.vazio());
+      await this.carregaTudo();
+      this.ligaTempoReal(null);
+    }
+    this.setState({ screen: 'login', user: null, sheet: null, banner: null }, () => this.setAcc(this.state.accIdx));
+  }
   startChange() {
     const idx = this.C.CONTAS.findIndex((a) => a.id === this.state.user);
     this.setState({ screen: 'login', sheet: null, accIdx: idx, stage: 'enter', pin: '', first: '', pinMsg: '', changing: true, lockUntil: 0 });
@@ -278,8 +425,14 @@ export default class App extends React.Component {
   cancelChange() { this.setState({ screen: 'app', changing: false, pin: '', first: '', pinMsg: '' }); }
   forgot() {
     const C = this.C, a = C.CONTAS[this.state.accIdx];
-    this.ask({ title: 'Repor o código de ' + a.nome + '?', body: 'O código atual deixa de funcionar e escolhe um novo a seguir. Faça isto apenas no seu próprio telemóvel.', okTxt: 'Repor código', danger: true, ok: () => {
-      this.commit((d) => { delete d.pins[a.id]; }); C.bloqueio.set(a.id, { fails: 0, until: 0 });
+    this.ask({ title: 'Repor o código de ' + a.nome + '?', body: 'O código atual deixa de funcionar e escolhe um novo a seguir. Faça isto apenas no seu próprio telemóvel.', okTxt: 'Repor código', danger: true, ok: async () => {
+      if (C.modo === 'servidor') {
+        const r = await C.auth.repor(a.id);
+        if (r.naoAssociado) { this.ask({ title: 'Este telemóvel não está associado a esta conta.', body: 'Peça ao Filipe para repor o código.', okTxt: 'Entendi', ok: () => {} }); return; }
+        if (!r.ok) { this.toastMsg('Erro ao guardar. Verifique a ligação e tente outra vez.'); return; }
+        delete this.data.pins[a.id];
+      } else this.commit((d) => { delete d.pins[a.id]; });
+      C.bloqueio.set(a.id, { fails: 0, until: 0 });
       this.setState({ stage: 'new', pin: '', first: '', pinMsg: '', lockUntil: 0 });
     } });
   }
@@ -334,13 +487,14 @@ export default class App extends React.Component {
     if (peso != null && (isNaN(peso) || peso <= 0 || peso > 5000)) { this.setState({ formErr: 'O peso tem de ser em gramas, por exemplo 4,8.' }); return; }
     if (!this.ownerOf(f.loja)) return;
     this.setState({ busy: true });
-    try { for (const x of f.fotos) if (x.novo) { await C.media.put(x.id, x.blob); this.urls[x.id] = x.url; } }
-    catch (e) { this.setState({ busy: false, formErr: 'Não foi possível guardar as fotografias neste telemóvel. Pode estar sem espaço.' }); return; }
+    const pid = f.id || C.uid('p'), caminho = (x) => C.media.pathFoto(f.loja, pid, x.id);
+    try { for (const x of f.fotos) if (x.novo) { await C.media.put(x.id, x.blob, { bucket: 'pecas', path: caminho(x) }); this.urls[x.id] = x.url; } }
+    catch (e) { this.setState({ busy: false, formErr: C.modo === 'servidor' ? 'Erro ao guardar. Verifique a ligação e tente outra vez.' : 'Não foi possível guardar as fotografias neste telemóvel. Pode estar sem espaço.' }); return; }
     const rec = { titulo, preco: preco == null ? null : Math.round(preco * 100) / 100, cat: f.cat, mat: f.mat, peso: peso == null ? null : Math.round(peso * 100) / 100, estado: f.estado, fotos: f.fotos.map((x) => x.id) };
-    const ok = this.commit((d) => {
+    const ok = await this.commitA((d) => {
       if (f.id) { const p = d.pecas.find((x) => x.id === f.id); if (p) Object.assign(p, rec, { ex: false, upd: Date.now() }); }
-      else d.pecas.unshift(Object.assign({ id: C.uid('p'), loja: f.loja, at: Date.now() }, rec));
-    });
+      else d.pecas.unshift(Object.assign({ id: pid, loja: f.loja, at: Date.now() }, rec));
+    }, () => C.repo.pecas.upsert({ id: pid, loja: f.loja, cat: rec.cat, titulo: rec.titulo, preco: rec.preco, mat: rec.mat, peso: rec.peso, estado: rec.estado, fotos: f.fotos.map((x) => ({ id: x.id, path: caminho(x) })) }));
     if (!ok) { this.setState({ busy: false }); return; }
     f.rm.forEach((id) => C.media.del(id).catch(() => {}));
     this.closeSheet();
@@ -348,13 +502,13 @@ export default class App extends React.Component {
   }
   setEstado(id, e) {
     const p = this.data.pecas.find((x) => x.id === id); if (!p || !this.ownerOf(p.loja) || p.estado === e) return;
-    this.commit((d) => { const q = d.pecas.find((x) => x.id === id); q.estado = e; q.upd = Date.now(); });
+    this.commit((d) => { const q = d.pecas.find((x) => x.id === id); q.estado = e; q.upd = Date.now(); }, () => this.C.repo.pecas.setEstado(id, e));
     this.toastMsg('Estado alterado para «' + this.C.ESTADOS.find((x) => x.id === e).nome + '».');
   }
   delPeca(id) {
     const p = this.data.pecas.find((x) => x.id === id); if (!p || !this.ownerOf(p.loja)) return;
     this.ask({ title: 'Apagar «' + p.titulo + '»?', body: 'A peça e as fotografias saem da loja. Não é possível desfazer.', okTxt: 'Apagar', danger: true, ok: () => {
-      if (!this.commit((d) => { d.pecas = d.pecas.filter((x) => x.id !== id); })) return;
+      if (!this.commit((d) => { d.pecas = d.pecas.filter((x) => x.id !== id); }, () => this.C.repo.pecas.remove(id))) return;
       (p.fotos || []).forEach((m) => this.C.media.del(m).catch(() => {}));
       this.closeSheet(); this.toastMsg('Peça apagada.');
     } });
@@ -371,15 +525,16 @@ export default class App extends React.Component {
     if (tel.length !== 9) { this.setState({ formErr: 'O telefone tem de ter 9 algarismos.' }); return; }
     if (wh && wh.length !== 9) { this.setState({ formErr: 'O número de WhatsApp tem de ter 9 algarismos.' }); return; }
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { this.setState({ formErr: 'O email não parece correto.' }); return; }
-    if (!this.commit((d) => { Object.assign(d.lojas[a.loja], { morada: f.morada.trim(), horario: f.horario.trim(), tel, whats: wh, email }); })) return;
+    const info = { morada: f.morada.trim(), horario: f.horario.trim(), tel, whats: wh, email };
+    if (!this.commit((d) => { Object.assign(d.lojas[a.loja], info); }, () => C.repo.lojas.updateInfo(a.loja, info))) return;
     this.closeSheet(); this.toastMsg('Informações da loja guardadas.');
   }
 
   /* ---------- chat ---------- */
   sendChat() {
     const a = this.me(), txt = this.state.chatTxt.trim(); if (!this.staff(a) || !txt) return;
-    const t = Date.now(), urg = this.state.chatUrg;
-    if (!this.commit((d) => { d.chat.push({ id: this.C.uid('c'), by: a.id, at: t, txt, urg }); d.seen[a.id] = Object.assign({}, d.seen[a.id], { chat: t }); })) return;
+    const t = Date.now(), urg = this.state.chatUrg, cid = this.C.uid('c');
+    if (!this.commit((d) => { d.chat.push({ id: cid, by: a.id, at: t, txt, urg }); d.seen[a.id] = Object.assign({}, d.seen[a.id], { chat: t }); }, async () => { await this.C.repo.chat.send({ id: cid, txt, urg }); await this.C.repo.vistos.mark(['chat']); })) return;
     this.setState({ chatTxt: '', chatUrg: false });
     if (urg) this.toastMsg('Aviso urgente enviado a toda a equipa.');
   }
@@ -415,7 +570,7 @@ export default class App extends React.Component {
     }
     if (this.SER.every((s) => rec[s[0]] == null)) { this.setState({ cotErr: 'Escreva pelo menos um preço: ouro ou prata, fino ou usado.' }); return; }
     const had = !!this.data.cot[k];
-    if (!this.commit((d) => { d.cot[k] = Object.assign(rec, { nota, by: a.id, at: Date.now(), edit: had }); d.seen[a.id] = Object.assign({}, d.seen[a.id], { cot: Date.now() }); })) return;
+    if (!this.commit((d) => { d.cot[k] = Object.assign(rec, { nota, by: a.id, at: Date.now(), edit: had }); d.seen[a.id] = Object.assign({}, d.seen[a.id], { cot: Date.now() }); }, async () => { await C.repo.cot.set(k, { of: rec.of, ou: rec.ou, pf: rec.pf, pu: rec.pu, nota }); await C.repo.vistos.mark(['cot']); })) return;
     this.setState({ cotEdit: false, cotIn: { of: '', ou: '', pf: '', pu: '' }, cotNota: '', cotErr: '' });
     this.burst(document.querySelector('[data-cot-hero]'));
     this.toastMsg(had ? 'Cotação corrigida. A equipa foi avisada.' : 'Cotação diária publicada. A equipa recebeu a notificação.');
@@ -429,7 +584,7 @@ export default class App extends React.Component {
     const n = new Date(), y = n.getFullYear(), m = n.getMonth() + 1, mes = C.MESES[m - 1], val = Math.round(v * 100) / 100;
     this.ask({ title: 'Registar ' + C.euro(val) + ' em ' + mes + '?', body: 'Vale ' + C.numero(val / 1000, 1) + ' pontos para ' + a.nome + '. Pode corrigir este valor até ao último dia de ' + mes + '.', okTxt: 'Registar', ok: () => {
       this.burst(document.querySelector('[data-lucro-btn]'));
-      if (!this.commit((d) => { d.lucro[y] = d.lucro[y] || {}; d.lucro[y][a.loja] = d.lucro[y][a.loja] || {}; d.lucro[y][a.loja][m] = { valor: val, at: Date.now(), by: a.id }; })) return;
+      if (!this.commit((d) => { d.lucro[y] = d.lucro[y] || {}; d.lucro[y][a.loja] = d.lucro[y][a.loja] || {}; d.lucro[y][a.loja][m] = { valor: val, at: Date.now(), by: a.id }; }, () => C.repo.lucro.set(y, m, val))) return;
       this.setState({ lucroTxt: '', lucroEdit: false, lucroErr: '', lucroVer: a.loja });
       this.toastMsg('Lucro de ' + mes + ' registado: ' + C.numero(val / 1000, 1) + ' pontos.');
     } });
@@ -447,7 +602,8 @@ export default class App extends React.Component {
     const file = e.target && e.target.files && e.target.files[0]; if (e.target) e.target.value = ''; if (!file) return;
     const isVid = /^video\//.test(file.type), isImg = /^image\//.test(file.type);
     if (!isVid && !isImg) { this.setState({ formErr: 'Escolha uma imagem ou um vídeo.' }); return; }
-    if (isVid && file.size > 80 * 1048576) { this.setState({ formErr: 'O vídeo tem mais de 80 MB. Escolha um vídeo mais curto.' }); return; }
+    const lim = this.C.modo === 'servidor' ? 50 : 80; // 50 MB = limite por ficheiro do plano gratuito do Supabase
+    if (isVid && file.size > lim * 1048576) { this.setState({ formErr: 'O vídeo tem mais de ' + lim + ' MB. Escolha um vídeo mais curto.' }); return; }
     this.setState({ busy: true, formErr: '' });
     let blob = file;
     try { if (isImg && file.size > 12 * 1048576) blob = await this.C.comprimeImagem(file, 2600); }
@@ -465,15 +621,16 @@ export default class App extends React.Component {
     if (titulo.length < 2) { this.setState({ formErr: 'Dê um título à publicação.' }); return; }
     if (!texto && !f.media) { this.setState({ formErr: 'Junte uma imagem, um vídeo ou o texto para copiar.' }); return; }
     this.setState({ busy: true });
+    const pid = f.id || C.uid('u'), caminho = f.media && f.media.novo ? C.media.pathPub(pid, f.media.id, f.media.nome, f.media.tipo) : null;
     if (f.media && f.media.novo) {
-      try { await C.media.put(f.media.id, f.media.blob); this.urls[f.media.id] = f.media.url; }
-      catch (e) { this.setState({ busy: false, formErr: 'Não foi possível guardar o ficheiro neste telemóvel. Pode estar sem espaço.' }); return; }
+      try { await C.media.put(f.media.id, f.media.blob, { bucket: 'pub', path: caminho }); this.urls[f.media.id] = f.media.url; }
+      catch (e) { this.setState({ busy: false, formErr: C.modo === 'servidor' ? 'Erro ao guardar. Verifique a ligação e tente outra vez.' : 'Não foi possível guardar o ficheiro neste telemóvel. Pode estar sem espaço.' }); return; }
     }
     const media = f.media ? { id: f.media.id, tipo: f.media.tipo, nome: f.media.nome } : null;
-    const ok = this.commit((d) => {
+    const ok = await this.commitA((d) => {
       if (f.id) { const p = d.pub.find((x) => x.id === f.id); if (p) Object.assign(p, { titulo, texto, media, ex: false, upd: Date.now() }); }
-      else d.pub.unshift({ id: C.uid('u'), by: a.id, at: Date.now(), titulo, texto, media, partilhas: {} });
-    });
+      else d.pub.unshift({ id: pid, by: a.id, at: Date.now(), titulo, texto, media, partilhas: {} });
+    }, () => C.repo.pub.upsert({ id: pid, titulo, texto, media: media && Object.assign({}, media, { path: caminho }) }, f.rm));
     if (!ok) { this.setState({ busy: false }); return; }
     f.rm.forEach((id) => C.media.del(id).catch(() => {}));
     this.closeSheet();
@@ -482,7 +639,7 @@ export default class App extends React.Component {
   delPub(id) {
     const a = this.me(), p = this.data.pub.find((x) => x.id === id); if (!a || !a.pub || !p) return;
     this.ask({ title: 'Apagar «' + (p.titulo || 'publicação') + '»?', body: 'Sai da secção Publicidade para toda a equipa. Os vistos de partilha desta publicação também se perdem.', okTxt: 'Apagar', danger: true, ok: () => {
-      if (!this.commit((d) => { d.pub = d.pub.filter((x) => x.id !== id); })) return;
+      if (!this.commit((d) => { d.pub = d.pub.filter((x) => x.id !== id); }, () => this.C.repo.pub.remove(id, p.media && p.media.id))) return;
       if (p.media) this.C.media.del(p.media.id).catch(() => {});
       this.toastMsg('Publicação apagada.');
     } });
@@ -493,7 +650,7 @@ export default class App extends React.Component {
     const n = new Date(), pm = new Date(p.at), mesmo = (x) => { const t = new Date(x.at); return t.getFullYear() === n.getFullYear() && t.getMonth() === n.getMonth(); };
     if (!mesmo(p)) { this.toastMsg('Os vistos desse mês já fecharam.'); return; }
     const on = !(p.partilhas && p.partilhas[a.loja]), btn = document.querySelector('[data-share="' + id + '"]');
-    if (!this.commit((d) => { const q = d.pub.find((x) => x.id === id); q.partilhas = Object.assign({}, q.partilhas); if (on) q.partilhas[a.loja] = Date.now(); else delete q.partilhas[a.loja]; })) return;
+    if (!this.commit((d) => { const q = d.pub.find((x) => x.id === id); q.partilhas = Object.assign({}, q.partilhas); if (on) q.partilhas[a.loja] = Date.now(); else delete q.partilhas[a.loja]; }, () => (on ? this.C.repo.pub.marcarPartilhada(id) : this.C.repo.pub.desmarcarPartilhada(id)))) return;
     if (!on) { this.toastMsg('Visto retirado.'); return; }
     const mes = this.data.pub.filter(mesmo), falta = mes.filter((x) => !(x.partilhas && x.partilhas[a.loja])).length;
     if (!falta) { this.burst(btn); this.toastMsg('Partilhou todas as publicações de ' + this.C.MESES[n.getMonth()] + ': +1 ponto no Lucro do mês.'); }
@@ -505,7 +662,7 @@ export default class App extends React.Component {
         d.pecas = d.pecas.filter((x) => !x.ex); d.chat = d.chat.filter((x) => !x.ex); d.pub = d.pub.filter((x) => !x.ex);
         Object.keys(d.cot).forEach((k) => { if (d.cot[k].ex) delete d.cot[k]; });
         Object.values(d.lucro).forEach((Y) => Object.values(Y).forEach((L) => Object.keys(L).forEach((m) => { if (L[m] && L[m].ex) delete L[m]; })));
-      });
+      }, () => this.C.repo.ex.apagar());
       this.setState({ sheet: null }); this.toastMsg('Dados de exemplo apagados.');
     } });
   }

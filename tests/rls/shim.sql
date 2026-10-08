@@ -16,3 +16,9 @@ grant execute on function auth.uid() to anon, authenticated, service_role;
 -- como no Supabase, o service_role tem acesso total (ignora RLS por bypassrls)
 alter default privileges in schema public grant all on tables to service_role;
 grant all on all tables in schema public to service_role;
+
+-- papel de ligação do PostgREST (como o `authenticator` do Supabase)
+do $$ begin
+  if not exists (select 1 from pg_roles where rolname = 'authenticator') then create role authenticator login password 'authenticator' noinherit; end if;
+end $$;
+grant anon, authenticated to authenticator;

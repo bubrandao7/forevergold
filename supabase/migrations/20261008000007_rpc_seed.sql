@@ -2,7 +2,7 @@
 -- Devolve só booleanos e uma hora. Alimenta setAcc() e vmLogin() antes de haver sessão.
 create function public.fg_estado_contas() returns table (conta text, tem_pin boolean, bloqueado_ate timestamptz)
 language sql stable security definer set search_path = public, pg_temp as $$
-  select c.id, p.conta is not null,
+  select c.id, coalesce(p.hash is not null, false),
          case when p.bloqueado_ate > now() then p.bloqueado_ate end
   from public.contas c left join public.pins p on p.conta = c.id
   order by c.id

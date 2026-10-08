@@ -127,10 +127,11 @@ create table public.vistos (
 -- ---------------------------------------------------------------- códigos e dispositivos (só service_role)
 create table public.pins (
   conta         text primary key references public.contas (id) on delete cascade,
-  hash          text not null,
+  hash          text,                       -- null = "sem código" (primeira entrada, ou reposição à espera do novo código)
   tentativas    smallint not null default 0,
-  bloqueios     smallint not null default 0,
   bloqueado_ate timestamptz,
+  bilhete_hash  text,                       -- bilhete de reposição (uso único) para escolher o novo código
+  bilhete_ate   timestamptz,
   definido_em   timestamptz not null default now()
 );
 

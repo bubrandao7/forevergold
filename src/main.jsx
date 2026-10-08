@@ -6,8 +6,9 @@ import './core/lisboa.js';
 import './core/fg-assets.js';
 import './core/fg-core.js';
 import App from './App.jsx';
+import { instala } from './data/index.js';
 
-createRoot(document.getElementById('root')).render(<App />);
+instala().then(() => createRoot(document.getElementById('root')).render(<App />));
 
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   import('virtual:pwa-register').then(({ registerSW }) => registerSW({ immediate: true })).catch(() => {});

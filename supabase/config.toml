@@ -1,0 +1,15 @@
+# Configuração do Supabase CLI (supabase start / supabase functions deploy)
+project_id = "forevergold"
+
+[api]
+schemas = ["public"]
+max_rows = 1000
+
+[functions.entrar]
+verify_jwt = true
+[functions.definir-pin]
+verify_jwt = true
+[functions.repor-pin]
+verify_jwt = true
+[functions.admin-repor-pin]
+verify_jwt = true
