@@ -26,5 +26,5 @@ export async function arranca(db = 'fg_e2e', { porta = 3101, portaPg = 3100, ext
     auth: { persistSession: false, autoRefreshToken: false },
     global: { headers: conta ? { Authorization: 'Bearer ' + jwt({ sub: base.ids[conta], role: 'authenticated' }) } : { Authorization: 'Bearer ' + jwt({ role: 'anon' }) } }
   });
-  return { base, cliente, porta, parar: async () => { proxy.close(); pr.kill(); await base.c.end(); } };
+  return { base, cliente, porta, servidor: proxy, parar: async () => { proxy.closeAllConnections?.(); proxy.close(); pr.kill(); await base.c.end(); } };
 }

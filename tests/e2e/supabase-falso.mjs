@@ -5,6 +5,7 @@ import http from 'node:http';
 import { arranca, jwt } from './stack.mjs';
 import { criaPins } from '../../supabase/functions/_shared/logic.ts';
 import { depsPg } from '../functions/deps-pg.mjs';
+import { ligaRealtime } from './realtime-falso.mjs';
 
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,DELETE,OPTIONS', 'Access-Control-Expose-Headers': '*' };
 const ler = (req) => new Promise((ok) => { const c = []; req.on('data', (d) => c.push(d)); req.on('end', () => ok(Buffer.concat(c))); });
@@ -69,12 +70,12 @@ export async function iniciaFalso({ porta = 3110, portaPg = 3120, db = 'fg_brows
     }
     if (p === '/__test/ficheiros') return resp(res, 200, [...ficheiros.keys()]);
     if (p === '/__test/pin' && req.method === 'POST') { const { conta, pin } = JSON.parse((await ler(req)).toString()); return resp(res, 200, await pins.adminRepor({ conta, pin })); }
-    if (p.startsWith('/realtime/')) { res.writeHead(404, CORS); res.end(); return true; }
     return false; // /rest/v1 → PostgREST
   };
   S = await arranca(db, { porta, portaPg, extra });
   pins = criaPins(depsPg(S.base.c, { sessao }));
+  const rt = await ligaRealtime(S.servidor, S.base, db);
   // código inicial igual para todas as contas (só nos testes; em produção usa-se tools/repor-pin.mjs)
   for (const c of Object.keys(S.base.ids)) await pins.adminRepor({ conta: c, pin: '2727' });
-  return { ...S, url: `http://127.0.0.1:${porta}`, anon: jwt({ role: 'anon' }), ficheiros };
+  return { ...S, parar: async () => { await rt.parar(); await S.parar(); }, url: `http://127.0.0.1:${porta}`, anon: jwt({ role: 'anon' }), ficheiros };
 }
