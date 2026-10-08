@@ -1,8 +1,8 @@
 /* Tempo real: cada alteração feita noutro telemóvel chega aqui e é aplicada a `data` (o mesmo objeto que a app usa).
    Depois chama `avisar()` e a app decide se mostra banner (feed/showBanner/notifySys, como no protótipo). */
-import { ms, lojaDe, pecaDe, chatDe, cotDe, lucroDe, pubDe } from './mapper.js';
+import { ms, lojaDe, pecaDe, chatDe, cotDe, lucroDe, pubDe, avisoDe } from './mapper.js';
 
-const TABELAS = ['lojas', 'pecas', 'peca_fotos', 'chat', 'cotacoes', 'lucro', 'pub', 'pub_partilhas', 'vistos'];
+const TABELAS = ['lojas', 'pecas', 'peca_fotos', 'chat', 'cotacoes', 'lucro', 'pub', 'pub_partilhas', 'vistos', 'avisos'];
 
 /* aplica um evento a data; devolve true se mudou algo que o ecrã mostra */
 export function aplica(data, reg, tabela, tipo, n, a) {
@@ -56,6 +56,7 @@ export function aplica(data, reg, tabela, tipo, n, a) {
       if (del) delete p.partilhas[r.loja]; else p.partilhas[r.loja] = ms(r.at);
       return true;
     }
+    case 'avisos': { if (!del) poe(data.avisos, avisoDe(r), (x, y) => y.at - x.at); return !del; }
     case 'vistos': {
       if (del) return false;
       const s = (data.seen[r.conta] = Object.assign({}, data.seen[r.conta]));

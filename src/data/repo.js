@@ -1,7 +1,7 @@
 /* Repositório: operações por entidade sobre o Supabase.
    A app mantém `data` na forma do protótipo ({ lojas, pecas, chat, cot, lucro, pub, seen, pins, class }); aqui é onde
    se carrega do servidor, se aplicam alterações em tempo real e se gravam as operações. */
-import { rel, ms, iso, lojaDe, pecaDe, chatDe, cotDe, cotPara, lucroDe, pubDe } from './mapper.js';
+import { rel, ms, iso, lojaDe, pecaDe, chatDe, cotDe, cotPara, lucroDe, pubDe, avisoDe } from './mapper.js';
 
 const TAM = 1000; // máximo de linhas por pedido no Supabase
 const KINDS = ['chat', 'cot', 'pub', 'lucro'];
@@ -22,11 +22,11 @@ export function criaRepo(sb, media, reg) {
     }
   }
 
-  const vazio = () => ({ v: 1, lojas: {}, pecas: [], chat: [], cot: {}, lucro: {}, pub: [], pins: {}, seen: {}, class: null });
+  const vazio = () => ({ v: 1, lojas: {}, pecas: [], chat: [], cot: {}, lucro: {}, pub: [], avisos: [], pins: {}, seen: {}, class: null });
 
   /* Carrega o que o papel pode ver. cliente (sem sessão): lojas, peças e fotos. Equipa: tudo. */
   async function carregar(parcial) {
-    const quer = parcial || ['lojas', 'pecas', 'chat', 'cot', 'lucro', 'pub', 'seen', 'class'];
+    const quer = parcial || ['lojas', 'pecas', 'chat', 'cot', 'lucro', 'pub', 'avisos', 'seen', 'class'];
     const d = parcial ? {} : vazio();
     const t0 = Date.now();
     const agora = await ok(sb.rpc('fg_agora'));
@@ -62,6 +62,7 @@ export function criaRepo(sb, media, reg) {
           return pubDe(r, por[r.id]);
         });
       }
+      if (quer.includes('avisos')) d.avisos = (await ok(sb.from('avisos').select('*').order('at', { ascending: false }).limit(30))).map(avisoDe);
       if (quer.includes('seen')) {
         d.seen = { [R.conta]: {} };
         (await ok(sb.from('vistos').select('kind,at').eq('conta', R.conta))).forEach((r) => { d.seen[R.conta][r.kind] = ms(r.at); });

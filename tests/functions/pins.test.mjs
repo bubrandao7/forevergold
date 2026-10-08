@@ -1,36 +1,17 @@
 /* Lógica dos códigos (supabase/functions/_shared/logic.ts) contra as funções SQL reais (contagem de tentativas atómica). */
 import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import crypto from 'node:crypto';
 import bcrypt from 'bcryptjs';
+import { depsPg, hmacPin } from './deps-pg.mjs';
 import { novaBase } from '../rls/db.mjs';
 import { criaPins } from '../../supabase/functions/_shared/logic.ts';
 
 let b, c, cmp = 0, relogio = Date.now();
-const hmac = (conta, pin) => crypto.createHmac('sha256', 'pimenta-de-teste').update(`${conta}|${pin}`).digest('hex');
-const sha = (t) => crypto.createHash('sha256').update(t).digest('hex');
 const sessoes = [];
-
-function deps() {
-  return {
-    contaExiste: async (x) => (await c.query('select 1 from public.contas where id = $1', [x])).rowCount > 0,
-    reservar: async (x) => (await c.query('select public.fg_pin_reservar($1) as r', [x])).rows[0].r,
-    resultado: async (x, certo) => (await c.query('select public.fg_pin_resultado($1, $2) as r', [x, certo])).rows[0].r,
-    getPin: async (x) => (await c.query('select hash, bilhete_hash, bilhete_ate from public.pins where conta = $1', [x])).rows[0] || null,
-    setPin: async (x, v) => { await c.query(`insert into public.pins (conta, hash, bilhete_hash, bilhete_ate, tentativas, bloqueado_ate) values ($1,$2,$3,$4,0,null)
-      on conflict (conta) do update set hash = excluded.hash, bilhete_hash = excluded.bilhete_hash, bilhete_ate = excluded.bilhete_ate, tentativas = 0, bloqueado_ate = null`, [x, v.hash, v.bilhete_hash, v.bilhete_ate]); },
-    dispositivoValido: async (x, h) => (await c.query('select 1 from public.dispositivos where conta = $1 and token_hash = $2', [x, h])).rowCount > 0,
-    addDispositivo: async (x, h, ua) => { await c.query('insert into public.dispositivos (conta, token_hash, ua) values ($1,$2,$3) on conflict do nothing', [x, h, ua]); },
-    apagarDispositivos: async (x) => { await c.query('delete from public.dispositivos where conta = $1', [x]); },
-    hashar: async (x, pin) => bcrypt.hash(hmac(x, pin), 4),
-    comparar: async (x, pin, hash) => { cmp++; return bcrypt.compare(hmac(x, pin), hash); },
-    sessao: async (x) => { const s = { access_token: 'jwt-' + x, refresh_token: 'r-' + x }; sessoes.push(x); return s; },
-    quemEh: async (jwt) => (jwt && jwt.startsWith('jwt-') ? jwt.slice(4) : null),
-    aleatorio: () => crypto.randomBytes(32).toString('hex'),
-    sha256: async (t) => sha(t),
-    agora: () => relogio
-  };
-}
+const deps = () => depsPg(c, {
+  sessao: async (x) => { sessoes.push(x); return { access_token: 'jwt-' + x, refresh_token: 'r-' + x }; },
+  agora: () => relogio, aoComparar: () => { cmp++; }
+});
 let P;
 before(async () => { b = await novaBase('fg_pins'); c = b.c; P = criaPins(deps()); });
 after(async () => { await c.end(); });
@@ -47,6 +28,7 @@ test('o código nunca fica em claro e a pimenta conta', async () => {
   const h = (await c.query("select hash from public.pins where conta = 'foreverbu'")).rows[0].hash;
   assert.ok(h.startsWith('$2'), 'bcrypt'); assert.ok(!h.includes('2727'));
   assert.equal(await bcrypt.compare('2727', h), false, 'sem a pimenta não se confirma');
+  assert.equal(await bcrypt.compare(hmacPin('foreverbu', '2727'), h), true);
 });
 
 test('entrar: certo (com e sem token do dispositivo) e erradas com contagem 4,3,2,1 e bloqueio à 5.ª', async () => {

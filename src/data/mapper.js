@@ -18,6 +18,7 @@ export const chatDe = (r) => ({ id: r.id, by: r.autor, at: ms(r.at), txt: r.txt,
 export const cotDe = (r) => ({ of: num(r.ouro_fino), ou: num(r.ouro_usado), pf: num(r.prata_fina), pu: num(r.prata_usada), nota: r.nota || '', by: r.autor, at: ms(r.at), edit: !!r.edit, ex: !!r.ex });
 export const cotPara = (dia, c) => ({ dia, ouro_fino: c.of ?? null, ouro_usado: c.ou ?? null, prata_fina: c.pf ?? null, prata_usada: c.pu ?? null, nota: c.nota || '' });
 
+export const avisoDe = (r) => ({ id: r.id, tipo: r.tipo, titulo: r.titulo, corpo: r.corpo, at: ms(r.at) });
 export const lucroDe = (r) => ({ valor: num(r.valor), at: ms(r.at), by: r.autor });
 
 export const pubDe = (r, partilhas) => ({

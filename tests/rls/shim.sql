@@ -21,4 +21,4 @@ grant all on all tables in schema public to service_role;
 do $$ begin
   if not exists (select 1 from pg_roles where rolname = 'authenticator') then create role authenticator login password 'authenticator' noinherit; end if;
 end $$;
-grant anon, authenticated to authenticator;
+grant anon, authenticated, service_role to authenticator;

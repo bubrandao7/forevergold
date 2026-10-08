@@ -25,6 +25,7 @@ export async function instala() {
   const media = criaMedia(sb, reg);
   const repo = criaRepo(sb, media, reg);
   const bloqueio = criaBloqueioCache();
+  C.push = await import('../push/subscribe.js');
   C.sb = sb; C.reg = reg; C.repo = repo; C.rt = rt;
   C.bloqueio = bloqueio;
   C.auth = criaAuth(sb, repo, bloqueio);

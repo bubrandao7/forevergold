@@ -1,6 +1,7 @@
 import React from 'react';
 import Template from './ui/Template.jsx';
 import { LDate as Date } from './core/lisboa.js';
+import Offline from './ui/Offline.jsx';
 
 export default class App extends React.Component {
   state = {
@@ -9,7 +10,7 @@ export default class App extends React.Component {
     user: null, tab: 'inicio', loja: null, cat: 'todas', equipa: null, sheet: null, peca: null, form: null, formErr: '', busy: false, inboxSnap: null,
     chatTxt: '', chatUrg: false, cotD: null, cotIn: { of: '', ou: '', pf: '', pu: '' }, cotSerie: 'of', cotNota: '', cotEdit: false, cotErr: '',
     lucroTxt: '', lucroEdit: false, lucroErr: '', lucroVer: null, regras: false,
-    banner: null, toast: '', confirm: null, laserTxt: 'Para sempre', copied: '',
+    banner: null, toast: '', confirm: null, laserTxt: 'Para sempre', copied: '', offline: false,
     perm: typeof Notification !== 'undefined' ? Notification.permission : 'unsupported'
   };
 
@@ -19,6 +20,10 @@ export default class App extends React.Component {
     this.reduz = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
     this.onResize = () => this.setState({ vw: window.innerWidth, vh: window.innerHeight });
     window.addEventListener('resize', this.onResize);
+    this._ir = new URLSearchParams(location.search).get('ir'); // aberta a partir de uma notificação: separador a mostrar
+    if (this._ir) { try { history.replaceState(null, '', location.pathname); } catch (e) {} }
+    this.onSw = (e) => { if (e.data && e.data.tipo === 'ir' && e.data.k) { this._ir = e.data.k; this.irPendente(); } };
+    if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', this.onSw);
     this.onNet = () => { this.setState({ offline: !navigator.onLine }); if (navigator.onLine) this.recarrega(); };
     this.onVis = () => { if (!document.hidden) this.recarrega(); };
     window.addEventListener('online', this.onNet); window.addEventListener('offline', this.onNet);
@@ -31,6 +36,7 @@ export default class App extends React.Component {
     window.removeEventListener('resize', this.onResize);
     window.removeEventListener('online', this.onNet); window.removeEventListener('offline', this.onNet);
     document.removeEventListener('visibilitychange', this.onVis);
+    if ('serviceWorker' in navigator) navigator.serviceWorker.removeEventListener('message', this.onSw);
     if (this.unsub) this.unsub();
     Object.values(this.urls || {}).forEach((u) => { try { URL.revokeObjectURL(u); } catch (e) {} });
   }
@@ -75,7 +81,14 @@ export default class App extends React.Component {
     if (acc) Object.assign(up, { screen: 'app', user: acc.id, accIdx: C.CONTAS.indexOf(acc) });
     this.lastNotif = Date.now();
     this.ligaTempoReal(acc);
-    this.setState(up, () => { if (!acc) this.setAcc(1); this.fx(); this.clock(); });
+    this.setState(up, () => { if (!acc) this.setAcc(1); this.fx(); this.clock(); this.irPendente(); });
+  }
+  /* abrir o separador de uma notificação (chat, cot, pub, lucro, venc), se já houver equipa com sessão */
+  irPendente() {
+    const a = this.me();
+    if (!this._ir || this.state.screen !== 'app' || !this.staff(a)) return;
+    const k = this._ir; this._ir = null;
+    this.navTo(k);
   }
   /* (re)carrega do servidor para o mesmo objeto this.data (o tempo real e os commits partilham-no) */
   async carregaTudo() {
@@ -201,6 +214,8 @@ export default class App extends React.Component {
       out.push({ k: 'cot', at: c.at, by: c.by, ref: k, kind: 'Cotação diária', body: C.pad(dt.getDate()) + '/' + C.pad(dt.getMonth() + 1) + ': ' + this.cotResumo(c) + ' · ' + this.nome(c.by) + (c.nota ? '. ' + c.nota : '') });
     });
     d.pub.forEach((p) => out.push({ k: 'pub', at: p.at, by: p.by, kind: 'Publicidade', body: 'Nova publicação: ' + (p.titulo || 'sem título') }));
+    /* vencedora do mês / da temporada (a base de dados cria o aviso quando o mês ou o ano fecha) */
+    (d.avisos || []).forEach((a) => out.push({ k: 'venc', at: a.at, by: '', kind: a.titulo, body: a.corpo }));
     /* o lucro do mês não gera avisos (decisão da Bu) */
     return out.filter((i) => i.by !== meId).sort((a, b) => b.at - a.at);
   }
@@ -278,7 +293,7 @@ export default class App extends React.Component {
     if (k === 'chat' || k === 'urg') this.go('chat');
     else if (k === 'cot') this.openEquipa('cot');
     else if (k === 'pub') this.openEquipa('pub');
-    else if (k === 'lucro') this.openEquipa('lucro');
+    else if (k === 'lucro' || k === 'venc') this.openEquipa('lucro');
   }
   ask(cfg) { this.setState({ confirm: cfg }); }
   closeSheet() {
@@ -402,14 +417,16 @@ export default class App extends React.Component {
       Object.keys(this.data).forEach((k) => { delete this.data[k]; }); Object.assign(this.data, C.repo.vazio());
       await this.carregaTudo();
       this.ligaTempoReal(acc);
+      if (acc.tipo !== 'cliente') C.push.subscrever(C.sb).catch(() => {}); // se já deu permissão, regista este telemóvel para esta conta
     }
     this.C.sessao.set(id); this.lastNotif = Date.now();
-    this.setState({ screen: 'app', user: id, tab: 'inicio', loja: null, equipa: null, sheet: null, pin: '', first: '', pinMsg: '', changing: false, banner: null, cotD: null, lucroVer: null });
+    this.setState({ screen: 'app', user: id, tab: 'inicio', loja: null, equipa: null, sheet: null, pin: '', first: '', pinMsg: '', changing: false, banner: null, cotD: null, lucroVer: null }, () => this.irPendente());
   }
   async logout() {
     const C = this.C;
     C.sessao.del();
     if (C.modo === 'servidor') {
+      await C.push.retirar(C.sb);   // este telemóvel deixa de receber os avisos desta conta
       await C.auth.sair();
       C.repo.definirConta(null);
       Object.keys(this.data).forEach((k) => { delete this.data[k]; }); Object.assign(this.data, C.repo.vazio());
@@ -666,9 +683,21 @@ export default class App extends React.Component {
       this.setState({ sheet: null }); this.toastMsg('Dados de exemplo apagados.');
     } });
   }
+  /* iPhone/iPad no Safari, sem a app no ecrã principal: aí o iOS não oferece notificações */
+  iosPorInstalar() {
+    const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const instalada = navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+    return ios && !instalada;
+  }
   async askNotif() {
     if (!('Notification' in window)) return;
-    try { const r = await Notification.requestPermission(); this.setState({ perm: r }); if (r === 'granted') this.toastMsg('Notificações ativas neste telemóvel.'); } catch (e) {}
+    try {
+      const r = await Notification.requestPermission(); this.setState({ perm: r });
+      if (r === 'granted') {
+        if (this.C.modo === 'servidor') await this.C.push.subscrever(this.C.sb).catch((e) => console.warn('[push]', e));
+        this.toastMsg('Notificações ativas neste telemóvel.');
+      }
+    } catch (e) {}
   }
 
   /* ---------- motion ---------- */
@@ -1124,12 +1153,12 @@ export default class App extends React.Component {
       v.pf = { nome: a.tipo === 'cliente' ? 'Cliente' : a.nome, user: a.tipo === 'cliente' ? 'Entrada sem código' : a.id, staff,
         papel: a.tipo === 'cliente' ? 'Vê a página principal e as peças das cinco lojas.' : a.tipo === 'loja' ? 'Edita a secção da loja ' + a.nome + ', usa o chat, a cotação diária, o lucro do mês e a publicidade.' : a.pub ? 'Gere a secção Publicidade e usa o chat, a cotação diária e o lucro do mês.' : 'Usa o chat, a publicidade, a cotação diária e acompanha o lucro do mês.',
         notifOk: perm === 'granted', notifAsk: perm === 'default', notifNo: perm === 'denied' || perm === 'unsupported',
-        notifTxt: perm === 'granted' ? 'Notificações ativas neste telemóvel.' : perm === 'denied' ? 'As notificações estão bloqueadas nas definições do navegador.' : perm === 'unsupported' ? 'Este navegador não mostra notificações. Os avisos aparecem dentro da app.' : 'Receba avisos do chat, da cotação diária e da publicidade mesmo com a app em segundo plano.',
+        notifTxt: perm === 'granted' ? 'Notificações ativas neste telemóvel.' : perm === 'denied' ? 'As notificações estão bloqueadas nas definições do navegador.' : perm === 'unsupported' ? (this.iosPorInstalar() ? 'Para receber avisos no iPhone: toque em Partilhar › «Adicionar ao ecrã principal» e abra a ForeverGold a partir do ícone. Precisa de iOS 16.4 ou mais recente.' : 'Este navegador não mostra notificações. Os avisos aparecem dentro da app.') : 'Receba avisos do chat, da cotação diária e da publicidade mesmo com a app em segundo plano.',
         askNotif: () => this.askNotif(), changePin: () => this.startChange(), logout: () => this.logout(), clearEx: () => this.clearEx(),
         hasEx: staff && (d.pecas.some((x) => x.ex) || d.chat.some((x) => x.ex) || d.pub.some((x) => x.ex) || Object.values(d.cot).some((x) => x.ex)) };
     }
     if (st.sheet === 'inbox') {
-      const snap = st.inboxSnap || {}, key = { chat: 'chat', urg: 'chat', cot: 'cot', pub: 'pub', lucro: 'lucro' };
+      const snap = st.inboxSnap || {}, key = { chat: 'chat', urg: 'chat', cot: 'cot', pub: 'pub', lucro: 'lucro', venc: 'lucro' };
       const items = staff ? this.feed(a.id).slice(0, 40) : [];
       v.sInbox = true;
       v.inbox = items.map((i) => { const novo = i.at > (snap[key[i.k]] || 0); return { kind: i.kind, body: i.body, when: C.quando(i.at, st.now), novo, kc: i.k === 'urg' ? '#F08C70' : '#C6A766', bg: novo ? 'rgba(198,167,102,.08)' : 'transparent', dot: novo ? (i.k === 'urg' ? '#D9593B' : '#C6A766') : 'transparent', click: () => { this.setState({ sheet: null }); this.navTo(i.k); } }; });
@@ -1139,6 +1168,7 @@ export default class App extends React.Component {
   }
 
   render() {
-    return <Template vals={this.renderVals()} />;
+    const vals = this.renderVals();
+    return <><Template vals={vals} />{this.state.offline && <Offline fr={vals.fr} />}</>;
   }
 }
