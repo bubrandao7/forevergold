@@ -11,7 +11,7 @@ O aspeto, os textos, as animações e o comportamento são os do protótipo em `
 | Códigos de 4 dígitos no servidor | feito, testado em local |
 | Notificações push | feito, testado em local; **falta testar num telemóvel a sério** (secção 9) |
 | PWA instalável, abre sem rede | feito |
-| Capacitor (App Store / Play Store) | não feito (Fase D, só se for pedido) |
+| Capacitor (App Store / Play Store) | preparado, não submetido (ver `FASE_D.md`) |
 
 ---
 
