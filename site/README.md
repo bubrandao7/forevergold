@@ -20,7 +20,9 @@ Tudo o que é texto, artigos, avaliações, lojas e contactos está em `js/dados
 
 ## Publicar
 
-Vercel ou Netlify: criar um projeto novo a partir deste repositório com a pasta raiz `site` (sem comando de build). Não use o projeto da app, que compila a raiz.
+GitHub Pages (automático): cada mudança em `site/` que chegue ao `main` publica o site (workflow `.github/workflows/site.yml`). Só é preciso ativar uma vez em Settings › Pages › Source: GitHub Actions.
+
+Alternativa, Vercel ou Netlify: projeto novo com a pasta raiz `site` e sem comando de build. Não use o projeto da app, que compila a raiz.
 
 ## Notas
 
