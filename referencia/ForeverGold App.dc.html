@@ -415,7 +415,7 @@
 <span data-a="rise" data-d="100" style="display:flex;align-items:baseline;gap:8px">
 <sc-if value="{{ cot.isOuro }}"><span data-a="sheen" style="font:400 46px/1 'Bodoni Moda',Georgia,serif;background:linear-gradient(100deg,#B4944F 0%,#F0DDAA 35%,#C6A766 55%,#F3E3B5 80%,#B4944F 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent">{{ cot.valor }}</span></sc-if>
 <sc-if value="{{ cot.isPrata }}"><span data-a="sheen" style="font:400 46px/1 'Bodoni Moda',Georgia,serif;background:linear-gradient(100deg,#8D9391 0%,#F1F3F2 35%,#B4B9B7 55%,#FFFFFF 80%,#989E9C 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent">{{ cot.valor }}</span></sc-if>
-<span style="font:400 16px Jost,sans-serif;color:#B8B6A8;white-space:nowrap">€ / kg</span></span>
+<span style="font:400 16px Jost,sans-serif;color:#B8B6A8;white-space:nowrap">€ / kilo</span></span>
 <span style="font:400 12px Jost,sans-serif;color:#8E978F">Preço de venda · {{ cot.by }}</span>
 <sc-if value="{{ cot.hasDelta }}"><span data-a="rise" data-d="250" style="font:500 12px Jost,sans-serif;color:{{ cot.dC }}">{{ cot.delta }}</span></sc-if>
 <sc-if value="{{ cot.sparkHas }}">
@@ -425,7 +425,7 @@
 </div>
 </sc-if>
 <div data-a="rise" data-d="200" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
-<sc-for list="{{ series }}" as="s" hint-placeholder-count="4"><button onClick="{{ s.click }}" style="text-align:left;padding:10px 12px;border-radius:16px;border:1px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};cursor:pointer;display:flex;flex-direction:column;gap:2px;transition:background .45s,color .45s" style-active="transform:scale(.97)"><span style="font:500 9px Jost,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:{{ s.sub }}">{{ s.metal }} {{ s.tipo }}</span><span style="font:400 20px/1.1 'Bodoni Moda',Georgia,serif">{{ s.val }} <span style="font:400 11px Jost,sans-serif;opacity:.7">€/kg</span></span></button></sc-for>
+<sc-for list="{{ series }}" as="s" hint-placeholder-count="4"><button onClick="{{ s.click }}" style="text-align:left;padding:10px 12px;border-radius:16px;border:1px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};cursor:pointer;display:flex;flex-direction:column;gap:2px;transition:background .45s,color .45s" style-active="transform:scale(.97)"><span style="font:500 9px Jost,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:{{ s.sub }}">{{ s.metal }} {{ s.tipo }}</span><span style="font:400 20px/1.1 'Bodoni Moda',Georgia,serif">{{ s.val }} <span style="font:400 11px Jost,sans-serif;opacity:.7">€/kilo</span></span></button></sc-for>
 </div>
 </div>
 </div>
@@ -454,7 +454,7 @@
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <sc-for list="{{ dia.vals }}" as="dv" hint-placeholder-count="4"><div style="padding:12px 14px;border-radius:16px;border:1px solid {{ dv.bd }};background:rgba(0,0,0,.18);display:flex;flex-direction:column;gap:3px"><span style="font:500 9px Jost,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#8E978F">{{ dv.metal }} {{ dv.tipo }}</span><span style="font:400 22px/1.1 'Bodoni Moda',Georgia,serif;color:{{ dv.c }}">{{ dv.val }}</span></div></sc-for>
 </div>
-<span style="font:400 11.5px Jost,sans-serif;color:#6B766F">Preços de venda, por quilo.</span>
+<span style="font:400 11.5px Jost,sans-serif;color:#6B766F">Preços de venda, por kilo.</span>
 <sc-if value="{{ dia.hasNota }}"><p style="margin:0;padding:12px 14px;border-radius:14px;background:rgba(0,0,0,.2);font:400 14px/1.55 Jost,sans-serif;color:#EEE7D7;white-space:pre-wrap">{{ dia.nota }}</p></sc-if>
 <span style="font:400 12px Jost,sans-serif;color:#8E978F">{{ dia.by }}</span>
 <button onClick="{{ dia.edit }}" style="align-self:flex-start;height:40px;padding:0 16px;border-radius:20px;border:1px solid rgba(198,167,102,.4);background:none;color:#EEE7D7;font:500 10px Jost,sans-serif;letter-spacing:.16em;text-transform:uppercase;cursor:pointer">Corrigir</button>
@@ -462,7 +462,7 @@
 </sc-if>
 <sc-if value="{{ dia.write }}">
 <div style="display:flex;flex-direction:column;gap:10px">
-<span style="font:400 12px/1.5 Jost,sans-serif;color:#8E978F">Preços de venda em € por quilo (kg). Preencha os que tiver; pode deixar algum em branco.</span>
+<span style="font:400 12px/1.5 Jost,sans-serif;color:#8E978F">Preços de venda em € por kilo. Preencha os que tiver; pode deixar algum em branco.</span>
 <sc-for list="{{ dia.grupos }}" as="g" hint-placeholder-count="2">
 <div style="padding:14px;border-radius:18px;border:1px solid {{ g.bd }};background:rgba(0,0,0,.16);display:flex;flex-direction:column;gap:10px">
 <span style="font:italic 400 19px 'Bodoni Moda',Georgia,serif;color:{{ g.c }}">{{ g.nome }}</span>
@@ -1231,7 +1231,7 @@ class Component extends DCLogic {
     const parts = [];
     if (o[0] != null || o[1] != null) parts.push('Ouro fino ' + f(o[0]) + ' · lei ' + f(o[1]));
     if (p[0] != null || p[1] != null) parts.push('Prata fina ' + f(p[0]) + ' · lei ' + f(p[1]));
-    return parts.join(' | ') + ' €/kg';
+    return parts.join(' | ') + ' €/kilo';
   }
   cotSel(k) { this.setState({ cotD: k, cotEdit: false, cotIn: { of: '', ou: '', pf: '', pu: '' }, cotNota: '', cotErr: '' }); }
   cotMonth(delta) {
@@ -1249,7 +1249,7 @@ class Component extends DCLogic {
       const raw = String(st.cotIn[s[0]] || '').trim();
       if (!raw) { rec[s[0]] = null; continue; }
       const v = C.parseNum(raw.replace(/^(\d{1,3})\.(\d{3})$/, '$1$2'));
-      if (v == null || isNaN(v) || v < 100 || v >= 10000000) { this.setState({ cotErr: s[1] + ' ' + s[2] + ': escreva o preço por quilo, por exemplo 63 400.' }); return; }
+      if (v == null || isNaN(v) || v < 100 || v >= 10000000) { this.setState({ cotErr: s[1] + ' ' + s[2] + ': escreva o preço por kilo, por exemplo 63 400.' }); return; }
       rec[s[0]] = Math.round(v * 100) / 100;
     }
     if (this.SER.every((s) => rec[s[0]] == null)) { this.setState({ cotErr: 'Escreva pelo menos um preço: ouro ou prata, fino ou lei.' }); return; }
@@ -1584,7 +1584,7 @@ class Component extends DCLogic {
     };
     if (v.tInicio) {
       v.destaques = d.pecas.filter((p) => p.estado === 'disponivel').slice(0, 8).map((p) => this.pv(p));
-      v.ini = { staff, cotTxt: hoje ? (this.cv(hoje, 'of') != null ? C.euro(this.cv(hoje, 'of')) : C.euro(this.cv(hoje, 'ou') ?? this.cv(hoje, 'pf') ?? this.cv(hoje, 'pu'))) : 'Por escrever', cotSub: hoje ? (this.cv(hoje, 'of') != null ? 'ouro fino' : 'por quilo') + (this.cv(hoje, 'pf') != null ? ' · prata fina ' + C.euro(this.cv(hoje, 'pf')) : '') + ' · ' + this.nome(hoje.by) + ', ' + C.hora(hoje.at) : 'Ainda ninguém escreveu a de hoje', goCot: () => this.openEquipa('cot'),
+      v.ini = { staff, cotTxt: hoje ? (this.cv(hoje, 'of') != null ? C.euro(this.cv(hoje, 'of')) : C.euro(this.cv(hoje, 'ou') ?? this.cv(hoje, 'pf') ?? this.cv(hoje, 'pu'))) : 'Por escrever', cotSub: hoje ? (this.cv(hoje, 'of') != null ? 'ouro fino' : 'por kilo') + (this.cv(hoje, 'pf') != null ? ' · prata fina ' + C.euro(this.cv(hoje, 'pf')) : '') + ' · ' + this.nome(hoje.by) + ', ' + C.hora(hoje.at) : 'Ainda ninguém escreveu a de hoje', goCot: () => this.openEquipa('cot'),
         chatTxt: u.chat ? (u.chat === 1 ? '1 mensagem nova' : u.chat + ' mensagens novas') : 'Tudo lido', goChat: () => this.go('chat'), chatC: u.chat ? '#F08C70' : '#B8B6A8' };
       v.goLojas = () => this.go('lojas'); v.goCompra = () => this.goSection('compra');
       v.waGeral = C.waHref('932656581', 'Olá, Forevergold! Tenho peças de ouro/prata para vender e gostava de saber mais.');
