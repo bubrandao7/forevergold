@@ -17,7 +17,7 @@ export function cotResumo(c: Cot) {
   const parts: string[] = [];
   if (c.ouro_fino != null || c.ouro_usado != null) parts.push('Ouro fino ' + f(c.ouro_fino) + ' · lei ' + f(c.ouro_usado));
   if (c.prata_fina != null || c.prata_usada != null) parts.push('Prata fina ' + f(c.prata_fina) + ' · lei ' + f(c.prata_usada));
-  return parts.join(' | ') + ' €/kg';
+  return parts.join(' | ') + ' €/kilo';
 }
 export function cot(c: Cot, nomeAutor: string): Aviso {
   const [, mm, dd] = c.dia.split('-');

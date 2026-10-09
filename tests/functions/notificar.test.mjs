@@ -63,7 +63,7 @@ t('cotação: toda a equipa menos quem escreveu; texto igual ao do feed', async 
   const e = envios(); const [, mm, dd] = hoje.split('-');
   assert.ok(!para(e).includes('forevervalbom'));
   assert.equal(e[0].corpo.title, 'Cotação diária');
-  assert.equal(e[0].corpo.body.replace(/[\u00a0\u202f]/g, ' '), `${dd}/${mm}: Ouro fino 63 400,00 · lei 58 000,00 | Prata fina 850,00 · lei 700,00 €/kg · Valbom. Boa venda`);
+  assert.equal(e[0].corpo.body.replace(/[\u00a0\u202f]/g, ' '), `${dd}/${mm}: Ouro fino 63 400,00 · lei 58 000,00 | Prata fina 850,00 · lei 700,00 €/kilo · Valbom. Boa venda`);
 });
 
 t('publicidade: toda a equipa menos a BU', async () => {

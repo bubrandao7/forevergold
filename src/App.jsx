@@ -564,7 +564,7 @@ export default class App extends React.Component {
     const parts = [];
     if (o[0] != null || o[1] != null) parts.push('Ouro fino ' + f(o[0]) + ' · lei ' + f(o[1]));
     if (p[0] != null || p[1] != null) parts.push('Prata fina ' + f(p[0]) + ' · lei ' + f(p[1]));
-    return parts.join(' | ') + ' €/kg';
+    return parts.join(' | ') + ' €/kilo';
   }
   cotSel(k) { this.setState({ cotD: k, cotEdit: false, cotIn: { of: '', ou: '', pf: '', pu: '' }, cotNota: '', cotErr: '' }); }
   cotMonth(delta) {
@@ -582,7 +582,7 @@ export default class App extends React.Component {
       const raw = String(st.cotIn[s[0]] || '').trim();
       if (!raw) { rec[s[0]] = null; continue; }
       const v = C.parseNum(raw.replace(/^(\d{1,3})\.(\d{3})$/, '$1$2'));
-      if (v == null || isNaN(v) || v < 100 || v >= 10000000) { this.setState({ cotErr: s[1] + ' ' + s[2] + ': escreva o preço por quilo, por exemplo 63 400.' }); return; }
+      if (v == null || isNaN(v) || v < 100 || v >= 10000000) { this.setState({ cotErr: s[1] + ' ' + s[2] + ': escreva o preço por kilo, por exemplo 63 400.' }); return; }
       rec[s[0]] = Math.round(v * 100) / 100;
     }
     if (this.SER.every((s) => rec[s[0]] == null)) { this.setState({ cotErr: 'Escreva pelo menos um preço: ouro ou prata, fino ou lei.' }); return; }
@@ -931,7 +931,7 @@ export default class App extends React.Component {
     };
     if (v.tInicio) {
       v.destaques = d.pecas.filter((p) => p.estado === 'disponivel').slice(0, 8).map((p) => this.pv(p));
-      v.ini = { staff, cotTxt: hoje ? (this.cv(hoje, 'of') != null ? C.euro(this.cv(hoje, 'of')) : C.euro(this.cv(hoje, 'ou') ?? this.cv(hoje, 'pf') ?? this.cv(hoje, 'pu'))) : 'Por escrever', cotSub: hoje ? (this.cv(hoje, 'of') != null ? 'ouro fino' : 'por quilo') + (this.cv(hoje, 'pf') != null ? ' · prata fina ' + C.euro(this.cv(hoje, 'pf')) : '') + ' · ' + this.nome(hoje.by) + ', ' + C.hora(hoje.at) : 'Ainda ninguém escreveu a de hoje', goCot: () => this.openEquipa('cot'),
+      v.ini = { staff, cotTxt: hoje ? (this.cv(hoje, 'of') != null ? C.euro(this.cv(hoje, 'of')) : C.euro(this.cv(hoje, 'ou') ?? this.cv(hoje, 'pf') ?? this.cv(hoje, 'pu'))) : 'Por escrever', cotSub: hoje ? (this.cv(hoje, 'of') != null ? 'ouro fino' : 'por kilo') + (this.cv(hoje, 'pf') != null ? ' · prata fina ' + C.euro(this.cv(hoje, 'pf')) : '') + ' · ' + this.nome(hoje.by) + ', ' + C.hora(hoje.at) : 'Ainda ninguém escreveu a de hoje', goCot: () => this.openEquipa('cot'),
         chatTxt: u.chat ? (u.chat === 1 ? '1 mensagem nova' : u.chat + ' mensagens novas') : 'Tudo lido', goChat: () => this.go('chat'), chatC: u.chat ? '#F08C70' : '#B8B6A8' };
       v.goLojas = () => this.go('lojas'); v.goCompra = () => this.goSection('compra');
       v.waGeral = C.waHref('932656581', 'Olá, Forevergold! Tenho peças de ouro/prata para vender e gostava de saber mais.');

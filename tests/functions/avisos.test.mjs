@@ -8,9 +8,9 @@ test('textos iguais aos do feed()/notifySys() do protótipo', () => {
   assert.equal(u.title, 'Aviso urgente · Oficina'); assert.deepEqual(u.vibrate, [40, 60, 40]); assert.equal(u.tag, 'fg-urg');
   const c = cot({ dia: '2026-10-08', ouro_fino: 63400, ouro_usado: 58000, prata_fina: 850, prata_usada: 700, nota: 'Boa tarde' }, 'Filipe');
   assert.equal(c.title, 'Cotação diária');
-  assert.equal(c.body.replace(/[\u00a0\u202f]/g, ' '), '08/10: Ouro fino 63 400,00 · lei 58 000,00 | Prata fina 850,00 · lei 700,00 €/kg · Filipe. Boa tarde');
+  assert.equal(c.body.replace(/[\u00a0\u202f]/g, ' '), '08/10: Ouro fino 63 400,00 · lei 58 000,00 | Prata fina 850,00 · lei 700,00 €/kilo · Filipe. Boa tarde');
   const so = cot({ dia: '2026-10-09', ouro_fino: 64000, ouro_usado: null, prata_fina: null, prata_usada: null, nota: '' }, 'BU');
-  assert.equal(so.body.replace(/[\u00a0\u202f]/g, ' '), '09/10: Ouro fino 64 000,00 · lei — €/kg · BU');
+  assert.equal(so.body.replace(/[\u00a0\u202f]/g, ' '), '09/10: Ouro fino 64 000,00 · lei — €/kilo · BU');
   assert.equal(pub({ titulo: 'Campanha de Natal' }).body, 'Nova publicação: Campanha de Natal');
   assert.equal(pub({ titulo: '' }).body, 'Nova publicação: sem título');
 });
