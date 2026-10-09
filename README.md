@@ -15,6 +15,8 @@ O aspeto, os textos, as animações e o comportamento são os do protótipo em `
 
 **Site público da loja** (montra, loja online por WhatsApp, lojas e contactos): pasta [`site/`](site/README.md), independente da app.
 
+**Site da Suco Bagaço Portugal** (sumos, copos 3D, lojas com geolocalização): pasta [`sucobagaco/`](sucobagaco/README.md), independente da app e do site ForeverGold.
+
 ---
 
 ## Estado do projeto Supabase da ForeverGold
