@@ -37,6 +37,13 @@ W('icon-512.png', await render(512, 512, 0.6));
 W('icon-maskable-512.png', await render(512, 512, 0.42)); // zona segura de 80%
 W('apple-touch-icon.png', await render(180, 180, 0.6));
 W('favicon-32.png', await render(32, 32, 0.7));
+// fontes para as lojas (npx @capacitor/assets generate): ícone 1024 sem transparência e splash 2732
+fs.mkdirSync(path.join(root, 'assets'), { recursive: true });
+fs.writeFileSync(path.join(root, 'assets/icon-only.png'), await render(1024, 1024, 0.6));
+fs.writeFileSync(path.join(root, 'assets/icon-foreground.png'), await render(1024, 1024, 0.42));
+fs.writeFileSync(path.join(root, 'assets/icon-background.png'), await render(1024, 1024, 0.0001));
+fs.writeFileSync(path.join(root, 'assets/splash.png'), await render(2732, 2732, 0.2));
+fs.writeFileSync(path.join(root, 'assets/splash-dark.png'), await render(2732, 2732, 0.2));
 for (const [w, h] of SPLASH) W(`splash/${w}x${h}.png`, await render(w, h, 0.28));
 await browser.close();
 console.log('ícones e', SPLASH.length, 'imagens de splash gerados em public/');

@@ -6,11 +6,11 @@ test('textos iguais aos do feed()/notifySys() do protótipo', () => {
   assert.deepEqual(chat({ txt: 'Olá', urg: false }, 'Valbom'), { k: 'chat', title: 'Chat · Valbom', body: 'Olá', tag: 'fg-chat', vibrate: undefined, url: '/?ir=chat' });
   const u = chat({ txt: 'Fogo!', urg: true }, 'Oficina');
   assert.equal(u.title, 'Aviso urgente · Oficina'); assert.deepEqual(u.vibrate, [40, 60, 40]); assert.equal(u.tag, 'fg-urg');
-  const c = cot({ dia: '2026-10-08', ouro_fino: 63.4, ouro_usado: 58, prata_fina: 0.85, prata_usada: 0.7, nota: 'Boa tarde' }, 'Filipe');
+  const c = cot({ dia: '2026-10-08', ouro_fino: 63400, ouro_usado: 58000, prata_fina: 850, prata_usada: 700, nota: 'Boa tarde' }, 'Filipe');
   assert.equal(c.title, 'Cotação diária');
-  assert.equal(c.body, '08/10: Ouro fino 63,40 · usado 58,00 | Prata fina 0,85 · usada 0,70 €/g · Filipe. Boa tarde');
-  const so = cot({ dia: '2026-10-09', ouro_fino: 64, ouro_usado: null, prata_fina: null, prata_usada: null, nota: '' }, 'BU');
-  assert.equal(so.body, '09/10: Ouro fino 64,00 · usado — €/g · BU');
+  assert.equal(c.body.replace(/[\u00a0\u202f]/g, ' '), '08/10: Ouro fino 63 400,00 · lei 58 000,00 | Prata fina 850,00 · lei 700,00 €/kg · Filipe. Boa tarde');
+  const so = cot({ dia: '2026-10-09', ouro_fino: 64000, ouro_usado: null, prata_fina: null, prata_usada: null, nota: '' }, 'BU');
+  assert.equal(so.body.replace(/[\u00a0\u202f]/g, ' '), '09/10: Ouro fino 64 000,00 · lei — €/kg · BU');
   assert.equal(pub({ titulo: 'Campanha de Natal' }).body, 'Nova publicação: Campanha de Natal');
   assert.equal(pub({ titulo: '' }).body, 'Nova publicação: sem título');
 });

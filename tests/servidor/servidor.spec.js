@@ -118,11 +118,11 @@ test('cotação: publicar grava e corrigir marca como corrigida', async ({ page 
   await tab(page, 'Equipa');
   await page.getByRole('button', { name: /^cotação diária/i }).click(); await page.waitForTimeout(800);
   const ins = page.locator('input[inputmode=decimal]');
-  await ins.nth(0).fill('63,40'); await ins.nth(1).fill('58'); await ins.nth(2).fill('0,85'); await ins.nth(3).fill('0,7');
+  await ins.nth(0).fill('63 400'); await ins.nth(1).fill('58 000'); await ins.nth(2).fill('850'); await ins.nth(3).fill('700');
   await page.getByRole('button', { name: /publicar e avisar/i }).click();
   await expect(page.getByText('Cotação diária publicada. A equipa recebeu a notificação.')).toBeVisible();
   const hoje = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Lisbon' });
-  await expect.poll(async () => (await sql('select ouro_fino::float8 o, autor, edit from public.cotacoes where dia = $1', [hoje]))[0]?.o).toBe(63.4);
+  await expect.poll(async () => (await sql('select ouro_fino::float8 o, autor, edit from public.cotacoes where dia = $1', [hoje]))[0]?.o).toBe(63400);
   expect((await sql('select autor, edit from public.cotacoes where dia = $1', [hoje]))[0]).toEqual({ autor: 'foreverfilipe', edit: false });
 });
 

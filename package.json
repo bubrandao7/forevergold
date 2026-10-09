@@ -13,14 +13,22 @@
     "test:e2e": "node --test --test-timeout=120000 tests/e2e/*.test.mjs",
     "test": "npm run test:sql && npm run test:functions && npm run test:e2e && npm run test:servidor && npm run test:visual",
     "test:functions": "node --experimental-strip-types --no-warnings --test --test-timeout=120000 tests/functions/*.test.mjs",
-    "test:servidor": "playwright test -c playwright.servidor.config.js"
+    "test:servidor": "playwright test -c playwright.servidor.config.js",
+    "build:app": "vite build --mode online && cap sync",
+    "cap:android": "npm run build:app && cap open android",
+    "cap:ios": "npm run build:app && cap open ios"
   },
   "dependencies": {
+    "@capacitor/android": "^7.6.9",
+    "@capacitor/core": "^7.6.9",
+    "@capacitor/ios": "^7.6.9",
     "@supabase/supabase-js": "^2.117.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^7.6.9",
     "@playwright/test": "^1.64.0",
     "@vitejs/plugin-react": "^4.7.0",
     "bcryptjs": "^2.4.3",

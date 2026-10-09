@@ -15,9 +15,9 @@ type Cot = { ouro_fino: number | null; ouro_usado: number | null; prata_fina: nu
 export function cotResumo(c: Cot) {
   const f = (x: number | null) => (x == null ? '—' : numero(x, 2));
   const parts: string[] = [];
-  if (c.ouro_fino != null || c.ouro_usado != null) parts.push('Ouro fino ' + f(c.ouro_fino) + ' · usado ' + f(c.ouro_usado));
-  if (c.prata_fina != null || c.prata_usada != null) parts.push('Prata fina ' + f(c.prata_fina) + ' · usada ' + f(c.prata_usada));
-  return parts.join(' | ') + ' €/g';
+  if (c.ouro_fino != null || c.ouro_usado != null) parts.push('Ouro fino ' + f(c.ouro_fino) + ' · lei ' + f(c.ouro_usado));
+  if (c.prata_fina != null || c.prata_usada != null) parts.push('Prata fina ' + f(c.prata_fina) + ' · lei ' + f(c.prata_usada));
+  return parts.join(' | ') + ' €/kg';
 }
 export function cot(c: Cot, nomeAutor: string): Aviso {
   const [, mm, dd] = c.dia.split('-');

@@ -67,10 +67,10 @@ create index chat_at_idx on public.chat (at);
 -- ---------------------------------------------------------------- cotação diária
 create table public.cotacoes (
   dia         date primary key,
-  ouro_fino   numeric(6, 2) check (ouro_fino > 0 and ouro_fino < 1000),
-  ouro_usado  numeric(6, 2) check (ouro_usado > 0 and ouro_usado < 1000),
-  prata_fina  numeric(6, 2) check (prata_fina > 0 and prata_fina < 1000),
-  prata_usada numeric(6, 2) check (prata_usada > 0 and prata_usada < 1000),
+  ouro_fino   numeric(10, 2) check (ouro_fino >= 100 and ouro_fino < 10000000),
+  ouro_usado  numeric(10, 2) check (ouro_usado >= 100 and ouro_usado < 10000000),
+  prata_fina  numeric(10, 2) check (prata_fina >= 100 and prata_fina < 10000000),
+  prata_usada numeric(10, 2) check (prata_usada >= 100 and prata_usada < 10000000),
   nota        text not null default '' check (char_length(nota) <= 500),
   autor       text not null references public.contas (id),
   at          timestamptz not null default now(),

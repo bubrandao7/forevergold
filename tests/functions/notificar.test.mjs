@@ -42,7 +42,7 @@ t('chat normal: toda a equipa menos o autor; título "Chat · Nome"', async () =
   await chama({ tipo: 'chat', id: 'n1' });
   const e = envios();
   assert.deepEqual(para(e), ['foreverbu', 'foreveroficina', 'forevervalbom', 'foreverriotinto'].sort());
-  assert.equal(e[0].corpo.title, 'Chat · Filipe'); assert.equal(e[0].corpo.body, 'Boa tarde a todos'); assert.equal(e[0].corpo.tag, 'fg-chat'); assert.equal(e[0].corpo.url, '/?ir=chat');
+  assert.equal(e[0].corpo.title, 'Chat · Filipe'); assert.equal(e[0].corpo.body.replace(/[\u00a0\u202f]/g, ' '), 'Boa tarde a todos'); assert.equal(e[0].corpo.tag, 'fg-chat'); assert.equal(e[0].corpo.url, '/?ir=chat');
   assert.equal(e[0].corpo.vibrate, undefined);
 });
 
@@ -58,12 +58,12 @@ t('chat urgente: título "Aviso urgente · Nome", vibração [40,60,40], urgênc
 t('cotação: toda a equipa menos quem escreveu; texto igual ao do feed', async () => {
   limpa();
   const hoje = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Lisbon' });
-  await S.base.c.query("insert into public.cotacoes (dia, ouro_fino, ouro_usado, prata_fina, prata_usada, nota, autor) values ($1, 63.4, 58, 0.85, 0.7, 'Boa venda', 'forevervalbom')", [hoje]);
+  await S.base.c.query("insert into public.cotacoes (dia, ouro_fino, ouro_usado, prata_fina, prata_usada, nota, autor) values ($1, 63400, 58000, 850, 700, 'Boa venda', 'forevervalbom')", [hoje]);
   await chama({ tipo: 'cot', dia: hoje });
   const e = envios(); const [, mm, dd] = hoje.split('-');
   assert.ok(!para(e).includes('forevervalbom'));
   assert.equal(e[0].corpo.title, 'Cotação diária');
-  assert.equal(e[0].corpo.body, `${dd}/${mm}: Ouro fino 63,40 · usado 58,00 | Prata fina 0,85 · usada 0,70 €/g · Valbom. Boa venda`);
+  assert.equal(e[0].corpo.body.replace(/[\u00a0\u202f]/g, ' '), `${dd}/${mm}: Ouro fino 63 400,00 · lei 58 000,00 | Prata fina 850,00 · lei 700,00 €/kg · Valbom. Boa venda`);
 });
 
 t('publicidade: toda a equipa menos a BU', async () => {
@@ -71,7 +71,7 @@ t('publicidade: toda a equipa menos a BU', async () => {
   await S.base.c.query("insert into public.pub (id, autor, titulo, texto) values ('np1', 'foreverbu', 'Campanha de Natal', 'x')");
   await chama({ tipo: 'pub', id: 'np1' });
   const e = envios();
-  assert.ok(!para(e).includes('foreverbu')); assert.equal(e[0].corpo.title, 'Publicidade'); assert.equal(e[0].corpo.body, 'Nova publicação: Campanha de Natal');
+  assert.ok(!para(e).includes('foreverbu')); assert.equal(e[0].corpo.title, 'Publicidade'); assert.equal(e[0].corpo.body.replace(/[\u00a0\u202f]/g, ' '), 'Nova publicação: Campanha de Natal');
 });
 
 t('subscrições mortas (410) são apagadas; clientes nunca têm subscrições', async () => {

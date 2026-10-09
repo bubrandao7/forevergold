@@ -87,19 +87,19 @@ test('chat: só a equipa, autor = quem escreve, hora do servidor', async () => {
 test('cotação: qualquer da equipa escreve e corrige; dia futuro não', async () => {
   const hoje = (await rows('foreverbu', `select (now() at time zone 'Europe/Lisbon')::date::text as d`))[0].d;
   const r = await como(b, 'forevervalbom', async (q) => {
-    await q(`insert into public.cotacoes (dia, ouro_fino, nota, autor) values ($1, 63.40, 'n', 'forevervalbom')`, [hoje]);
+    await q(`insert into public.cotacoes (dia, ouro_fino, nota, autor) values ($1, 63400, 'n', 'forevervalbom')`, [hoje]);
     return (await q(`select edit, autor from public.cotacoes where dia = $1`, [hoje])).rows[0];
   }, { manter: true });
   assert.deepEqual(r, { edit: false, autor: 'forevervalbom' });
   await como(b, 'foreverfilipe', async (q) => {
-    await q(`insert into public.cotacoes (dia, ouro_fino, autor) values ($1, 63.40, 'foreverfilipe') on conflict (dia) do update set ouro_fino = excluded.ouro_fino, autor = excluded.autor`, [hoje]);
+    await q(`insert into public.cotacoes (dia, ouro_fino, autor) values ($1, 63400, 'foreverfilipe') on conflict (dia) do update set ouro_fino = excluded.ouro_fino, autor = excluded.autor`, [hoje]);
     const x = (await q(`select edit, autor from public.cotacoes where dia = $1`, [hoje])).rows[0];
     assert.deepEqual(x, { edit: true, autor: 'foreverfilipe' });
   });
-  assert.match(await falha(b, 'foreverfilipe', `insert into public.cotacoes (dia, ouro_fino, autor) values ((now() + interval '3 days')::date, 60, 'foreverfilipe')`), /dia futuro|futuro/);
+  assert.match(await falha(b, 'foreverfilipe', `insert into public.cotacoes (dia, ouro_fino, autor) values ((now() + interval '3 days')::date, 60000, 'foreverfilipe')`), /dia futuro|futuro/);
   assert.match(await falha(b, 'foreverfilipe', `insert into public.cotacoes (dia, autor) values ('2026-01-05', 'foreverfilipe')`), /check/);
-  assert.match(await falha(b, 'foreverfilipe', `insert into public.cotacoes (dia, ouro_fino, autor) values ('2026-01-05', 1000, 'foreverfilipe')`), /check/);
-  assert.match(await falha(b, null, `insert into public.cotacoes (dia, ouro_fino, autor) values ('2026-01-05', 60, 'foreverfilipe')`), /permission denied/);
+  assert.match(await falha(b, 'foreverfilipe', `insert into public.cotacoes (dia, ouro_fino, autor) values ('2026-01-05', 50, 'foreverfilipe')`), /check/);
+  assert.match(await falha(b, null, `insert into public.cotacoes (dia, ouro_fino, autor) values ('2026-01-05', 60000, 'foreverfilipe')`), /permission denied/);
 });
 
 test('lucro: só a loja, só a sua, só o mês corrente', async () => {

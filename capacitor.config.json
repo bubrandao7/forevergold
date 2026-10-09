@@ -1,0 +1,8 @@
+{
+  "appId": "pt.forevergold.app",
+  "appName": "ForeverGold",
+  "webDir": "dist",
+  "backgroundColor": "#070D0B",
+  "ios": { "contentInset": "never", "backgroundColor": "#070D0B" },
+  "android": { "backgroundColor": "#070D0B" }
+}

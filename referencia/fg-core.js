@@ -19,9 +19,9 @@
   var LOJAS_ORDEM = ['valbom', 'stovidio', 'pedroucos', 'riotinto', 'arrifana'];
   var LOJAS_BASE = [
     { id: 'valbom', nome: 'Valbom', zona: 'Gondomar', morada: 'Rua Novais da Cunha, 1135, Valbom 4420-226', horario: '9h30 – 13h00 · 14h00 – 18h30', tel: '220180168', whats: '932656581', email: 'geralforevergold@gmail.com' },
-    { id: 'stovidio', nome: 'Santo Ovídio', zona: 'Vila Nova de Gaia', morada: 'Rua Conceição Fernandes, 72, 4430-062 Vila Nova de Gaia', horario: '9h30 – 12h30 · 14h00 – 19h00', tel: '220935909', whats: '932656581', email: 'geralforevergold@gmail.com' },
+    { id: 'stovidio', nome: 'Santo Ovídio', zona: 'Vila Nova de Gaia', morada: 'Rua Conceição Fernandes, 72, 4430-062 Vila Nova de Gaia', horario: '9h30 – 13h00 · 14h00 – 18h30', tel: '220935909', whats: '932656581', email: 'geralforevergold@gmail.com' },
     { id: 'pedroucos', nome: 'Pedrouços', zona: 'Maia', morada: 'Rua D. Afonso Henriques, 1502, 4435-003', horario: '9h30 – 12h30 · 14h00 – 19h00', tel: '223174709', whats: '932656581', email: 'geralforevergold@gmail.com' },
-    { id: 'riotinto', nome: 'Rio Tinto', zona: 'Gondomar', morada: 'Av. Dr. Domingos Gonçalves de Sá 434 Lj 12, 4435-213 Rio Tinto', horario: '9h30 – 13h00 · 14h00 – 18h30', tel: '220920620', whats: '932656581', email: 'geralforevergold@gmail.com' },
+    { id: 'riotinto', nome: 'Rio Tinto', zona: 'Gondomar', morada: 'Av. Dr. Domingos Gonçalves de Sá 434 Lj 12, 4435-213 Rio Tinto', horario: '9h00 – 13h00 · 14h00 – 18h00', tel: '220920620', whats: '932656581', email: 'geralforevergold@gmail.com' },
     { id: 'arrifana', nome: 'Arrifana', zona: 'Santa Maria da Feira', morada: 'Rua Terras de Santa Maria, 1521, 3700-398 Arrifana', horario: '9h30 – 12h30 · 14h00 – 19h00', tel: '256038450', whats: '932656581', email: 'forevergold.arrifana@gmail.com' }
   ];
   var CATS = [
@@ -121,13 +121,13 @@
       { id: 'cex2', by: 'foreveroficina', at: t - D - 5 * H, txt: 'A balança grande da oficina está em calibração até quinta-feira. Até lá, as pesagens de ouro para compra fazem-se só nas lojas.', urg: true, ex: true },
       { id: 'cex3', by: 'forevervalbom', at: t - 40 * 60e3, txt: 'Recebido. Obrigada!', urg: false, ex: true }
     ];
-    var cot = {}, v = 63.2, d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1), n = 0, quem = ['forevervalbom', 'foreverriotinto', 'foreverfilipe', 'foreverstovidio'];
+    var cot = {}, v = 63200, d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1), n = 0, quem = ['forevervalbom', 'foreverriotinto', 'foreverfilipe', 'foreverstovidio'];
     while (n < 12) {
       var wd = d.getDay();
       if (wd !== 0 && wd !== 6) {
         var r2 = function (x) { return Math.round(x * 100) / 100; };
-        cot[ymd(d)] = { of: r2(v), ou: r2(v * 0.915), pf: r2(0.86 + (R() - 0.5) * 0.04), pu: r2(0.71 + (R() - 0.5) * 0.04), nota: '', by: quem[n % quem.length], at: new Date(d.getFullYear(), d.getMonth(), d.getDate(), 9, 20 + n).getTime(), ex: true };
-        v -= (R() - 0.45) * 0.9; n++;
+        cot[ymd(d)] = { of: r2(v), ou: r2(v * 0.915), pf: r2(860 + (R() - 0.5) * 40), pu: r2(710 + (R() - 0.5) * 40), nota: '', by: quem[n % quem.length], at: new Date(d.getFullYear(), d.getMonth(), d.getDate(), 9, 20 + n).getTime(), ex: true };
+        v -= (R() - 0.45) * 900; n++;
       }
       d = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1);
     }
@@ -147,7 +147,7 @@
     ['pecas', 'chat', 'pub'].forEach(function (k) { if (!Array.isArray(d[k])) d[k] = []; });
     LOJAS_BASE.forEach(function (l) { if (!d.lojas[l.id]) d.lojas[l.id] = Object.assign({}, l); });
     Object.keys(d.lucro).forEach(function (y) { var Y = d.lucro[y]; if (!Y || typeof Y !== 'object') { delete d.lucro[y]; return; } Object.keys(Y).forEach(function (l) { var L = Y[l] || {}; Object.keys(L).forEach(function (m) { if (!L[m] || L[m].ex || !emJogo(+y, +m)) delete L[m]; }); }); });
-    Object.keys(d.cot).forEach(function (k) { var e = d.cot[k]; if (!e || typeof e !== 'object') { delete d.cot[k]; return; } if (e.valor != null && e.of == null) { e.of = e.valor; delete e.valor; } if (e.ex && e.of != null && e.ou == null && e.pf == null) { e.ou = Math.round(e.of * 91.5) / 100; e.pf = 0.86; e.pu = 0.71; } });
+    Object.keys(d.cot).forEach(function (k) { var e = d.cot[k]; if (!e || typeof e !== 'object') { delete d.cot[k]; return; } if (e.valor != null && e.of == null) { e.of = e.valor; delete e.valor; } if (e.ex && e.of != null && e.ou == null && e.pf == null) { e.ou = Math.round(e.of * 91.5) / 100; e.pf = 860; e.pu = 710; } });
     return d;
   }
 
