@@ -49,10 +49,10 @@ test('cotação: o outro telemóvel recebe o banner "Cotação diária" e vê o 
   await entra(a, 'forevervalbom'); await entra(b, 'foreverfilipe');
   await tab(a, 'Equipa'); await a.getByRole('button', { name: /^cotação diária/i }).click(); await a.waitForTimeout(700);
   const ins = a.locator('input[inputmode=decimal]');
-  await ins.nth(0).fill('64,25'); await ins.nth(2).fill('0,88');
+  await ins.nth(0).fill('64 250'); await ins.nth(2).fill('880');
   await a.getByRole('button', { name: /publicar e avisar/i }).click();
   await expect(b.getByText('Cotação diária').first()).toBeVisible({ timeout: 8000 });
-  await expect(b.getByText(/Ouro fino 64,25 · usado —/)).toBeVisible();
+  await expect(b.getByText(/Ouro fino 64.250,00 · lei —/)).toBeVisible();
 });
 
 test('lucro: sem banner nenhum; a classificação do outro telemóvel atualiza', async ({ browser }) => {

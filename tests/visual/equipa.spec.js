@@ -58,7 +58,7 @@ test('loja: chat, equipa, cotação, lucro, publicidade, avisos', async ({ brows
   await r.run('cot-mes-seguinte', ri(/Mês seguinte/));
   await r.run('cot-escrever-erro', async (p) => { await p.getByRole('button', { name: /publicar e avisar/i }).click(); await p.waitForTimeout(300); });
   await r.run('cot-escrever', async (p) => {
-    const ins = p.locator('input[inputmode=decimal]'); await ins.nth(0).fill('63,40'); await ins.nth(1).fill('58'); await ins.nth(2).fill('0,85'); await ins.nth(3).fill('0,7');
+    const ins = p.locator('input[inputmode=decimal]'); await ins.nth(0).fill('63 400'); await ins.nth(1).fill('58 000'); await ins.nth(2).fill('850'); await ins.nth(3).fill('700');
     await p.locator('textarea').last().fill('Nota de teste'); await p.waitForTimeout(200);
   });
   await r.run('cot-publicar', async (p) => { await p.getByRole('button', { name: /publicar e avisar/i }).click(); await p.waitForTimeout(500); }, ['canvas']);

@@ -17,6 +17,8 @@ O aspeto, os textos, as animações e o comportamento são os do protótipo em `
 
 ## Estado do projeto Supabase da ForeverGold
 
+A cotação diária é em **€ por quilo** (ouro e prata, fino e lei). No projeto Supabase já criado, a conversão de gramas para quilos faz-se uma vez com `supabase/manual/02_cotacao_por_kg.sql`.
+
 O projeto `xngfnysjvjnfgvxxcsnc` (Irlanda, plano gratuito) já tem a base de dados, as permissões, o Storage, o Realtime, as 5 Edge Functions e os 8 códigos criados. Foi preparado com o conector do Supabase e não com `supabase db push`, por isso **não corra `db push` neste projeto** (o histórico de migrações tem outros nomes e tentaria criar tudo outra vez). Para um projeto novo e vazio, siga as secções 2 a 6.
 
 ---

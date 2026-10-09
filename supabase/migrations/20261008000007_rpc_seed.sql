@@ -35,7 +35,7 @@ create function fg.seed() returns void language plpgsql security definer set sea
 declare
   s bigint := 20261007;               -- rng(20261007) do protótipo (LCG de 32 bits)
   r numeric;
-  v double precision := 63.2;
+  v double precision := 63200;
   d date := fg.hoje_pt() - 1;
   n int := 0;
   quem text[] := array['forevervalbom', 'foreverriotinto', 'foreverfilipe', 'foreverstovidio'];
@@ -82,15 +82,15 @@ begin
   while n < 12 loop
     dow := extract(dow from d)::int;     -- 0 = domingo, 6 = sábado (igual a getDay())
     if dow <> 0 and dow <> 6 then
-      s := (s * 1664525 + 1013904223) % 4294967296; rnd := s / 4294967296.0; pf := 0.86 + (rnd - 0.5) * 0.04;
-      s := (s * 1664525 + 1013904223) % 4294967296; rnd := s / 4294967296.0; pu := 0.71 + (rnd - 0.5) * 0.04;
+      s := (s * 1664525 + 1013904223) % 4294967296; rnd := s / 4294967296.0; pf := 860 + (rnd - 0.5) * 40;
+      s := (s * 1664525 + 1013904223) % 4294967296; rnd := s / 4294967296.0; pu := 710 + (rnd - 0.5) * 40;
       insert into public.cotacoes (dia, ouro_fino, ouro_usado, prata_fina, prata_usada, nota, autor, at, ex)
       values (d,
               floor(v * 100 + 0.5) / 100, floor(v * 0.915 * 100 + 0.5) / 100,
               floor(pf * 100 + 0.5) / 100, floor(pu * 100 + 0.5) / 100,
               '', quem[(n % 4) + 1], (d + time '09:00' + make_interval(mins => 20 + n)) at time zone 'Europe/Lisbon', true);
       s := (s * 1664525 + 1013904223) % 4294967296; rnd := s / 4294967296.0;
-      v := v - (rnd - 0.45) * 0.9;
+      v := v - (rnd - 0.45) * 900;
       n := n + 1;
     end if;
     d := d - 1;

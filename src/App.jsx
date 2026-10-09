@@ -557,14 +557,14 @@ export default class App extends React.Component {
   }
 
   /* ---------- cotação diária ---------- */
-  get SER() { return [['of', 'Ouro', 'fino'], ['ou', 'Ouro', 'usado'], ['pf', 'Prata', 'fina'], ['pu', 'Prata', 'usada']]; }
+  get SER() { return [['of', 'Ouro', 'fino'], ['ou', 'Ouro', 'lei'], ['pf', 'Prata', 'fina'], ['pu', 'Prata', 'lei']]; }
   cv(e, k) { if (!e) return null; if (e[k] != null) return e[k]; return k === 'of' && e.valor != null ? e.valor : null; }
   cotResumo(e) {
     const C = this.C, o = [this.cv(e, 'of'), this.cv(e, 'ou')], p = [this.cv(e, 'pf'), this.cv(e, 'pu')], f = (x) => (x == null ? '—' : C.numero(x, 2));
     const parts = [];
-    if (o[0] != null || o[1] != null) parts.push('Ouro fino ' + f(o[0]) + ' · usado ' + f(o[1]));
-    if (p[0] != null || p[1] != null) parts.push('Prata fina ' + f(p[0]) + ' · usada ' + f(p[1]));
-    return parts.join(' | ') + ' €/g';
+    if (o[0] != null || o[1] != null) parts.push('Ouro fino ' + f(o[0]) + ' · lei ' + f(o[1]));
+    if (p[0] != null || p[1] != null) parts.push('Prata fina ' + f(p[0]) + ' · lei ' + f(p[1]));
+    return parts.join(' | ') + ' €/kg';
   }
   cotSel(k) { this.setState({ cotD: k, cotEdit: false, cotIn: { of: '', ou: '', pf: '', pu: '' }, cotNota: '', cotErr: '' }); }
   cotMonth(delta) {
@@ -581,11 +581,11 @@ export default class App extends React.Component {
     for (const s of this.SER) {
       const raw = String(st.cotIn[s[0]] || '').trim();
       if (!raw) { rec[s[0]] = null; continue; }
-      const v = C.parseNum(raw);
-      if (v == null || isNaN(v) || v <= 0 || v >= 1000) { this.setState({ cotErr: s[1] + ' ' + s[2] + ': escreva o preço por grama, por exemplo 63,40.' }); return; }
+      const v = C.parseNum(raw.replace(/^(\d{1,3})\.(\d{3})$/, '$1$2'));
+      if (v == null || isNaN(v) || v < 100 || v >= 10000000) { this.setState({ cotErr: s[1] + ' ' + s[2] + ': escreva o preço por quilo, por exemplo 63 400.' }); return; }
       rec[s[0]] = Math.round(v * 100) / 100;
     }
-    if (this.SER.every((s) => rec[s[0]] == null)) { this.setState({ cotErr: 'Escreva pelo menos um preço: ouro ou prata, fino ou usado.' }); return; }
+    if (this.SER.every((s) => rec[s[0]] == null)) { this.setState({ cotErr: 'Escreva pelo menos um preço: ouro ou prata, fino ou lei.' }); return; }
     const had = !!this.data.cot[k];
     if (!this.commit((d) => { d.cot[k] = Object.assign(rec, { nota, by: a.id, at: Date.now(), edit: had }); d.seen[a.id] = Object.assign({}, d.seen[a.id], { cot: Date.now() }); }, async () => { await C.repo.cot.set(k, { of: rec.of, ou: rec.ou, pf: rec.pf, pu: rec.pu, nota }); await C.repo.vistos.mark(['cot']); })) return;
     this.setState({ cotEdit: false, cotIn: { of: '', ou: '', pf: '', pu: '' }, cotNota: '', cotErr: '' });
@@ -931,7 +931,7 @@ export default class App extends React.Component {
     };
     if (v.tInicio) {
       v.destaques = d.pecas.filter((p) => p.estado === 'disponivel').slice(0, 8).map((p) => this.pv(p));
-      v.ini = { staff, cotTxt: hoje ? (this.cv(hoje, 'of') != null ? C.euro(this.cv(hoje, 'of')) : C.euro(this.cv(hoje, 'ou') ?? this.cv(hoje, 'pf') ?? this.cv(hoje, 'pu'))) : 'Por escrever', cotSub: hoje ? (this.cv(hoje, 'of') != null ? 'ouro fino' : 'por grama') + (this.cv(hoje, 'pf') != null ? ' · prata fina ' + C.euro(this.cv(hoje, 'pf')) : '') + ' · ' + this.nome(hoje.by) + ', ' + C.hora(hoje.at) : 'Ainda ninguém escreveu a de hoje', goCot: () => this.openEquipa('cot'),
+      v.ini = { staff, cotTxt: hoje ? (this.cv(hoje, 'of') != null ? C.euro(this.cv(hoje, 'of')) : C.euro(this.cv(hoje, 'ou') ?? this.cv(hoje, 'pf') ?? this.cv(hoje, 'pu'))) : 'Por escrever', cotSub: hoje ? (this.cv(hoje, 'of') != null ? 'ouro fino' : 'por quilo') + (this.cv(hoje, 'pf') != null ? ' · prata fina ' + C.euro(this.cv(hoje, 'pf')) : '') + ' · ' + this.nome(hoje.by) + ', ' + C.hora(hoje.at) : 'Ainda ninguém escreveu a de hoje', goCot: () => this.openEquipa('cot'),
         chatTxt: u.chat ? (u.chat === 1 ? '1 mensagem nova' : u.chat + ' mensagens novas') : 'Tudo lido', goChat: () => this.go('chat'), chatC: u.chat ? '#F08C70' : '#B8B6A8' };
       v.goLojas = () => this.go('lojas'); v.goCompra = () => this.goSection('compra');
       v.waGeral = C.waHref('932656581', 'Olá, Forevergold! Tenho peças de ouro/prata para vender e gostava de saber mais.');
@@ -995,7 +995,7 @@ export default class App extends React.Component {
     if (v.eHub) {
       const hoje = d.cot[tk], rank = a.tipo === 'loja' ? std.findIndex((s) => s.id === a.loja) : -1;
       const last = d.pub.slice().sort((x, z) => z.at - x.at)[0];
-      v.hub = { cotTxt: hoje && this.cv(hoje, 'of') != null ? C.numero(this.cv(hoje, 'of'), 2) : '—', cotHas: !!hoje, cotSub: hoje ? 'Hoje · ouro fino' + (this.cv(hoje, 'ou') != null ? ' · usado ' + C.numero(this.cv(hoje, 'ou'), 2) : '') + (this.cv(hoje, 'pf') != null ? ' · prata fina ' + C.numero(this.cv(hoje, 'pf'), 2) : '') + ' · ' + this.nome(hoje.by) + ', ' + C.hora(hoje.at) : 'Ainda ninguém escreveu a cotação de hoje.', cotBadge: u.cot ? String(u.cot) : '', cotB: !!u.cot,
+      v.hub = { cotTxt: hoje && this.cv(hoje, 'of') != null ? C.numero(this.cv(hoje, 'of'), 2) : '—', cotHas: !!hoje, cotSub: hoje ? 'Hoje · ouro fino' + (this.cv(hoje, 'ou') != null ? ' · lei ' + C.numero(this.cv(hoje, 'ou'), 2) : '') + (this.cv(hoje, 'pf') != null ? ' · prata fina ' + C.numero(this.cv(hoje, 'pf'), 2) : '') + ' · ' + this.nome(hoje.by) + ', ' + C.hora(hoje.at) : 'Ainda ninguém escreveu a cotação de hoje.', cotBadge: u.cot ? String(u.cot) : '', cotB: !!u.cot,
         lead: std[0].nome, leadPts: C.numero(std[0].pts, 1), dias: String(dias), pos: rank >= 0 ? (rank + 1) + '.º lugar' : 'Classificação', posSub: rank >= 0 ? a.nome + ' · ' + C.numero(std[rank].pts, 1) + ' pontos' : 'Só as cinco lojas pontuam',
         pend, pendTxt: 'Falta registar o lucro de ' + mes, lucroB: !!(u.lucro || pend),
         lastWin: (() => { if (m === 1 || !C.emJogo(y, m - 1)) return ''; const w = this.winners(y, std)[m - 2]; return w.ids.length ? 'Vencedora de ' + C.MESES[m - 2] + ': ' + w.nomes.join(' e ') : ''; })(),
@@ -1039,7 +1039,7 @@ export default class App extends React.Component {
       const e = d.cot[sel], fut = sel > tk;
       v.dia = { title: cap(C.DIAS_L[sd.getDay()]) + ', ' + sd.getDate() + ' de ' + C.MESES[mo], tag: sel === tk ? 'Hoje' : fut ? 'Ainda não chegou' : '', hasTag: sel === tk || fut,
         show: !!e && !st.cotEdit, vals: this.SER.map((s) => { const x = this.cv(e, s[0]); return { metal: s[1], tipo: s[2], val: x == null ? '—' : C.euro(x), c: s[1] === 'Prata' ? '#DADEDC' : '#EBD7A4', bd: s[1] === 'Prata' ? 'rgba(218,222,220,.22)' : 'rgba(198,167,102,.24)' }; }),
-        grupos: [['Ouro', '#C6A766', 'rgba(198,167,102,.3)'], ['Prata', '#C9CECC', 'rgba(218,222,220,.28)']].map((g) => ({ nome: g[0], c: g[1], bd: g[2], campos: this.SER.filter((s) => s[1] === g[0]).map((s) => ({ tipo: s[2].charAt(0).toUpperCase() + s[2].slice(1), val: st.cotIn[s[0]], ph: s[1] === 'Ouro' ? (s[0] === 'of' ? 'ex.: 63,40' : 'ex.: 58,00') : (s[0] === 'pf' ? 'ex.: 0,85' : 'ex.: 0,70'), on: (ev) => { const val = ev.target.value.slice(0, 10); this.setState((x) => ({ cotIn: Object.assign({}, x.cotIn, { [s[0]]: val }), cotErr: '' })); } })) })),
+        grupos: [['Ouro', '#C6A766', 'rgba(198,167,102,.3)'], ['Prata', '#C9CECC', 'rgba(218,222,220,.28)']].map((g) => ({ nome: g[0], c: g[1], bd: g[2], campos: this.SER.filter((s) => s[1] === g[0]).map((s) => ({ tipo: s[2].charAt(0).toUpperCase() + s[2].slice(1), val: st.cotIn[s[0]], ph: s[1] === 'Ouro' ? (s[0] === 'of' ? 'ex.: 63 400' : 'ex.: 58 000') : (s[0] === 'pf' ? 'ex.: 850' : 'ex.: 700'), on: (ev) => { const val = ev.target.value.slice(0, 10); this.setState((x) => ({ cotIn: Object.assign({}, x.cotIn, { [s[0]]: val }), cotErr: '' })); } })) })),
         nota: e ? e.nota : '', hasNota: !!(e && e.nota), by: e ? (e.edit ? 'Corrigida por ' : 'Escrita por ') + this.nome(e.by) + ', ' + C.quando(e.at, now) : '',
         edit: () => { const ci = {}; this.SER.forEach((s) => { const x = this.cv(e, s[0]); ci[s[0]] = x == null ? '' : String(x).replace('.', ','); }); this.setState({ cotEdit: true, cotErr: '', cotIn: ci, cotNota: e ? e.nota || '' : '' }); },
         write: !fut && (!e || st.cotEdit), hasCancel: !!e, cancel: () => this.setState({ cotEdit: false, cotErr: '' }), fut, empty: !e && !fut,

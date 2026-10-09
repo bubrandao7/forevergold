@@ -40,7 +40,7 @@ t('equipa carrega tudo (chat, cotações por data, publicidade, vistos, classifi
   const d = await r.carregar();
   assert.equal(d.chat.length, 3); assert.equal(d.chat[0].by, 'foreverfilipe');
   const ks = Object.keys(d.cot); assert.equal(ks.length, 12); assert.match(ks[0], /^\d{4}-\d{2}-\d{2}$/);
-  const c = d.cot[ks[0]]; assert.ok(c.of > 50 && c.ou < c.of && c.pf < 1 && c.pu < c.pf, JSON.stringify(c));
+  const c = d.cot[ks[0]]; assert.ok(c.of > 50000 && c.ou < c.of && c.pf < 1000 && c.pu < c.pf, JSON.stringify(c));
   assert.equal(d.pub.length, 1); assert.equal(d.pub[0].media, null); assert.deepEqual(d.pub[0].partilhas, {});
   assert.deepEqual(Object.keys(d.seen.forevervalbom).sort(), ['chat', 'cot', 'lucro', 'pub']);
   assert.ok(d.class['2026'].std.length === 5 && Array.isArray(d.class['2026'].winners));
@@ -76,11 +76,11 @@ t('loja: editar informação; chat; cotação nova e corrigida; vistos', async (
   const m = d.chat.find((x) => x.id === 'cx1'); assert.equal(m.by, 'forevervalbom'); assert.equal(m.urg, true);
   assert.ok(Math.abs(m.at - Date.now()) < 5000, 'hora do servidor convertida para o relógio local');
   const hoje = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Lisbon' });
-  await r.cot.set(hoje, { of: 63.4, ou: 58, pf: 0.85, pu: 0.7, nota: 'n' });
-  d = await r.carregar(); assert.equal(d.cot[hoje].edit, false); assert.equal(d.cot[hoje].of, 63.4);
-  await r.cot.set(hoje, { of: 64, ou: null, pf: null, pu: null, nota: '' });
-  d = await r.carregar(); assert.equal(d.cot[hoje].edit, true); assert.equal(d.cot[hoje].ou, null); assert.equal(d.cot[hoje].of, 64);
-  await assert.rejects(() => r.cot.set('2999-01-01', { of: 1 }), /futuro/);
+  await r.cot.set(hoje, { of: 63400, ou: 58000, pf: 850, pu: 700, nota: 'n' });
+  d = await r.carregar(); assert.equal(d.cot[hoje].edit, false); assert.equal(d.cot[hoje].of, 63400);
+  await r.cot.set(hoje, { of: 64000, ou: null, pf: null, pu: null, nota: '' });
+  d = await r.carregar(); assert.equal(d.cot[hoje].edit, true); assert.equal(d.cot[hoje].ou, null); assert.equal(d.cot[hoje].of, 64000);
+  await assert.rejects(() => r.cot.set('2999-01-01', { of: 100 }), /futuro/);
   await r.vistos.mark(['chat', 'cot']);
   d = await r.carregar(); assert.ok(Math.abs(d.seen.forevervalbom.chat - Date.now()) < 5000);
 });

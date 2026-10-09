@@ -15,8 +15,8 @@ test('tempo real: chat, cotação e lucro entram e saem do ecrã', () => {
   assert.equal(d.chat[1].at, Date.parse('2026-10-08T12:00:00Z') - 1000, 'convertido para o relógio local');
   aplica(d, r, 'chat', 'INSERT', { id: 'c1', autor: 'foreverbu', at: '2026-10-08T12:00:00Z', txt: 'Olá!', urg: true, ex: false });
   assert.equal(d.chat.length, 2); assert.equal(d.chat[1].txt, 'Olá!', 'o mesmo id substitui (eco da própria mensagem)');
-  aplica(d, r, 'cotacoes', 'INSERT', { dia: '2026-10-08', ouro_fino: '63.40', ouro_usado: null, prata_fina: 0.85, prata_usada: null, nota: '', autor: 'foreverfilipe', at: '2026-10-08T09:00:00Z', edit: false, ex: false });
-  assert.equal(d.cot['2026-10-08'].of, 63.4); assert.equal(d.cot['2026-10-08'].ou, null);
+  aplica(d, r, 'cotacoes', 'INSERT', { dia: '2026-10-08', ouro_fino: '63400.00', ouro_usado: null, prata_fina: 850, prata_usada: null, nota: '', autor: 'foreverfilipe', at: '2026-10-08T09:00:00Z', edit: false, ex: false });
+  assert.equal(d.cot['2026-10-08'].of, 63400); assert.equal(d.cot['2026-10-08'].ou, null);
   aplica(d, r, 'cotacoes', 'DELETE', null, { dia: '2026-10-08' });
   assert.deepEqual(d.cot, {});
   aplica(d, r, 'lucro', 'INSERT', { ano: 2026, mes: 10, loja: 'valbom', valor: 1000, autor: 'forevervalbom', at: '2026-10-08T10:00:00Z' });
