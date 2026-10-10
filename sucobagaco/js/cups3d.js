@@ -190,18 +190,30 @@ export function mount(canvas, o) {
       emissive: 0xffffff, emissiveMap: sh.specks, emissiveIntensity: 0.16, sheen: 0.5, sheenColor: new T.Color(1, 1, 1), sheenRoughness: 0.5,
       clearcoat: 0.35, clearcoatRoughness: 0.35,
     });
-    /* O nível do sumo muda no vértice: a altura encolhe e o raio acompanha o afunilamento do copo,
-       em vez de esticar/achatar a malha (que fazia o sumo atravessar a parede ao esvaziar). */
+    /* O nível do sumo muda no vértice, não na escala da malha: a base fica no fundo do copo, a altura encolhe
+       e o raio acompanha o afunilamento sem nunca passar do interior real do copo (perfil de cupGeo).
+       Com uFill = 1 a forma é exatamente a da malha original. */
     const fillU = { value: 1 };
     liqMat.onBeforeCompile = (shader) => {
       shader.uniforms.uFill = fillU;
       shader.vertexShader = shader.vertexShader
-        .replace('void main() {', 'uniform float uFill;\nvoid main() {')
+        .replace('void main() {', `uniform float uFill;
+          float cupInner(float y) {
+            float r;
+            if (y < 0.012) r = mix(0.6, 0.675, y / 0.012);
+            else if (y < 0.05) r = mix(0.675, 0.69, (y - 0.012) / 0.038);
+            else if (y < 0.15) r = mix(0.69, 0.695, (y - 0.05) / 0.1);
+            else if (y < 0.185) r = mix(0.695, 0.7303, (y - 0.15) / 0.035);
+            else r = 0.70 + 0.27 * (y / 2.8) + 0.012;
+            return r - 0.014;
+          }
+          void main() {`)
         .replace('#include <begin_vertex>', `#include <begin_vertex>
           float yo = position.y;
-          float yn = yo * uFill;
-          float r0 = 0.70 + 0.27 * (min(yo, 2.69) / 2.8) - 0.022;
-          float r1 = 0.70 + 0.27 * (min(yn, 2.69) / 2.8) - 0.022;
+          float yn = 0.05 + max(yo - 0.05, 0.0) * uFill;
+          float r0 = 0.70 + 0.27 * (min(yo, 2.69) / 2.8) - 0.022 - (yo < 0.2 ? 0.012 : 0.0);
+          float r1 = 0.70 + 0.27 * (min(yn, 2.69) / 2.8) - 0.022 - 0.012 * (1.0 - smoothstep(0.17, 0.23, yn));
+          r1 = min(r1, cupInner(yn) - 0.006);
           transformed.xz *= r1 / r0;
           transformed.y = yn;`);
     };
