@@ -17,14 +17,16 @@ npm install                              # na raiz, uma vez (usa o @playwright/t
 node sucobagaco/tests/smoke.mjs
 ```
 
-11 verificações: sem erros na consola nem violações da CSP, separadores (rato e teclado), geolocalização aceite e recusada, ligações Maps/WhatsApp de cada loja, botão flutuante, introdução, «reduzir movimento», site sem WebGL, site sem JavaScript e telemóvel sem scroll horizontal.
+13 verificações: sem erros na consola nem violações da CSP, separadores (rato e teclado), geolocalização aceite e recusada, ligações Maps/WhatsApp de cada loja, botão flutuante, introdução, «reduzir movimento», site sem WebGL, site sem JavaScript e telemóvel sem scroll horizontal.
 
 ## Onde mudar o quê
 
 | O quê | Onde |
 |---|---|
-| Textos, menu (sumos, descrições) | `index.html` — cada separador é um `<div role="tabpanel">` |
-| Cor do sabor e do cartão de cada separador | atributos `data-flavor` e `data-bg` nos botões `.tab` |
+| «Escolhe o teu copo» (4 separadores com o copo 3D) | `index.html`, secção `#sumos` — cada separador é um `<div role="tabpanel">`; cor do copo em `data-flavor` e `data-bg` |
+| **Cardápio completo** (14 categorias, 179 itens, sem preços) | `index.html`, secção `#cardapio` — cada categoria é um `.cpanel`; cada item é um `.citem` (nome em `<h4>`, descrição em `<p>`) |
+| **Franquia** (texto, 10× ABF, Veja SP, WhatsApp, ligação saiba mais) | `index.html`, secção `#franquia` |
+| Atalho para o site do Brasil | cabeçalho (`.pill-link`) e rodapé, `index.html` |
 | Lojas (morada, coordenadas) | `index.html` — cada loja é um `<li class="store">` com `data-lat` e `data-lng`; atualize também o bloco `application/ld+json` no `<head>` |
 | WhatsApp | procurar `351935353535` em `index.html` |
 | Fotografias do Instagram | guardar em `img/instagram/` e seguir o comentário em `index.html` (secção «Segue o sabor») |

@@ -215,7 +215,7 @@ function runIntro() {
 /* ------------------------------------------------------------------ */
 
 let cupsMenu = null;
-const tabs = $$('[role="tab"]');
+const tabs = $$('.tabs [role="tab"]');
 const card = $('[data-card]');
 
 function selectTab(tab, { focus = false } = {}) {
@@ -254,6 +254,42 @@ function setupTabs() {
     if (frapes) selectTab(frapes);
     scrollToId('sumos');
   }));
+}
+
+/* ------------------------------------------------------------------ */
+/* Cardápio completo (categorias em separadores)                       */
+/* ------------------------------------------------------------------ */
+
+function setupMenu() {
+  const ctabs = $$('.ctabs [role="tab"]');
+  if (!ctabs.length) return;
+  const select = (tab, focus = false) => {
+    if (tab.getAttribute('aria-selected') === 'true') return;
+    ctabs.forEach((t) => {
+      const on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      const panel = document.getElementById(t.getAttribute('aria-controls'));
+      if (panel) panel.hidden = !on;
+    });
+    if (focus) tab.focus();
+    const panel = document.getElementById(tab.getAttribute('aria-controls'));
+    if (panel && !REDUCE) $$('.citem', panel).forEach((el, i) => el.animate(
+      [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }],
+      { duration: 550, delay: Math.min(i, 16) * 30, easing: EASE, fill: 'both' }
+    ));
+  };
+  ctabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => select(tab));
+    tab.addEventListener('keydown', (e) => {
+      const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+      let next = null;
+      if (e.key in keys) next = ctabs[(i + keys[e.key] + ctabs.length) % ctabs.length];
+      else if (e.key === 'Home') next = ctabs[0];
+      else if (e.key === 'End') next = ctabs[ctabs.length - 1];
+      if (next) { e.preventDefault(); select(next, true); }
+    });
+  });
 }
 
 /* ------------------------------------------------------------------ */
@@ -329,7 +365,7 @@ function setupStores() {
 /* ------------------------------------------------------------------ */
 
 function setupFab() {
-  const fab = $('[data-fab]'), stores = $('#lojas'), foot = $('.foot');
+  const fab = $('[data-fab]'), stores = $('#lojas'), franchise = $('#franquia'), foot = $('.foot');
   if (!fab) return;
   let on = false, ticking = false;
   const update = () => {
@@ -338,7 +374,9 @@ function setupFab() {
     const lr = stores ? stores.getBoundingClientRect() : { top: 9e9, bottom: -1 };
     const inStores = lr.top < window.innerHeight * 0.8 && lr.bottom > window.innerHeight * 0.2;
     const inFoot = foot ? foot.getBoundingClientRect().top < window.innerHeight - 40 : false;
-    const next = window.scrollY > heroB * 0.9 && !inStores && !inFoot;
+    const fr = franchise ? franchise.getBoundingClientRect() : { top: 9e9, bottom: -1 };
+    const inFranchise = fr.top < window.innerHeight * 0.8 && fr.bottom > window.innerHeight * 0.2;
+    const next = window.scrollY > heroB * 0.9 && !inStores && !inFranchise && !inFoot;
     if (next === on) return;
     on = next;
     fab.classList.toggle('is-on', on);
@@ -428,6 +466,7 @@ prepareHero();
 setupReveal();
 setupMotion();
 setupTabs();
+setupMenu();
 setupStores();
 setupFab();
 runIntro();

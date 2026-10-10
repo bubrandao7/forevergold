@@ -56,6 +56,50 @@ await test('separadores do menu: clicar, setas, painéis e cor do cartão', asyn
   await p.context().close();
 });
 
+await test('cardápio: 14 categorias, painéis, teclado e conteúdo completo', async () => {
+  const p = await newPage();
+  const tabs = p.locator('.ctabs [role="tab"]');
+  assert.equal(await tabs.count(), 14);
+  assert.equal(await p.locator('.citem').count(), 179);
+  assert.ok(await p.locator('#cpanel-especiais').isVisible());
+  await p.locator('#ctab-sopas').click();
+  assert.ok(await p.locator('#cpanel-sopas').isVisible());
+  assert.ok(!(await p.locator('#cpanel-especiais').isVisible()));
+  assert.match(await p.locator('#cpanel-sopas').innerText(), /Canja de Galinha[\s\S]*Creme de Grão de Bico com Frango e Espinafre/);
+  await p.locator('#ctab-iogurte').click();
+  assert.match(await p.locator('#cpanel-iogurte').innerText(), /Atenas[\s\S]*Olimpo/);
+  await p.locator('#ctab-vendidos').click();
+  assert.match(await p.locator('#cpanel-vendidos').innerText(), /Sandes e wraps[\s\S]*Sucos/);
+  await p.locator('#ctab-acai').click();
+  assert.match(await p.locator('#cpanel-acai').innerText(), /chegou a Portugal/);
+  await p.locator('#ctab-acai').press('ArrowRight');
+  assert.equal(await p.locator('#ctab-vitaminas').getAttribute('aria-selected'), 'true');
+  await p.locator('#ctab-vitaminas').press('Home');
+  assert.equal(await p.locator('#ctab-especiais').getAttribute('aria-selected'), 'true');
+  await p.locator('#ctab-especiais').press('End');
+  assert.equal(await p.locator('#ctab-sopas').getAttribute('aria-selected'), 'true');
+  // os separadores do «Escolhe o teu copo» continuam independentes
+  assert.equal(await p.locator('.tabs [role="tab"]').count(), 4);
+  assert.deepEqual(p.problems, []);
+  await p.context().close();
+});
+
+await test('atalho para o Brasil, secção Franquia e ligações do rodapé', async () => {
+  const p = await newPage();
+  const br = p.locator('.nav .pill-link');
+  assert.match(await br.getAttribute('href'), /sucobagaco\.com\.br/);
+  assert.equal(await br.getAttribute('target'), '_blank');
+  assert.deepEqual(await p.locator('.nav a').allInnerTexts().then((a) => a.map((x) => x.replace(/\s*↗/, '').trim())), ['Cardápio', 'Lojas', 'Franquia', 'Instagram', 'Suco Bagaço Brasil', 'Encontrar loja']);
+  const f = p.locator('#franquia');
+  assert.match(await f.locator('h2').innerText(), /Seja um franqueado\s+Suco Bagaço\./);
+  assert.match(await f.innerText(), /10×[\s\S]*Melhor suco de São Paulo/);
+  assert.match(await f.locator('a[href*="wa.me/351935353535"]').first().getAttribute('href'), /^https:/);
+  assert.match(await f.locator('a[href*="wtennis"]').getAttribute('href'), /suco-bagaco\/$/);
+  assert.equal(await p.locator('.foot-nav a[href="#franquia"]').count(), 1);
+  assert.equal(await p.locator('.foot-nav a[href*="sucobagaco.com.br"]').count(), 1);
+  await p.context().close();
+});
+
 await test('geolocalização aceite: lojas ordenadas e «Mais perto de ti»', async () => {
   const p = await newPage({ geolocation: { latitude: 37.14, longitude: -8.54 }, permissions: ['geolocation'] });
   const order = () => p.locator('.store h3').allInnerTexts();

@@ -20,6 +20,9 @@ O Vercel **não republica sozinho**. Depois de fazer commit e push, é preciso c
 
 Nota: em 10/10/2026 `sucobagaco.pt`, `.com`, `.com.pt` e `sucobagacoportugal.pt` estavam todos ocupados. Falar primeiro com a marca (pode já haver um domínio). Preços: confirmar no registo; não foram verificados.
 
+## Conteúdo (v2)
+O cardápio completo e a secção Franquia vieram do desenho «Suco Bagaço Site v2» (textos de sucobagaco.pt, fornecidos pela Bu). Estão em `index.html` (`#cardapio`, `#franquia`). A abertura (logótipo + contador 0–100 % fruta) é a pedida pela Bu: **sem azulejos**, ao contrário do README do v2.
+
 ## Por fazer
 - [ ] Fotografias reais do Instagram (com autorização): `img/instagram/` e comentário em `index.html`.
 - [ ] Confirmar o WhatsApp `9 35 35 35 35` para as 4 lojas (ou números por loja).
