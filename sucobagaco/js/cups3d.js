@@ -190,6 +190,21 @@ export function mount(canvas, o) {
       emissive: 0xffffff, emissiveMap: sh.specks, emissiveIntensity: 0.16, sheen: 0.5, sheenColor: new T.Color(1, 1, 1), sheenRoughness: 0.5,
       clearcoat: 0.35, clearcoatRoughness: 0.35,
     });
+    /* O nível do sumo muda no vértice: a altura encolhe e o raio acompanha o afunilamento do copo,
+       em vez de esticar/achatar a malha (que fazia o sumo atravessar a parede ao esvaziar). */
+    const fillU = { value: 1 };
+    liqMat.onBeforeCompile = (shader) => {
+      shader.uniforms.uFill = fillU;
+      shader.vertexShader = shader.vertexShader
+        .replace('void main() {', 'uniform float uFill;\nvoid main() {')
+        .replace('#include <begin_vertex>', `#include <begin_vertex>
+          float yo = position.y;
+          float yn = yo * uFill;
+          float r0 = 0.70 + 0.27 * (min(yo, 2.69) / 2.8) - 0.022;
+          float r1 = 0.70 + 0.27 * (min(yn, 2.69) / 2.8) - 0.022;
+          transformed.xz *= r1 / r0;
+          transformed.y = yn;`);
+    };
     const liquid = new T.Mesh(sh.liqGeo, liqMat); body.add(liquid);
     const cup = new T.Mesh(sh.cupGeo, cupMat); body.add(cup);
     const rim = new T.Mesh(rimGeo, rimMat); rim.rotation.x = Math.PI / 2; rim.position.y = YT + 0.005; body.add(rim);
@@ -203,7 +218,7 @@ export function mount(canvas, o) {
       const m = new T.Mesh(sh.dropGeo, dropMat); m.scale.set(1, 1.35, 0.45); body.add(m);
       drops.push({ m, a: (R() - 0.5) * 1.8, y: 0.5 + R() * 1.7, v: 0.04 + R() * 0.05, ph: R() * 10 });
     }
-    return { c, i, root, body, liquid, liqMat, glowMat, shMat, shadow, drops, target: new T.Color(bif ? 0xffffff : c.flavor), bif };
+    return { c, i, root, body, liquid, fillU, liqMat, glowMat, shMat, shadow, drops, target: new T.Color(bif ? 0xffffff : c.flavor), bif };
   });
 
   const resize = () => {
@@ -262,7 +277,7 @@ export function mount(canvas, o) {
         }
         u.body.rotation.z += Math.sin(k * 14) * 0.012 * (1 - clamp(k / 1.5));
       }
-      u.liquid.scale.y = Math.max(0.015, fill * mul);
+      u.fillU.value = Math.max(0.015, fill * mul);
       const lift = u.body.position.y - 0.13;
       u.shadow.scale.setScalar(clamp(1 - lift * 0.5, 0.6, 1.2));
       u.shMat.opacity = clamp(0.72 - lift * 0.9, 0, 0.8) * intro;
