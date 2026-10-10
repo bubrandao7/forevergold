@@ -145,7 +145,7 @@ function setupMotion() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Introdução (mosaico + contador)                                     */
+/* Introdução (logótipo + contador de 0 a 100 % fruta)                 */
 /* ------------------------------------------------------------------ */
 
 function runIntro() {
@@ -158,37 +158,11 @@ function runIntro() {
   if (head) head.style.opacity = '0';
   root.style.overflow = 'hidden';
 
-  const S = 76, W = box.clientWidth, H = box.clientHeight;
-  const cols = Math.ceil(W / S) + 1, rows = Math.ceil(H / S) + 1;
-  const cx = W / 2, cy = H / 2, maxD = Math.hypot(Math.max(cx, W - cx), Math.max(cy, H - cy));
-  const ACC = ['#FF6A13', '#FFC93C', '#C8261E', '#FF6A13'];
-  const SPREAD = 1150, START = 280, TILE = 760;
-  const anims = [], frag = document.createDocumentFragment();
-  let seed = 7;
-  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-
-  for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
-    const el = document.createElement('div');
-    el.style.cssText = `position:absolute;left:${x * S}px;top:${y * S}px;width:${S - 1}px;height:${S - 1}px;background-color:#19C2B6;background-image:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,0) 42%,rgba(10,59,60,0) 70%,rgba(10,59,60,.10));box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);backface-visibility:hidden;will-change:transform,opacity`;
-    frag.appendChild(el);
-    const dist = Math.hypot(x * S + S / 2 - cx, y * S + S / 2 - cy) / maxD;
-    const delay = START + dist * SPREAD + rnd() * 90, axis = (x + y) % 2 ? 'rotateY' : 'rotateX';
-    anims.push(el.animate([
-      { transform: `${axis}(-96deg) scale(.7)`, opacity: 0 },
-      { transform: `${axis}(10deg) scale(1.03)`, opacity: 1, offset: 0.68 },
-      { transform: 'none', opacity: 1 },
-    ], { duration: TILE, delay, easing: EASE, fill: 'both' }));
-    if (rnd() < 0.11) {
-      const c = ACC[Math.floor(rnd() * ACC.length)];
-      anims.push(el.animate([{ backgroundColor: c }, { backgroundColor: c, offset: 0.55 }, { backgroundColor: '#19C2B6' }],
-        { duration: TILE + 700, delay, easing: 'ease-in-out', fill: 'both' }));
-    }
-  }
-  box.appendChild(frag);
+  const END = 2310; // duração da contagem 0 → 100 %
   logo.animate([{ opacity: 0, transform: 'translate(-50%,-46%) scale(.9)' }, { opacity: 1, transform: 'translate(-50%,-50%) scale(1)' }],
     { duration: 900, easing: EASE, fill: 'both' });
 
-  const END = START + SPREAD + TILE + 120, t0 = performance.now();
+  const t0 = performance.now();
   let flew = false, done = false, raf = 0, timer = 0;
 
   const finish = () => {
@@ -204,7 +178,6 @@ function runIntro() {
   const fly = () => {
     if (flew) return;
     flew = true; clearTimeout(timer);
-    anims.forEach((a) => a.finish());
     if (cnt) cnt.textContent = '100';
     startHero();
     ov.style.background = 'transparent'; ov.style.pointerEvents = 'none';

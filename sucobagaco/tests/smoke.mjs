@@ -119,7 +119,7 @@ await test('introdução: termina sozinha, mostra o site e não repete na mesma 
 await test('«reduzir movimento»: sem introdução e com tudo visível', async () => {
   const p = await newPage({ reducedMotion: 'reduce' }, { intro: true });
   assert.ok(!(await p.evaluate(() => document.documentElement.classList.contains('intro-on'))));
-  assert.equal(await p.locator('h1 [data-up]').first().evaluate((e) => getComputedStyle(e).transform), 'none');
+  assert.match(await p.locator('h1 [data-up]').first().evaluate((e) => getComputedStyle(e).transform), /^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
   assert.equal(await p.locator('.eyebrow').first().evaluate((e) => getComputedStyle(e).opacity), '1');
   await p.context().close();
 });
