@@ -11,6 +11,6 @@
 /vendor/*
   Cache-Control: public, max-age=31536000, immutable
 /css/*
-  Cache-Control: public, max-age=3600, must-revalidate
+  Cache-Control: no-cache
 /js/*
-  Cache-Control: public, max-age=3600, must-revalidate
+  Cache-Control: no-cache
