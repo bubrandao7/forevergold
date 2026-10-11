@@ -60,6 +60,7 @@ try {
 </script>
 
 <style>
+@property --m{syntax:'<percentage>';inherits:false;initial-value:150%}
 :root{--intro:2000;--ease:cubic-bezier(.2,.7,.2,1);--ease-io:cubic-bezier(.7,0,.2,1)}
 .no-intro{--intro:0}
 .no-intro .intro{display:none}
@@ -124,7 +125,7 @@ html.motion .tile.in:hover img{transform:scale(1.05);transition:transform .9s ea
 /* ---------- KEYFRAMES ---------- */
 @keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
 @keyframes lineIn{from{transform:translateY(112%) rotate(4deg)}to{transform:none}}
-@keyframes archOpen{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes soft{from{opacity:0;--m:0%}to{opacity:1;--m:145%}}
 @keyframes settle{from{transform:scale(1.28)}to{transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes marquee{to{transform:translateX(-50%)}}
@@ -139,8 +140,8 @@ html.motion .tile.in:hover img{transform:scale(1.05);transition:transform .9s ea
 .w{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .08em .14em 0;margin:0 -.08em -.14em 0}
 .w>span{display:inline-block;transform-origin:0 100%}
 .ldw .w>span{animation:lineIn 1.15s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc((var(--d,0) + var(--intro)) * 1ms)}
-.ld-arch{animation:archOpen 1.7s var(--ease-io) calc((var(--intro) + 200) * 1ms) both}
-.ld-arch img{animation:settle 2.4s var(--ease) calc((var(--intro) + 200) * 1ms) both}
+.ld-arch img,.rva img{-webkit-mask-image:linear-gradient(to top,#000 calc(var(--m) - 45%),transparent var(--m));mask-image:linear-gradient(to top,#000 calc(var(--m) - 45%),transparent var(--m))}
+.ld-arch img{animation:settle 2.6s var(--ease) calc((var(--intro) + 200) * 1ms) both,soft 2.4s cubic-bezier(.4,0,.2,1) calc((var(--intro) + 200) * 1ms) both}
 .eyebrow i{transform-origin:left}
 .eyebrow.ld i{animation:lineGrow 1.1s var(--ease) calc((var(--d,0) + var(--intro) + 300) * 1ms) both}
 
@@ -171,8 +172,8 @@ html.motion .tile.in:hover img{transform:scale(1.05);transition:transform .9s ea
 html.motion .rv{opacity:0;translate:0 34px}
 html.motion .rv.in{opacity:1;translate:0 0;transition:opacity .9s ease, translate 1s var(--ease);transition-delay:calc(var(--d,0) * 1ms)}
 html.motion .btn.rv.in{transition:opacity .9s ease, translate 1s var(--ease), transform .5s var(--ease), box-shadow .5s var(--ease), filter .25s ease;transition-delay:calc(var(--d,0) * 1ms),calc(var(--d,0) * 1ms),0ms,0ms,0ms}
-html.motion .rva img{transform:scale(1.28);clip-path:inset(100% 0 0 0)}
-html.motion .rva.in img{transform:scale(1);clip-path:inset(0 0 0 0);transition:clip-path 1.5s var(--ease-io), transform 2s var(--ease);transition-delay:calc(var(--d,0) * 1ms)}
+html.motion .rva img{--m:0%;opacity:0;transform:scale(1.28)}
+html.motion .rva.in img{--m:145%;opacity:1;transform:scale(1);transition:--m 2.2s cubic-bezier(.4,0,.2,1), opacity 1.6s ease, transform 2.4s var(--ease);transition-delay:calc(var(--d,0) * 1ms)}
 html.motion .rvw .w>span{transform:translateY(112%) rotate(4deg)}
 html.motion .rvw.in .w>span{transform:none;transition:transform 1.15s cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--d,0) * 1ms)}
 html.motion .eyebrow.rv i{transform:scaleX(0)}
@@ -205,7 +206,7 @@ html{scroll-behavior:auto}
 *,*::before,*::after{animation:none !important;transition:none !important}
 .tilt{transform:none !important}
 .hl::before{transform:none !important}
-html.motion .rv,html.motion .pop,html.motion .rvg .prow,html.motion .rva,html.motion .rva img,html.motion .rvw .w>span,html.motion .rvg .lead,html.motion .eyebrow.rv i,html.motion .draw path,html.motion .draw .fillarch{opacity:1;translate:none;scale:none;rotate:none;transform:none;clip-path:none;filter:none;stroke-dashoffset:0;fill-opacity:1}
+html.motion .rv,html.motion .pop,html.motion .rvg .prow,html.motion .rva,html.motion .rva img,html.motion .rvw .w>span,html.motion .rvg .lead,html.motion .eyebrow.rv i,html.motion .draw path,html.motion .draw .fillarch{opacity:1;translate:none;scale:none;rotate:none;transform:none;clip-path:none;filter:none;stroke-dashoffset:0;fill-opacity:1;--m:150%}
 }
 </style>
 </head>
@@ -695,6 +696,19 @@ Seguir no Instagram</a>
   var drifts = $$('[data-drift]');
   var fws = $$('.fw').map(function (p) { return { el: p, words: $$('span', p) }; });
   if (!reduced && fws.length) root.classList.add('scrub');
+  var ups = $$('.r,.ld,.ld-arch,h1,.strip,.marq').filter(function (el) {
+    if (el.classList.contains('tile')) return false;
+    return !(el.parentElement && el.parentElement.closest('.r,.ld'));
+  });
+  function lighten(vh) {
+    ups.forEach(function (el) {
+      var r = el.getBoundingClientRect(), p = 0;
+      if (r.top < 0) p = clamp(-r.top / Math.min(r.height || 1, vh * 0.4), 0, 1);
+      p = p * p * (3 - 2 * p);
+      var v = p > 0.002 ? +(1 - 0.82 * p).toFixed(3) : 1;
+      if (el._u !== v) { el._u = v; el.style.filter = v < 1 ? 'opacity(' + v + ')' : ''; }
+    });
+  }
   var ticking = false;
   function frame() {
     ticking = false;
@@ -714,6 +728,7 @@ Seguir no Instagram</a>
           el.style.transform = 'translate3d(0,' + ((p * 2 - 1) * 4).toFixed(3) + '%,0)';
         });
       }
+      lighten(vh);
       drifts.forEach(function (el) {
         var r = el.parentNode.getBoundingClientRect();
         if (r.bottom < -120 || r.top > vh + 120) return;
