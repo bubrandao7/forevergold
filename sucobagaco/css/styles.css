@@ -5,8 +5,8 @@
 @font-face { font-family: 'Instrument Serif'; font-style: normal; font-weight: 400; font-display: swap; src: url('../fonts/InstrumentSerif-400-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: 'Instrument Serif'; font-style: italic; font-weight: 400; font-display: swap; src: url('../fonts/InstrumentSerif-400-italic-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @font-face { font-family: 'Instrument Serif'; font-style: italic; font-weight: 400; font-display: swap; src: url('../fonts/InstrumentSerif-400-italic-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: 'Manrope'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('../fonts/Manrope-var-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: 'Manrope'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('../fonts/Manrope-var-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Manrope'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../fonts/Manrope-var-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Manrope'; font-style: normal; font-weight: 200 800; font-display: swap; src: url('../fonts/Manrope-var-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 
 /* ---------- Base ---------- */
 :root {
@@ -33,7 +33,7 @@ body {
   margin: 0;
   background: var(--cream);
   color: var(--ink);
-  font-family: var(--sans);
+  font-family: var(--sans); font-weight: 300; font-size: 16px;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -342,7 +342,7 @@ html.anim [data-fade], html.anim [data-rv] { opacity: 0; }
 .ctab[aria-selected="true"] { background: var(--ink); color: var(--cream); }
 .cpanel { display: flex; flex-wrap: wrap; gap: 32px 64px; align-items: flex-start; }
 .cpanel__head { flex: 1 1 300px; min-width: 0; }
-.eyebrow--rust { color: var(--rust); margin-bottom: 18px; }
+.eyebrow--rust { color: var(--rust); margin-bottom: 14px; font-size: 10.5px; }
 .cpanel__head h3 {
   font-family: var(--serif); font-weight: 400; font-size: clamp(44px, 4.8vw, 72px);
   line-height: .96; letter-spacing: -0.02em; margin-bottom: 20px;
@@ -364,11 +364,11 @@ html.anim [data-fade], html.anim [data-rv] { opacity: 0; }
 }
 .franquia__inner {
   position: relative; max-width: var(--maxw); margin: 0 auto;
-  padding: var(--sy) var(--gutter);
+  padding: calc(var(--sy) * .85) var(--gutter);
   display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 48px 80px; align-items: start;
 }
 .franquia__lead, .franquia__text { min-width: 0; }
-.franquia .eyebrow { color: var(--yellow); margin-bottom: 26px; }
+.franquia .eyebrow { color: var(--yellow); margin-bottom: 20px; }
 .franquia .eyebrow::before { background: var(--yellow); }
 .franquia h2 { margin-bottom: 40px; }
 .franquia h2 em { color: var(--yellow); }
@@ -438,15 +438,103 @@ html.intro-on .intro { display: block; position: fixed; inset: 0; z-index: 200; 
   font-size: 12px; letter-spacing: .18em; text-transform: uppercase; font-weight: 700; color: var(--ink);
 }
 
+/* ---------- Tipografia v3: mais leve, fina e pequena; opções em texto, sem cápsulas ----------
+   Serifada (Instrument Serif) para títulos, opções e links; Manrope 300/400/500 para texto e interface.
+   Escala: 11 · 13 · 14 · 16 · 22 · 36 · 46 · 76 · 96 */
+.eyebrow { font-size: 11.5px; letter-spacing: .16em; font-weight: 500; gap: 12px; }
+.eyebrow::before { width: 24px; }
+.display--xl { font-size: clamp(40px, 5.2vw, 78px); line-height: 1; letter-spacing: -0.015em; }
+.display--lg { font-size: clamp(36px, 4.4vw, 64px); line-height: 1.02; letter-spacing: -0.015em; }
+.lead { font-size: 17px; line-height: 1.65; font-weight: 300; }
+.hero h1 { font-size: clamp(46px, 6.2vw, 96px); line-height: .98; letter-spacing: -0.02em; margin-bottom: 26px; }
+.hero .lead { max-width: 440px; margin-bottom: 32px; }
+.ticker { padding: 22px 0; }
+.ticker__track { font-size: clamp(30px, 3.4vw, 46px); }
+.ticker__set i { width: 7px; height: 7px; margin: 0 30px; }
+
+/* Botões de ação: mais pequenos e finos */
+.btn { font-weight: 500; font-size: 14px; padding: 12px 22px; letter-spacing: .005em; }
+.btn--pill { padding: 10px 20px; }
+.btn--cta, .btn--ig, .btn--light { font-size: 14.5px; padding: 6px 6px 6px 24px; gap: 14px; }
+.btn--cta .btn__dot, .btn--ig .btn__dot, .btn--light .btn__dot { width: 36px; height: 36px; font-size: 15px; }
+.fab { font-size: 14px; font-weight: 500; padding: 6px 6px 6px 20px; }
+.fab span { width: 34px; height: 34px; }
+
+/* Links de texto (sem cápsula nem linha): serifada itálica + seta */
+.link, .btn--ghost {
+  display: inline-flex; align-items: center; gap: 10px; padding: 6px 0; border-radius: 0; background: none;
+  font-family: var(--serif); font-style: italic; font-size: 22px; font-weight: 400; letter-spacing: 0; line-height: 1.2;
+  color: var(--soft-fg, var(--ink));
+}
+.btn--ghost { gap: 12px; }
+.link:hover, .btn--ghost:hover { background: none; opacity: .6; }
+@media (hover: hover) {
+  .link:hover, .btn--ghost:hover { background: none; color: var(--soft-fg, var(--ink)); opacity: .6; }
+}
+
+/* Cabeçalho */
+.nav { font-size: 14px; font-weight: 400; gap: 8px clamp(20px, 2.6vw, 32px); }
+.nav .pill-link { padding: 6px 0; background: none; border-radius: 0; font-size: 14px; }
+
+/* Opções: texto serifado; a escolhida em itálico, opaca e com ponto laranja */
+.tabs { display: flex; flex-wrap: wrap; gap: 6px 28px; padding: 0 0 0 12px; background: none; border-radius: 0; margin-bottom: 20px; }
+.tab, .ctab {
+  position: relative; padding: 4px 0; border-radius: 0; background: none; color: var(--ink);
+  font-family: var(--sans); font-weight: 300; font-size: 13.5px; line-height: 1.3; letter-spacing: .02em;
+  opacity: .55; transition: opacity .3s, font-weight .3s;
+}
+.tab[aria-selected="true"], .ctab[aria-selected="true"] { background: none; color: var(--ink); opacity: 1; font-weight: 500; }
+.tab::before, .ctab::before {
+  content: ''; position: absolute; left: -11px; top: 50%; width: 5px; height: 5px; margin-top: -2.5px; border-radius: 50%;
+  background: var(--orange); transform: scale(0); transition: transform .3s var(--ease);
+}
+.tab[aria-selected="true"]::before, .ctab[aria-selected="true"]::before { transform: scale(1); }
+@media (hover: hover) { .tab:hover, .ctab:hover { opacity: .75; } .tab[aria-selected="true"]:hover, .ctab[aria-selected="true"]:hover { opacity: 1; } }
+.ctabs { gap: 8px 30px; padding-left: 12px; margin-bottom: clamp(32px, 4vw, 48px); }
+
+/* Listas e títulos */
+.menu__head p, .cardapio__sub { font-size: 17px; font-weight: 300; }
+.item { grid-template-columns: 44px minmax(0, 1fr); padding: 20px 0; }
+.item__n { font-size: 18px; }
+.item h3 { font-size: clamp(20px, 1.9vw, 24px); margin-bottom: 3px; }
+.item p { font-size: 13.5px; font-weight: 300; line-height: 1.55; }
+.cpanel__head h3 { font-size: clamp(30px, 3vw, 42px); line-height: 1.05; margin-bottom: 14px; }
+.cmenu__intro { font-size: 14px; font-weight: 300; line-height: 1.7; }
+.cgroup__label { font-size: 20px; }
+.citem { padding: 14px 0; }
+.citem h4 { font-size: 14.5px; font-weight: 400; line-height: 1.4; letter-spacing: .005em; }
+.citem p { font-size: 12.5px; font-weight: 300; margin-top: 2px; line-height: 1.5; }
+.store h3 { font-size: clamp(34px, 3.6vw, 46px); }
+.store__badge { font-size: 10px; font-weight: 500; padding: 5px 10px; letter-spacing: .12em; }
+.store__dist { font-size: 14px; font-weight: 400; }
+.store__place { font-size: 15px; font-weight: 500; }
+.store address { font-size: 15px; font-weight: 300; }
+.geo-msg { font-size: 14px; }
+.callout b { font-size: 10px; font-weight: 500; padding: 7px 12px; letter-spacing: .14em; }
+.franquia h2 { font-size: clamp(30px, 3.4vw, 46px); line-height: 1.08; margin-bottom: 28px; }
+.franquia__facts { gap: 24px; max-width: 460px; margin-bottom: 32px; }
+.franquia__facts > div { padding-top: 14px; }
+.franquia__facts b { font-size: clamp(30px, 2.8vw, 40px); margin-bottom: 8px; }
+.franquia__facts .franquia__fact-text { font-size: clamp(19px, 1.8vw, 24px); line-height: 1.1; margin-bottom: 10px; }
+.franquia__facts p { font-size: 12px; font-weight: 300; line-height: 1.5; }
+.franquia__text { font-size: 14px; font-weight: 300; line-height: 1.75; gap: 16px; max-width: 520px; }
+.franquia__text strong { font-weight: 500; }
+.foot__brand p { font-size: 24px; }
+.foot-nav { font-size: 14px; font-weight: 400; }
+.foot__legal { font-size: 12px; font-weight: 300; }
+.intro__count b { font-size: clamp(64px, 9vw, 120px); }
+.intro__count i { font-size: clamp(24px, 3vw, 38px); }
+.intro__skip { font-size: 11px; font-weight: 500; }
+
 /* ---------- Telemóvel (o desenho nasceu aqui) ---------- */
 @media (max-width: 640px) {
   :root { --sy: 64px; }
-  .lead { font-size: 17px; }
+  .lead { font-size: 16px; }
 
   /* Cabeçalho: logótipo + «Encontrar loja» na 1.ª linha; atalhos deslizáveis na 2.ª */
   .top { padding-top: 14px; padding-bottom: 6px; gap: 10px 12px; }
   .brand img { height: 46px; }
-  .top > .btn { order: 2; padding: 11px 18px; font-size: 14px; }
+  .top > .btn { order: 2; padding: 9px 16px; font-size: 13.5px; }
   .nav {
     order: 3; flex: 0 0 100%; gap: 8px; margin: 0 calc(var(--gutter) * -1); padding: 2px var(--gutter) 4px;
     overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
@@ -454,11 +542,12 @@ html.intro-on .intro { display: block; position: fixed; inset: 0; z-index: 200; 
     mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent);
   }
   .nav::-webkit-scrollbar { display: none; }
-  .nav a { flex: none; white-space: nowrap; padding: 9px 16px; border-radius: 999px; background: rgba(251, 246, 238, .4); font-size: 14px; }
+  .nav { gap: 22px; }
+  .nav a { flex: none; white-space: nowrap; padding: 8px 0; font-size: 14px; }
 
   /* Início */
   .hero__body { padding-top: 14px; padding-bottom: 8px; gap: 0; }
-  .hero__copy .eyebrow { margin-bottom: 18px; font-size: 12px; letter-spacing: .14em; }
+  .hero__copy .eyebrow { margin-bottom: 16px; font-size: 11px; letter-spacing: .14em; }
   .hero h1 { margin-bottom: 22px; }
   .hero .lead { margin-bottom: 26px; }
   .hero__cta { gap: 10px 12px; }
@@ -478,16 +567,16 @@ html.intro-on .intro { display: block; position: fixed; inset: 0; z-index: 200; 
 
   /* Escolhe o teu copo */
   .menu__head { gap: 10px; margin-bottom: 28px; }
-  .menu__head p { margin: 0; font-size: 17px; }
+  .menu__head p { margin: 0; font-size: 16px; }
   .menu__grid { gap: 28px; }
-  .tabs { display: flex; width: 100%; margin-bottom: 8px; }
-  .tab { flex: 1 1 0; padding: 12px 4px; font-size: 14px; }
-  .item { grid-template-columns: 40px minmax(0, 1fr); gap: 12px; padding: 20px 0; }
-  .item__n { font-size: 24px; }
+  .tabs { gap: 4px 22px; margin-bottom: 4px; }
+  .tab { font-size: 13.5px; padding: 8px 0; }
+  .item { grid-template-columns: 40px minmax(0, 1fr); gap: 12px; padding: 18px 0; }
+  .item__n { font-size: 17px; }
   .card { height: min(112vw, 450px); border-radius: 28px; }
 
   /* Cardápio: categorias numa só linha deslizável */
-  .cardapio__sub { margin: 0; font-size: 17px; }
+  .cardapio__sub { margin: 0; font-size: 16px; }
   .cardapio .menu__head { margin-bottom: 24px; }
   .ctabs {
     flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
@@ -497,14 +586,15 @@ html.intro-on .intro { display: block; position: fixed; inset: 0; z-index: 200; 
     mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 28px), transparent 100%);
   }
   .ctabs::-webkit-scrollbar { display: none; }
-  .ctab { flex: none; scroll-snap-align: center; padding: 11px 16px; font-size: 14px; }
+  .ctab { flex: none; scroll-snap-align: center; font-size: 13.5px; padding: 8px 0; }
+  .ctabs { gap: 0 22px; }
   .ctabs::after { content: ''; flex: 0 0 20px; }
   .cpanel { gap: 14px; }
-  .cpanel__head h3 { font-size: 42px; margin-bottom: 12px; }
+  .cpanel__head h3 { font-size: 30px; margin-bottom: 8px; }
   .eyebrow--rust { margin-bottom: 12px; }
   .cpanel__body { gap: 28px; }
-  .cgroup__label { font-size: 26px; }
-  .citem { padding: 16px 0; }
+  .cgroup__label { font-size: 19px; }
+  .citem { padding: 13px 0; }
 
   /* Lojas */
   .stores__inner { gap: 28px; }
@@ -513,7 +603,7 @@ html.intro-on .intro { display: block; position: fixed; inset: 0; z-index: 200; 
   .stores__intro .lead { margin-bottom: 22px; }
   .geo-msg { margin-top: 12px; }
   .store { padding: 26px 0; gap: 16px; }
-  .store h3 { font-size: 44px; }
+  .store h3 { font-size: 36px; }
   .store__title { margin-bottom: 8px; }
   .store__actions { width: 100%; }
 
@@ -522,8 +612,12 @@ html.intro-on .intro { display: block; position: fixed; inset: 0; z-index: 200; 
   .franquia .eyebrow { margin-bottom: 18px; }
   .franquia h2 { margin-bottom: 28px; }
   .franquia__facts { gap: 18px; margin-bottom: 28px; }
-  .franquia__facts p { font-size: 14px; }
-  .franquia__text { font-size: 17px; line-height: 1.65; gap: 18px; }
+  .franquia h2 { font-size: 32px; margin-bottom: 22px; }
+  .franquia__facts { gap: 18px; margin-bottom: 24px; }
+  .franquia__facts b { font-size: 32px; }
+  .franquia__facts .franquia__fact-text { font-size: 19px; }
+  .franquia__facts p { font-size: 12px; }
+  .franquia__text { font-size: 14px; line-height: 1.7; gap: 14px; }
   .franquia__cta { gap: 10px 12px; }
 
   /* Instagram */
@@ -535,8 +629,8 @@ html.intro-on .intro { display: block; position: fixed; inset: 0; z-index: 200; 
   /* Rodapé */
   .foot__inner { padding-top: 48px; padding-bottom: 20px; gap: 28px; align-items: flex-start; }
   .foot__brand img { height: 72px; }
-  .foot__brand p { font-size: 24px; }
-  .foot-nav { grid-template-columns: 1fr; gap: 2px; font-size: 16px; }
+  .foot__brand p { font-size: 22px; }
+  .foot-nav { grid-template-columns: 1fr; gap: 0; font-size: 15px; }
   .foot-nav a { padding: 11px 0; }
   .foot__legal { flex-direction: column; gap: 8px; padding-bottom: 32px; }
   .fab { right: 14px; bottom: 14px; }
