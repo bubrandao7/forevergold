@@ -526,6 +526,32 @@ html.intro-on .intro { display: block; position: fixed; inset: 0; z-index: 200; 
 .intro__count i { font-size: clamp(24px, 3vw, 38px); }
 .intro__skip { font-size: 11px; font-weight: 500; }
 
+/* ---------- Cápsulas translúcidas: quase da cor do fundo; sobressaem as letras e a bolinha ---------- */
+.btn, .btn--cta, .btn--ig, .btn--light {
+  background: var(--cap-bg, rgba(10, 59, 60, .06)); color: var(--cap-fg, var(--ink));
+  font-weight: 500;
+}
+.hero, .stores { --cap-bg: rgba(251, 246, 238, .2); --cap-hover: rgba(251, 246, 238, .34); }
+.insta { --cap-bg: rgba(10, 59, 60, .06); --cap-hover: rgba(10, 59, 60, .12); }
+.franquia { --cap-bg: rgba(251, 246, 238, .1); --cap-fg: var(--cream); --cap-hover: rgba(251, 246, 238, .18); }
+.btn .btn__dot, .btn--cta .btn__dot, .btn--ig .btn__dot, .btn--light .btn__dot {
+  display: grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 50%;
+  background: var(--orange); color: var(--ink); font-size: 14px;
+}
+.btn--pill { padding: 4px 4px 4px 18px; gap: 12px; }
+.btn--pill .btn__dot { width: 28px; height: 28px; font-size: 12px; }
+.store .btn { padding: 4px 4px 4px 18px; gap: 12px; }
+.store .btn .btn__dot { width: 28px; height: 28px; font-size: 12px; }
+@media (hover: hover) {
+  .btn:hover, .btn--cta:hover, .btn--ig:hover, .btn--light:hover, .store .btn:hover { background: var(--cap-hover, rgba(10, 59, 60, .12)); color: var(--cap-fg, var(--ink)); }
+  .btn--cta:hover { transform: translateY(-2px); }
+  .fab:hover { background: rgba(251, 246, 238, .8); color: var(--ink); }
+}
+.fab { background: rgba(251, 246, 238, .6); color: var(--ink); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 10px 30px -14px rgba(10, 59, 60, .4); }
+.btn.btn--ghost, .btn.btn--ghost:hover { background: none; padding: 6px 0; color: var(--ink); }
+.store__badge { background: rgba(10, 59, 60, .1); color: var(--ink); }
+.callout b { background: rgba(251, 246, 238, .14); color: var(--cream); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+
 /* ---------- Telemóvel (o desenho nasceu aqui) ---------- */
 @media (max-width: 640px) {
   :root { --sy: 64px; }
@@ -534,7 +560,7 @@ html.intro-on .intro { display: block; position: fixed; inset: 0; z-index: 200; 
   /* Cabeçalho: logótipo + «Encontrar loja» na 1.ª linha; atalhos deslizáveis na 2.ª */
   .top { padding-top: 14px; padding-bottom: 6px; gap: 10px 12px; }
   .brand img { height: 46px; }
-  .top > .btn { order: 2; padding: 9px 16px; font-size: 13.5px; }
+  .top > .btn { order: 2; font-size: 13.5px; }
   .nav {
     order: 3; flex: 0 0 100%; gap: 8px; margin: 0 calc(var(--gutter) * -1); padding: 2px var(--gutter) 4px;
     overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
