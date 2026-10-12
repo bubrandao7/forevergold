@@ -89,7 +89,7 @@ await test('atalho para o Brasil, secção Franquia e ligações do rodapé', as
   const br = p.locator('.nav .pill-link');
   assert.match(await br.getAttribute('href'), /sucobagaco\.com\.br/);
   assert.equal(await br.getAttribute('target'), '_blank');
-  assert.deepEqual(await p.locator('.nav a').allInnerTexts().then((a) => a.map((x) => x.replace(/\s*↗/, '').trim())), ['Cardápio', 'Lojas', 'Franquia', 'Instagram', 'Suco Bagaço Brasil', 'Encontrar loja']);
+  assert.deepEqual(await p.locator('.nav a').allInnerTexts().then((a) => a.map((x) => x.replace(/\s*↗/, '').trim())), ['Cardápio', 'Lojas', 'Franquia', 'Instagram', 'Suco Bagaço Brasil']);
   const f = p.locator('#franquia');
   assert.match(await f.locator('h2').innerText(), /Seja um franqueado\s+Suco Bagaço\./);
   assert.match(await f.innerText(), /10×[\s\S]*Melhor suco de São Paulo/);
@@ -116,7 +116,7 @@ await test('geolocalização aceite: lojas ordenadas e «Mais perto de ti»', as
 
 await test('geolocalização recusada: mensagem clara e lista intacta', async () => {
   const p = await newPage({ permissions: [] });
-  await p.locator('.nav [data-nearest]').click();
+  await p.locator('.top [data-nearest]').click();
   await p.waitForFunction(() => document.querySelector('[data-geo-msg]').textContent.length > 0);
   assert.match(await p.locator('[data-geo-msg]').innerText(), /Escolhe a loja na lista/);
   assert.deepEqual(await p.locator('.store h3').allInnerTexts(), ['Rio Tinto', 'Gaia', 'Lisboa', 'Portimão']);

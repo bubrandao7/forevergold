@@ -272,7 +272,12 @@ function setupMenu() {
       const panel = document.getElementById(t.getAttribute('aria-controls'));
       if (panel) panel.hidden = !on;
     });
-    if (focus) tab.focus();
+    if (focus) tab.focus({ preventScroll: true });
+    /* Carrossel no telemóvel: centra a categoria escolhida. */
+    const row = tab.parentElement;
+    if (row.scrollWidth > row.clientWidth) {
+      row.scrollTo({ left: tab.offsetLeft - (row.clientWidth - tab.offsetWidth) / 2, behavior: REDUCE ? 'auto' : 'smooth' });
+    }
     const panel = document.getElementById(tab.getAttribute('aria-controls'));
     if (panel && !REDUCE) $$('.citem', panel).forEach((el, i) => el.animate(
       [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }],
@@ -421,12 +426,15 @@ async function setupCups() {
   };
 
   if (canvases.hero) {
+    /* No telemóvel (palco quase quadrado) os copos juntam-se e a câmara aproxima-se, para não ficarem minúsculos. */
+    const narrow = window.matchMedia('(max-width: 640px)').matches;
+    const gap = narrow ? 1.68 : 1.95;
     cupsHero = mount(canvases.hero, {
-      env: '#19C2B6', view: { w: 6.1, h: 3.7, cy: 1.5 }, spin: 0, wait: !heroStarted,
+      env: '#19C2B6', view: narrow ? { w: 5.7, h: 3.6, cy: 1.45 } : { w: 6.1, h: 3.7, cy: 1.5 }, spin: 0, wait: !heroStarted,
       cups: [
-        { x: -1.95, z: -0.55, s: 0.95, flavor: '#E8283A', ry: 0.34, phase: 0.8, delay: 0.15 },
+        { x: -gap, z: -0.55, s: 0.95, flavor: '#E8283A', ry: 0.34, phase: 0.8, delay: 0.15 },
         { x: 0, z: 0.55, s: 1, flavor: '#FFC21F', ry: 0, phase: 0, delay: 0 },
-        { x: 1.95, z: -0.55, s: 0.95, flavor: '#FF6A13', ry: -0.34, phase: 2.2, delay: 0.3 },
+        { x: gap, z: -0.55, s: 0.95, flavor: '#FF6A13', ry: -0.34, phase: 2.2, delay: 0.3 },
       ],
     });
     if (cupsHero && heroStarted) cupsHero.start();
