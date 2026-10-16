@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bu Adventures</title>
+<meta name="description" content="Bu Adventures, an original 3D animated character and short series by Bruna Brandão.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&family=Outfit:wght@600..800&family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&display=swap">
+<style>
+/* Layout: the approved Bu Adventures case study, a 12-column editorial grid in the Pink Forest palette, with the portfolio's motion layer on top. */
+:root{
+  --wine:#4A0A1A; --red:#E5173F; --hot:#FC90C6; --cream:#FEE8E6; --soft:#FBD3E6; --soft2:#F9BDD9; --deep:#B80D2A; --rose:#DE4F7A;
+  --serif:'Cormorant',Georgia,serif; --heavyf:'Outfit','DM Sans',sans-serif; --sans:'DM Sans',system-ui,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{background:var(--cream);overflow-x:clip}
+body{margin:0;background:var(--cream);color:var(--wine);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+img,video{display:block;max-width:100%}
+img{height:auto}
+a{color:inherit}
+a:focus-visible,video:focus-visible,button:focus-visible{outline:3px solid var(--wine);outline-offset:3px}
+::selection{background:var(--hot);color:var(--wine)}
+.serif,.h2,.step .info h3,.wi h3,.nc h3,.mc p,.step .num,.mc .n,.wi .n{font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
+.serif{font-family:var(--serif);font-weight:300}
+.wrap{max-width:1312px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px),3vw);padding-right:max(16px,env(safe-area-inset-right,0px),3vw)}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+.h2{font-family:var(--serif);font-weight:300;font-size:clamp(48px,6.8vw,104px);line-height:.95;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.lead{margin:0;font-weight:300}
+p{font-weight:300}
+.light{font-style:normal}
+.heavy{font-style:italic;font-weight:500}
+.lead,.who .lead,.step .info p,.wi p,.nc p,.fcap,.meta span,.traits li,.rui-t p,.fr-h .lead{font-size:15px;line-height:1.7;font-weight:300}
+.ln{display:block;overflow:hidden;padding-bottom:.06em}
+.ln>span{display:inline-block}
+
+/* top bar */
+.bar{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:20px max(16px,env(safe-area-inset-right,0px),3vw) 20px max(16px,env(safe-area-inset-left,0px),3vw);transition:transform .8s var(--ease)}
+.bar.away{transform:translateY(-120%)}
+.bar a{text-decoration:none;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;display:inline-flex;gap:10px;align-items:center}
+.bar .arrow{display:inline-block;transition:transform .5s var(--ease)}
+.bar a:hover .arrow{transform:translateX(-6px)}
+.bar span{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;opacity:.7}
+.mag{display:inline-block;will-change:transform}
+
+/* curtain + cursor */
+#curtain{position:fixed;inset:0;z-index:80;background:var(--hot);pointer-events:none}
+.reduce #curtain,.no-gsap #curtain{display:none}
+#dot,#ring{position:fixed;left:0;top:0;z-index:90;pointer-events:none;border-radius:50%}
+#dot{width:6px;height:6px;background:var(--wine)}
+#ring{width:44px;height:44px;background:rgba(229,23,63,.16);display:grid;place-items:center;transition:width .5s var(--ease),height .5s var(--ease),background .4s}
+#ring b{font:700 10px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--cream);opacity:0;transition:opacity .3s}
+body.hovering #ring{width:84px;height:84px;background:rgba(229,23,63,.9)}
+body.hovering #ring b{opacity:1}
+@media (hover:none),(pointer:coarse){#dot,#ring{display:none}}
+
+/* hero */
+.hero{position:relative;overflow:hidden;background:var(--hot);color:var(--wine);padding-top:40px;padding-bottom:clamp(60px,9vw,130px)}
+.hgrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:clamp(12px,2vw,28px);align-items:end;margin-top:clamp(56px,6vw,96px)}
+.wm{grid-column:1/6;font-size:clamp(150px,26vw,400px);line-height:.85;display:flex}
+.wm.nm{line-height:.85;margin:0 0 -.045em;padding-bottom:0;color:var(--red)}
+.wm span{display:inline-block;transform-origin:50% 100%;will-change:transform}
+.vidcard{grid-column:6/13;position:relative}
+.vframe{overflow:hidden;background:var(--wine);aspect-ratio:16/9;max-width:100%}
+.vframe video{width:100%;height:100%;object-fit:cover;will-change:transform}
+.head{margin-top:clamp(56px,7vw,100px);display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:clamp(12px,2vw,28px);row-gap:28px}
+.head h1{grid-column:1/-1;margin:0;font-size:clamp(46px,8vw,128px);line-height:.94;letter-spacing:-.03em}
+.head h1 .heavy{color:var(--red)}
+.head .side{grid-column:1/-1}
+.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:clamp(36px,5vw,64px);max-width:560px}
+.meta b{display:block;font-size:9px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:4px;font-weight:600}
+.meta span{font-size:12px}
+
+/* idea */
+.idea{background:var(--cream);padding:clamp(70px,10vw,150px) 0}
+.igrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:clamp(12px,2vw,28px);row-gap:36px}
+.igrid .l{grid-column:1/4;padding-top:12px}
+.igrid .q{grid-column:4/13}
+.q h2{margin:0;font-size:clamp(46px,8vw,128px);line-height:.94;letter-spacing:-.03em}
+.q h2 em{color:var(--red)}
+.who{margin-top:clamp(40px,5vw,72px);max-width:62ch}
+.who p{margin:0}
+
+/* cast */
+.cast{background:var(--soft2);padding:clamp(70px,9vw,130px) 0;overflow:hidden}
+.nm{font-family:var(--heavyf);font-weight:700;letter-spacing:-.045em;line-height:.9;margin:0}
+.nm-sz,.fr-h .nm{font-size:clamp(80px,11vw,168px);color:var(--red)}
+.portrait{overflow:hidden;background:var(--rose);width:100%;aspect-ratio:3/4;max-width:100%}
+.portrait img{width:100%;height:118%;object-fit:cover;will-change:transform}
+.bu-row{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:clamp(16px,3vw,48px);row-gap:clamp(16px,2vw,28px);margin-top:28px}
+.bu-t{grid-column:1/6;grid-row:1;display:flex;flex-direction:column;gap:18px;align-self:start}
+.bu-i{grid-column:8/13;grid-row:1}
+.rui-t{grid-column:1/6;grid-row:2;align-self:start;display:flex;flex-direction:column;gap:18px;margin-top:clamp(60px,8vw,110px)}
+.rui-i{grid-column:8/13;grid-row:2;margin-top:clamp(60px,8vw,110px)}
+.traits{margin:14px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px}
+.traits li{display:flex;align-items:baseline;gap:14px;padding:8px 0}
+.traits li span{font-family:var(--serif);font-weight:500;font-size:22px;color:var(--red);min-width:2ch}
+.fr{margin-top:clamp(70px,9vw,130px)}
+.fr-h{display:flex;flex-direction:column;gap:18px}
+.fr-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,2vw,28px);margin-top:clamp(24px,3vw,40px)}
+.fr-3 .f{overflow:hidden;aspect-ratio:2/3;background:var(--rose);max-width:100%}
+.fr-3 img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.fr-3 .f:hover img{transform:scale(1.06)}
+
+/* world */
+.world{background:var(--wine);color:var(--cream);padding:clamp(70px,9vw,130px) 0}
+.forest{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:clamp(12px,2vw,28px);row-gap:28px;align-items:end}
+.forest .t{grid-column:1/6}
+.forest .p{grid-column:6/13;overflow:hidden;aspect-ratio:16/9;max-width:100%}
+.forest .p img{width:100%;height:100%;object-fit:cover;animation:kb 18s ease-in-out infinite alternate}
+
+/* film */
+.film{background:var(--hot);padding:clamp(70px,9vw,130px) 0}
+.filmgrid{display:flex;flex-direction:column;align-items:center;margin-top:clamp(28px,4vw,52px)}
+.player{width:min(100%,960px);overflow:hidden;background:var(--wine);position:relative}
+.player video{width:100%;aspect-ratio:1280/674;background:var(--wine)}
+.play{position:absolute;inset:0;display:grid;place-items:center;background:transparent;border:0;cursor:pointer;padding:0}
+.play i{width:clamp(76px,9vw,120px);height:clamp(76px,9vw,120px);border-radius:50%;background:var(--red);display:grid;place-items:center;transition:transform .6s var(--ease)}
+.play i::after{content:"";margin-left:6px;border-left:22px solid var(--cream);border-top:14px solid transparent;border-bottom:14px solid transparent}
+.play:hover i{transform:scale(1.1)}
+.play[hidden]{display:none}
+.fcap{width:min(100%,960px);display:flex;flex-direction:column;gap:4px;margin-top:14px;text-align:center}
+
+/* process */
+.proc{background:var(--cream);padding:clamp(70px,9vw,130px) 0 clamp(90px,11vw,160px)}
+.stack{margin-top:clamp(36px,5vw,64px);display:flex;flex-direction:column}
+.step{padding:clamp(36px,5vw,72px) 0;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:clamp(12px,2vw,28px);row-gap:24px;align-items:start}
+.step .num{font-family:var(--heavyf);font-weight:700;letter-spacing:-.045em;grid-column:1/4;font-size:clamp(90px,13vw,200px);line-height:.8;margin:0;color:var(--red);position:sticky;top:90px;align-self:start}
+.step .info{grid-column:4/7;display:flex;flex-direction:column;gap:14px;position:sticky;top:90px;align-self:start}
+.step .info h3{margin:0;font-family:var(--serif);font-weight:300;font-size:clamp(34px,4vw,56px);letter-spacing:-.02em;line-height:1}
+.step .info p{margin:0}
+.step .vis{grid-column:7/13;display:flex;gap:14px;justify-content:center}
+.step .vis img{object-fit:cover;min-width:0;flex:1 1 0;width:100%}
+.vis.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.vis .a34{aspect-ratio:3/4}
+.vis .a169{aspect-ratio:16/9}
+
+/* message */
+.msg{background:var(--cream);padding:clamp(20px,3vw,40px) 0 clamp(70px,9vw,130px)}
+.mgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(12px,1.6vw,24px);margin-top:clamp(56px,6vw,96px)}
+.mc{display:flex;flex-direction:column;gap:36px}
+.mc .n{font-family:var(--heavyf);font-weight:700;letter-spacing:-.045em;font-size:110px;line-height:.8;color:var(--red);display:inline-block;transform-origin:50% 100%}
+.mc p{margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(20px,1.7vw,24px);line-height:1.15}
+
+/* why */
+.why{background:var(--wine);color:var(--cream);padding:clamp(70px,9vw,130px) 0}
+.wgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(20px,3vw,48px);margin-top:clamp(36px,5vw,64px)}
+.wi h3{margin:0 0 14px;font-family:var(--serif);font-weight:300;font-size:clamp(30px,3vw,42px);letter-spacing:-.01em;line-height:1.05}
+.wi p{margin:0;color:var(--soft)}
+.wi .n{font-family:var(--heavyf);font-weight:700;letter-spacing:-.045em;font-size:56px;line-height:1;color:var(--hot);display:block;margin-bottom:14px}
+
+/* next */
+.next{background:var(--cream);padding:clamp(70px,9vw,130px) 0 clamp(50px,6vw,80px)}
+.ngrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,1.6vw,24px);margin-top:clamp(30px,4vw,56px)}
+.nc{display:flex;flex-direction:column;gap:14px;min-height:200px}
+.nc h3{margin:0;font-family:var(--serif);font-weight:300;font-size:clamp(32px,3vw,46px);letter-spacing:-.015em;line-height:1}
+.nc .k{font-size:12px;font-weight:700;letter-spacing:.18em;color:var(--deep)}
+.back{display:block;margin-top:clamp(60px,8vw,110px);text-decoration:none}
+.back small{display:block;font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--deep);margin-bottom:10px}
+.back b{font-family:var(--serif);font-weight:300;font-size:clamp(46px,8vw,120px);line-height:.95;letter-spacing:-.03em;display:inline-block;transition:transform .8s var(--ease),color .4s}
+.back:hover b{transform:translateX(2vw);color:var(--red);font-style:italic}
+.foot{margin-top:clamp(40px,6vw,80px);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-weight:600;font-size:14px}
+
+@keyframes kb{from{transform:scale(1.02)}to{transform:scale(1.12) translateX(-2%)}}
+@media (max-width:900px){
+  .wm,.vidcard,.head .side,.igrid .l,.igrid .q,.bu-t,.bu-i,.rui-i,.rui-t,.forest .t,.forest .p,.step .num,.step .info,.step .vis{grid-column:1/-1;grid-row:auto}
+  .vidcard{margin-top:36px}
+  .meta{max-width:none}
+  .mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .step .num,.step .info{position:static}
+  .wgrid,.ngrid{grid-template-columns:minmax(0,1fr)}
+  .bar span{display:none}
+}
+@media (max-width:560px){
+  .mgrid,.traits,.fr-3{grid-template-columns:minmax(0,1fr)}
+  .step .vis:not(.g2){flex-wrap:wrap}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div id="curtain" aria-hidden="true"></div>
+<div id="dot" aria-hidden="true"></div>
+<div id="ring" aria-hidden="true"><b>Play</b></div>
+
+<nav class="bar" aria-label="Project">
+  <a href="index.html#work" class="mag leave"><span class="arrow">←</span> Bruna Brandão</a>
+  <span>Project 01 · Bu Adventures</span>
+</nav>
+
+<main id="top">
+  <!-- HERO -->
+  <header class="hero">
+    <div class="wrap">
+      <div class="hgrid">
+        <p class="wm nm" aria-label="Bu"><span aria-hidden="true">B</span><span aria-hidden="true">u</span></p>
+        <div class="vidcard">
+          <div class="vframe">
+            <video src="assets/bu-adventures/hero-loop.mp4" poster="assets/bu-adventures/hero-poster.webp" autoplay muted loop playsinline aria-label="Bu with her crystal club, clip from the film"></video>
+          </div>
+        </div>
+      </div>
+      <div class="head">
+        <h1 class="serif"><span class="ln"><span class="light">Sweet on the outside.</span></span><span class="ln"><span class="heavy">Strong on the inside.</span></span></h1>
+        <div class="side up">
+          <p class="lead">An original character at the center of a Pixar-style 3D animated short series. Drawn, built in 3D, set in a world and brought to life with AI tools.</p>
+          <div class="meta">
+            <div><b>Made</b><span>Drawing, 3D characters, scenes, video</span></div>
+            <div><b>Date</b><span>Oct 2026</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- IDEA -->
+  <section class="idea" id="idea">
+    <div class="wrap">
+      <div class="igrid">
+        <div class="l"><span class="eyebrow" style="color:var(--deep)">The idea</span></div>
+        <div class="q">
+          <h2 class="serif" id="ideaH"><span class="light">You can be gentle</span><br>and still have <em class="heavy">boundaries.</em></h2>
+          <div class="who up"><p class="lead">She is soft, but she knows her worth. For anyone told to choose between being kind and being strong. Bu is an original character at the center of a Pixar-style 3D animated short series. Everything in her world looks soft and gentle, and that is the point. Bu is sweet but not a pushover. She carries a crystal spiked club, a small reminder that kindness does not mean weakness.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAST -->
+  <section class="cast" id="cast">
+    <div class="wrap">
+      <span class="eyebrow">Meet the cast</span>
+      <div class="bu-row">
+        <div class="bu-t up">
+          <h2 class="nm nm-sz">Bu</h2>
+          <p class="lead">A chocolate-brown bunny with turquoise eyes, hot-pink whiskers and adorable buck teeth. She lives in the Pink Forest, a calm, candy-colored world of cotton-candy trees, giant polka-dot mushrooms, a tiny house and neat rows of planted carrots.</p>
+          <ul class="traits">
+            <li><span>01</span>Turquoise eyes</li>
+            <li><span>02</span>Hot-pink whiskers</li>
+            <li><span>03</span>Buck teeth</li>
+            <li><span>04</span>Crystal spiked club</li>
+          </ul>
+        </div>
+        <div class="bu-i"><div class="portrait reveal"><img src="assets/bu-adventures/bu-3d.webp" alt="Bu in 3D, holding her crystal spiked club" width="1000" height="1338"></div></div>
+        <div class="rui-t up">
+          <h2 class="nm nm-sz">Rui</h2>
+          <p class="lead">Her counterpart: a darker, sly bunny who bends the rules. He is not a villain. He is the kind of character who makes mistakes, and who gets the chance to fix them.</p>
+        </div>
+        <div class="rui-i"><div class="portrait reveal"><img src="assets/bu-adventures/rui-3d.webp" alt="Rui, a darker bunny holding a carrot" width="1000" height="1338" loading="lazy"></div></div>
+      </div>
+
+      <div class="fr">
+        <div class="fr-h up">
+          <h2 class="nm">Friends</h2>
+          <p class="lead">And the friends who share the carrots and hugs.</p>
+        </div>
+        <div class="fr-3">
+          <div class="f"><img src="assets/bu-adventures/friend-1.webp" alt="Grey bunny friend laughing" width="848" height="1264" loading="lazy"></div>
+          <div class="f"><img src="assets/bu-adventures/friend-2.webp" alt="Grey bunny friend with eyes closed" width="848" height="1264" loading="lazy"></div>
+          <div class="f"><img src="assets/bu-adventures/friend-3.webp" alt="Grey bunny friend with hands together" width="848" height="1264" loading="lazy"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORLD -->
+  <section class="world" id="world">
+    <div class="wrap">
+      <div class="forest">
+        <div class="t up">
+          <span class="eyebrow" style="color:var(--hot)">The world</span>
+          <h2 class="nm" style="margin:18px 0 20px;color:var(--hot);font-size:clamp(60px,7vw,112px)">Pink Forest</h2>
+          <p class="lead" style="color:var(--soft)">Cotton-candy trees, giant polka-dot mushrooms, a tiny house and neat rows of planted carrots. Deliberately minimal, with little visual noise and a tight color palette.</p>
+        </div>
+        <div class="p reveal"><img src="assets/bu-adventures/pink-forest.webp" alt="An elder bunny with young ones in the Pink Forest" width="1600" height="893" loading="lazy"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILM -->
+  <section class="film" id="film">
+    <div class="wrap">
+      <span class="eyebrow">The film</span>
+      <h2 class="h2 rise" style="margin-top:18px"><span class="ln"><span class="light">A story that needs</span> <span class="heavy" style="color:var(--red)">no language.</span></span></h2>
+      <div class="filmgrid">
+        <div class="player" id="player">
+          <video id="film" src="assets/bu-adventures/film-short-01.mp4" poster="assets/bu-adventures/film-poster.webp" playsinline preload="metadata" aria-label="Bu Adventures, the full short film"></video>
+          <button class="play" id="play" type="button" aria-label="Play the film"><i></i></button>
+        </div>
+        <div class="fcap up"><span>Bu Adventures · Short 01</span><span>Images, animation and narration built with accessible AI tools</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="proc" id="process">
+    <div class="wrap">
+      <span class="eyebrow" style="color:var(--deep)">How it was made</span>
+      <h2 class="h2 rise" style="margin-top:18px"><span class="ln"><span class="light">From a sketch</span> <span class="heavy">to a film.</span></span></h2>
+      <div class="stack">
+        <article class="step">
+          <span class="num serif">01</span>
+          <div class="info"><h3>Draw</h3><p>It all started with the 2D drawing and the pink text. That was the base of everything.</p></div>
+          <div class="vis">
+            <img class="a34" src="assets/bu-adventures/process-drawing.webp" alt="The original 2D drawing of Bu" loading="lazy">
+            <img class="a34" src="assets/bu-adventures/process-text.webp" alt="The pink text slide that introduces Bu" loading="lazy">
+          </div>
+        </article>
+        <article class="step">
+          <span class="num serif">02</span>
+          <div class="info"><h3>Build in 3D</h3><p>Then every character was made in 3D, on a pink background.</p></div>
+          <div class="vis">
+            <img class="a34" src="assets/bu-adventures/bu-3d.webp" alt="Bu in 3D" loading="lazy">
+            <img class="a34" src="assets/bu-adventures/rui-3d.webp" alt="Rui in 3D" loading="lazy">
+            <img class="a34" src="assets/bu-adventures/friend-1.webp" alt="A friend in 3D" loading="lazy">
+          </div>
+        </article>
+        <article class="step">
+          <span class="num serif">03</span>
+          <div class="info"><h3>Make the world</h3><p>After the characters, the scenes: the Pink Forest and its quiet moments, from sharing carrots to the final hug.</p></div>
+          <div class="vis g2">
+            <img class="a169" src="assets/bu-adventures/scene-carrots.webp" alt="Scene: Bu and a friend sharing carrots" loading="lazy">
+            <img class="a169" src="assets/bu-adventures/scene-closeup.webp" alt="Scene: Bu close-up" loading="lazy">
+            <img class="a169" src="assets/bu-adventures/scene-apology.webp" alt="Scene: Rui apologizes" loading="lazy">
+            <img class="a169" src="assets/bu-adventures/scene-hug.webp" alt="Scene: Rui and Bu hugging" loading="lazy">
+          </div>
+        </article>
+        <article class="step">
+          <span class="num serif">04</span>
+          <div class="info"><h3>Bring it to life</h3><p>Later, the video was generated and the story moved from joy to tension to an apology, a hug and a new friendship.</p></div>
+          <div class="vis" style="flex-direction:column">
+            <img class="a169" src="assets/bu-adventures/film-poster.webp" alt="A frame from the final film" loading="lazy">
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- MESSAGE -->
+  <section class="msg">
+    <div class="wrap">
+      <span class="eyebrow" style="color:var(--deep)">The message</span>
+      <h2 class="h2 rise" style="margin-top:18px"><span class="ln"><span class="light">Four things</span> <span class="heavy">Bu says.</span></span></h2>
+      <div class="mgrid">
+        <div class="mc"><span class="n">1</span><p>Sharing makes everyone happier.</p></div>
+        <div class="mc"><span class="n">2</span><p>Setting boundaries is healthy.</p></div>
+        <div class="mc"><span class="n">3</span><p>Saying sorry takes courage.</p></div>
+        <div class="mc"><span class="n">4</span><p>Forgiveness can turn a conflict into a friendship.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section class="why">
+    <div class="wrap">
+      <span class="eyebrow" style="color:var(--hot)">Why it works</span>
+      <h2 class="h2 rise" style="margin-top:18px;max-width:18ch"><span class="ln"><span class="light">Clear, original,</span> <span class="heavy">easy to scale.</span></span></h2>
+      <div class="wgrid">
+        <div class="wi up"><span class="n serif">01</span><h3>A character you remember</h3><p>A clear, original character with a story that needs no language. Pink whiskers and a crystal club make Bu easy to recognize on any screen and easy to turn into merchandise.</p></div>
+        <div class="wi up"><span class="n serif">02</span><h3>A world built to repeat</h3><p>The Pink Forest is deliberately minimal, with little visual noise and a tight color palette. Episodes can be produced quickly while the world stays consistent.</p></div>
+        <div class="wi up"><span class="n serif">03</span><h3>Fast and low cost</h3><p>The whole concept, images, animation and narration, was built with accessible AI tools. That means fast iteration and low production cost.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEXT -->
+  <section class="next">
+    <div class="wrap">
+      <span class="eyebrow" style="color:var(--deep)">What's next</span>
+      <h2 class="h2 rise" style="margin-top:18px"><span class="ln"><span class="light">Where Bu</span> <span class="heavy">goes from here.</span></span></h2>
+      <div class="ngrid">
+        <div class="nc up"><span class="k">01</span><h3>Short-form content</h3><p class="lead">TikTok, Reels and YouTube Shorts.</p></div>
+        <div class="nc up"><span class="k">02</span><h3>A children's channel</h3><p class="lead">A home for the full series.</p></div>
+        <div class="nc up"><span class="k">03</span><h3>Licensing</h3><p class="lead">Plush toys, stickers and print.</p></div>
+      </div>
+      <a class="back leave" href="index.html#work"><small>Back to</small><b>All Bu projects</b></a>
+      <div class="foot"><span>© 2026 Bruna Brandão</span></div>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const root = document.documentElement;
+  const hasG = typeof gsap !== 'undefined';
+  if (reduce) root.classList.add('reduce');
+  if (!hasG) root.classList.add('no-gsap');
+
+  /* film: one big play button, then native controls */
+  const film = document.getElementById('film'), play = document.getElementById('play');
+  play.addEventListener('click', () => { film.controls = true; play.hidden = true; film.play().catch(()=>{}); });
+  film.addEventListener('play', () => { film.controls = true; play.hidden = true; });
+
+  /* top bar hides on the way down */
+  const bar = document.querySelector('.bar'); let lastY = 0;
+  addEventListener('scroll', () => { const y = scrollY; bar.classList.toggle('away', y > lastY && y > 200); lastY = y; }, {passive:true});
+
+  /* cursor + magnetic links */
+  if (fine && !reduce) {
+    const dot = document.getElementById('dot'), ring = document.getElementById('ring'), label = ring.querySelector('b');
+    let px=innerWidth/2, py=innerHeight/2, rx=px, ry=py;
+    addEventListener('pointermove', e => { px=e.clientX; py=e.clientY; dot.style.transform=`translate(${px-3}px,${py-3}px)`; }, {passive:true});
+    const loop = () => { rx+=(px-rx)*.16; ry+=(py-ry)*.16; ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`; requestAnimationFrame(loop); }; loop();
+    const hov = (sel, txt) => document.querySelectorAll(sel).forEach(el => {
+      el.addEventListener('pointerenter', () => { document.body.classList.add('hovering'); label.textContent = txt; });
+      el.addEventListener('pointerleave', () => document.body.classList.remove('hovering'));
+    });
+    hov('#play', 'Play'); hov('a', 'Go'); hov('.fr-3 .f, .portrait', 'Bu');
+    document.querySelectorAll('.mag').forEach(el => {
+      el.addEventListener('pointermove', e => { const r=el.getBoundingClientRect(); el.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.3}px,${(e.clientY-r.top-r.height/2)*.4}px)`; });
+      el.addEventListener('pointerleave', () => { el.style.transform=''; });
+    });
+  }
+
+  if (!hasG || reduce) return;
+
+  /* page transition out: the cream wipe rises, then we go */
+  const curtain = document.getElementById('curtain');
+  document.querySelectorAll('a.leave').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault(); const href = a.getAttribute('href');
+    gsap.set(curtain,{display:'block',background:'#F4F6F9',yPercent:100});
+    gsap.to(curtain,{yPercent:0,duration:.8,ease:'expo.inOut',onComplete:()=>{ location.href = href; }});
+  }));
+
+  gsap.registerPlugin(ScrollTrigger);
+  if (typeof Lenis !== 'undefined') {
+    const lenis = new Lenis({lerp:.09});
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t => lenis.raf(t*1000)); gsap.ticker.lagSmoothing(0);
+  }
+
+  /* entrance: pink curtain lifts, B and u pop, video rises, title lines rise */
+  const tl = gsap.timeline({defaults:{ease:'expo.out'}});
+  gsap.set('.wm span',{yPercent:40,scaleY:.6,autoAlpha:0});
+  gsap.set('.vframe',{y:80,autoAlpha:0,clipPath:'inset(18% 10% 18% 10%)'});
+  gsap.set('.head h1 .ln>span',{yPercent:110});
+  gsap.set('.head .side',{autoAlpha:0,y:24});
+  tl.to(curtain,{yPercent:-100,duration:1,ease:'expo.inOut'})
+    .to('.wm span',{yPercent:0,scaleY:1,autoAlpha:1,duration:1.1,ease:'elastic.out(1,.5)',stagger:.12},'-=.35')
+    .to('.vframe',{y:0,autoAlpha:1,clipPath:'inset(0% 0% 0% 0%)',duration:1.4},'-=.9')
+    .to('.head h1 .ln>span',{yPercent:0,duration:1.3,stagger:.1},'-=1')
+    .to('.head .side',{autoAlpha:1,y:0,duration:1.1},'-=.9')
+    .set(curtain,{display:'none'});
+
+  /* hero video drifts with scroll, the B and u part ways */
+  gsap.to('.vframe video',{scale:1.15,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
+  gsap.to('.wm span:nth-child(1)',{yPercent:-12,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
+  gsap.to('.wm span:nth-child(2)',{yPercent:-28,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
+
+  /* the idea lights up word by word */
+  const ideaH = document.getElementById('ideaH');
+  const words = [];
+  const wrapWords = node => [...node.childNodes].forEach(n => {
+    if (n.nodeType === 3) { const f = document.createDocumentFragment(); n.textContent.split(/(\s+)/).forEach(w => { if (!w) return; if (/^\s+$/.test(w)) { f.appendChild(document.createTextNode(w)); return; } const s=document.createElement('span'); s.textContent=w; s.style.opacity=.15; words.push(s); f.appendChild(s); }); n.replaceWith(f); }
+    else if (n.nodeType === 1 && n.tagName !== 'BR') wrapWords(n);
+  });
+  wrapWords(ideaH);
+  gsap.to(words,{opacity:1,stagger:.1,ease:'none',scrollTrigger:{trigger:ideaH,start:'top 80%',end:'bottom 45%',scrub:true}});
+
+  /* generic rises */
+  gsap.utils.toArray('.up').forEach(el => gsap.from(el,{y:40,autoAlpha:0,duration:1.2,ease:'expo.out',scrollTrigger:{trigger:el,start:'top 88%'}}));
+  gsap.utils.toArray('.rise').forEach(h => gsap.from(h.querySelectorAll('.ln>span'),{yPercent:110,duration:1.3,ease:'expo.out',scrollTrigger:{trigger:h,start:'top 88%'}}));
+  gsap.utils.toArray('.traits li').forEach((li,i) => gsap.from(li,{x:-24,autoAlpha:0,duration:.9,delay:i*.08,ease:'expo.out',scrollTrigger:{trigger:'.traits',start:'top 88%'}}));
+
+  /* portraits and the forest open like a curtain, then drift inside their frames */
+  gsap.utils.toArray('.reveal').forEach(box => {
+    gsap.fromTo(box,{clipPath:'inset(100% 0% 0% 0%)'},{clipPath:'inset(0% 0% 0% 0%)',duration:1.5,ease:'expo.inOut',scrollTrigger:{trigger:box,start:'top 82%'}});
+    const img = box.querySelector('img');
+    if (box.classList.contains('portrait')) gsap.fromTo(img,{yPercent:-12},{yPercent:0,ease:'none',scrollTrigger:{trigger:box,start:'top bottom',end:'bottom top',scrub:true}});
+  });
+
+  /* friends arrive one after another, then float at different speeds */
+  gsap.from('.fr-3 .f',{y:120,autoAlpha:0,duration:1.4,ease:'expo.out',stagger:.15,scrollTrigger:{trigger:'.fr-3',start:'top 85%'}});
+  gsap.utils.toArray('.fr-3 .f').forEach((f,i) => gsap.to(f,{y:(i-1)*-50,ease:'none',scrollTrigger:{trigger:'.fr-3',start:'top bottom',end:'bottom top',scrub:true}}));
+
+  /* the film grows into the screen */
+  gsap.fromTo('#player',{scale:.82},{scale:1,ease:'none',scrollTrigger:{trigger:'#player',start:'top bottom',end:'center center',scrub:true}});
+
+  /* process images slide in */
+  gsap.utils.toArray('.step').forEach(step => {
+    gsap.from(step.querySelectorAll('.vis img'),{y:80,autoAlpha:0,duration:1.3,ease:'expo.out',stagger:.1,scrollTrigger:{trigger:step,start:'top 80%'}});
+    gsap.from(step.querySelector('.num'),{yPercent:40,autoAlpha:0,duration:1.2,ease:'expo.out',scrollTrigger:{trigger:step,start:'top 80%'}});
+  });
+
+  /* the four messages pop like the B and u */
+  gsap.from('.mc .n',{yPercent:60,scaleY:.5,autoAlpha:0,duration:1.1,ease:'elastic.out(1,.5)',stagger:.12,scrollTrigger:{trigger:'.mgrid',start:'top 85%'}});
+  gsap.from('.mc p',{y:24,autoAlpha:0,duration:1,ease:'expo.out',stagger:.12,delay:.2,scrollTrigger:{trigger:'.mgrid',start:'top 85%'}});
+})();
+</script>
+</body>
+</html>
