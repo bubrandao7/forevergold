@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400;1,6..96,500&family=Jost:wght@400;500;600&display=swap">
 <script src="fg-app/fg-assets.js"></script>
 <script src="fg-app/fg-core.js"></script>
-<style>html,body{margin:0;background:radial-gradient(90% 70% at 50% 40%,#182B24 0%,#070D0B 70%) fixed #070D0B;overflow:hidden}.fgapp{font-family:Jost,sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}.fgapp *{box-sizing:border-box}.fgapp a{color:#EBD7A4;text-decoration:none}.fgapp a:hover{color:#F3E3B5}.fgapp button,.fgapp input,.fgapp textarea{font-family:inherit}.fgapp button:focus-visible,.fgapp a:focus-visible,.fgapp input:focus-visible,.fgapp textarea:focus-visible{outline:2px solid #C6A766;outline-offset:2px}.fgapp ::selection{background:rgba(198,167,102,.35)}.fgapp input::placeholder,.fgapp textarea::placeholder{color:#5E6A63}.fgapp [data-noscroll]::-webkit-scrollbar{display:none}</style>
+<style>html,body{margin:0;background:radial-gradient(90% 70% at 50% 40%,#182B24 0%,#070D0B 70%) fixed #070D0B;overflow:hidden}html:not(.fg-cover),html:not(.fg-cover) body{background:radial-gradient(90% 75% at 50% 42%,#FBF7EE 0%,#EFE6D4 80%) fixed #EFE6D4}.fgapp{font-family:Jost,sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}.fgapp *{box-sizing:border-box}.fgapp a{color:#EBD7A4;text-decoration:none}.fgapp a:hover{color:#F3E3B5}.fgapp button,.fgapp input,.fgapp textarea{font-family:inherit}.fgapp button:focus-visible,.fgapp a:focus-visible,.fgapp input:focus-visible,.fgapp textarea:focus-visible{outline:2px solid #C6A766;outline-offset:2px}.fgapp ::selection{background:rgba(198,167,102,.35)}.fgapp input::placeholder,.fgapp textarea::placeholder{color:#5E6A63}.fgapp [data-noscroll]::-webkit-scrollbar{display:none}</style>
 </helmet>
 <div class="fgapp" style="position:relative;width:100vw;height:100dvh;display:flex;align-items:center;justify-content:center">
 <div style="position:relative;flex:none;width:{{ fr.w }};height:{{ fr.h }};border-radius:{{ fr.radius }};box-shadow:{{ fr.shadow }};transform:{{ fr.scale }};overflow:hidden;background:#070D0B;color:#EEE7D7;font-family:Jost,sans-serif;isolation:isolate">
@@ -842,18 +842,18 @@
 </div>
 </x-dc>
 <style>
-.fgnav{position:fixed;z-index:200;font-family:Jost,system-ui,sans-serif;color:#F4EEE1;-webkit-font-smoothing:antialiased}
+.fgnav{position:fixed;z-index:200;font-family:Jost,system-ui,sans-serif;color:#11201A;-webkit-font-smoothing:antialiased}
 .fgnav.top{top:24px;left:max(24px,3vw)}
 .fgnav.bot{bottom:24px;left:max(24px,3vw);max-width:300px}
-.fgnav a{color:#F4EEE1;text-decoration:none;font-size:12px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;display:inline-flex;gap:10px;align-items:center}
+.fgnav a{color:#11201A;text-decoration:none;font-size:12px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;display:inline-flex;gap:10px;align-items:center}
 .fgnav a span{display:inline-block;transition:transform .5s cubic-bezier(.16,1,.3,1)}
 .fgnav a:hover span{transform:translateX(-6px)}
-.fgnav a:focus-visible{outline:2px solid #C6A766;outline-offset:4px}
+.fgnav a:focus-visible{outline:2px solid #77602C;outline-offset:4px}
 .fgnav h1{margin:22px 0 0;font-family:'Bodoni Moda',Georgia,serif;font-weight:400;font-size:clamp(34px,3.4vw,52px);line-height:1;letter-spacing:-.02em}
-.fgnav h1 em{background:linear-gradient(100deg,#B4944F 0%,#F0DDAA 35%,#C6A766 55%,#F3E3B5 80%,#B4944F 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:fgshine 7s linear infinite;padding-right:.06em}
+.fgnav h1 em{background:linear-gradient(100deg,#77602C 0%,#B4944F 35%,#6A5426 55%,#A88A48 80%,#77602C 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:fgshine 7s linear infinite;padding-right:.06em}
 @keyframes fgshine{to{background-position:-220% 0}}
-.fgnav p{margin:0;font-size:13px;font-weight:400;line-height:1.6;color:#8E8D82}
-.fgnav p b{color:#C6A766;font-weight:500}
+.fgnav p{margin:0;font-size:13px;font-weight:400;line-height:1.6;color:#5F5A4D}
+.fgnav p b{color:#77602C;font-weight:600}
 @media (max-width:1000px){.fgnav.bot{display:none}}
 @media (max-width:560px){.fgnav{display:none}}
 @media (prefers-reduced-motion:reduce){.fgnav h1 em{animation:none}}
