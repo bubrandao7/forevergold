@@ -6,8 +6,13 @@
 if (location.hash === '#cover') document.documentElement.classList.add('sb-cover');
 /* always open at the top of the site */
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-(function () { var top = function () { if (!location.hash || location.hash === '#cover') window.scrollTo(0, 0); };
-  top(); addEventListener('DOMContentLoaded', top); addEventListener('load', function () { top(); setTimeout(top, 80); }); addEventListener('pageshow', top); })();
+(function () {
+  var d = document.documentElement;
+  d.style.scrollBehavior = 'auto'; /* jump, never glide, while the page opens */
+  var top = function () { if (!location.hash || location.hash === '#cover') { try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); } catch (e) { window.scrollTo(0, 0); } } };
+  top(); addEventListener('DOMContentLoaded', top); addEventListener('pageshow', top);
+  addEventListener('load', function () { top(); setTimeout(top, 80); setTimeout(function () { top(); d.style.scrollBehavior = ''; }, 700); });
+})();
 </script>
 <style>
 .bb-back{position:fixed;left:max(18px,env(safe-area-inset-left,0px));bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:9999;color:#0A3B3C;text-shadow:0 0 12px rgba(255,255,255,.6);font:600 12px/1 Manrope,system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;display:inline-flex;gap:10px;align-items:center;padding:10px 4px}
