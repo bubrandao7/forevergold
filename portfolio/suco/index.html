@@ -2,7 +2,13 @@
 <title>Suco Bagaço website</title>
 <meta name="description" content="Sumos 100% naturais, cardápio completo, lojas e franquia da Suco Bagaço em Portugal.">
 <link rel="stylesheet" href="css/styles.css">
-<script>if (location.hash === '#cover') document.documentElement.classList.add('sb-cover');</script>
+<script>
+if (location.hash === '#cover') document.documentElement.classList.add('sb-cover');
+/* always open at the top of the site */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+(function () { var top = function () { if (!location.hash || location.hash === '#cover') window.scrollTo(0, 0); };
+  top(); addEventListener('DOMContentLoaded', top); addEventListener('load', function () { top(); setTimeout(top, 80); }); addEventListener('pageshow', top); })();
+</script>
 <style>
 .bb-back{position:fixed;left:max(18px,env(safe-area-inset-left,0px));bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:9999;color:#0A3B3C;text-shadow:0 0 12px rgba(255,255,255,.6);font:600 12px/1 Manrope,system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;display:inline-flex;gap:10px;align-items:center;padding:10px 4px}
 .bb-back span{display:inline-block;transition:transform .5s cubic-bezier(.16,1,.3,1)}
@@ -10,6 +16,10 @@
 .bb-back:focus-visible{outline:2px solid currentColor;outline-offset:4px}
 html.sb-cover .bb-back,html.sb-cover .skip{display:none}
 html.sb-cover,html.sb-cover body{overflow:hidden!important;pointer-events:none}
+html.sb-cover .top,html.sb-cover .hero__copy,html.sb-cover #conteudo,html.sb-cover .foot,html.sb-cover [data-intro]{display:none!important}
+html.sb-cover .hero{height:100vh;min-height:0}
+html.sb-cover .hero__body{display:block;padding:0;margin:0;max-width:none;height:100%}
+html.sb-cover .stage--hero{position:absolute;inset:0 7%;height:100%;margin:0}
 </style>
 <script src="js/boot.js"></script>
 <script type="application/ld+json">
