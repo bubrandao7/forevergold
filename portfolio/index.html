@@ -98,9 +98,9 @@ a:hover .roll span{transform:translateY(-50%)}
 .portrait{position:sticky;top:12vh;align-self:start}
 .portrait figure{margin:0;position:relative;will-change:transform}
 .portrait img{display:block;width:100%;height:auto;position:relative;z-index:1;-webkit-mask-image:linear-gradient(to bottom,#000 68%,transparent 97%),linear-gradient(to right,transparent 0,#000 14%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to bottom,#000 68%,transparent 97%),linear-gradient(to right,transparent 0,#000 14%);mask-composite:intersect}
-.spark{position:absolute;z-index:2;width:34px;height:34px;color:var(--deep)}
+.spark{position:absolute;z-index:2;width:34px;height:34px;color:rgba(255,255,255,.72);filter:drop-shadow(0 0 8px rgba(255,255,255,.6)) drop-shadow(0 2px 10px rgba(60,127,196,.18))}
 .spark svg{width:100%;height:100%;display:block}
-.spark.s1{top:8%;right:6%}.spark.s2{top:38%;left:-2%;width:22px;height:22px;color:var(--baby)}.spark.s3{bottom:16%;right:-3%;width:26px;height:26px}
+.spark.s1{top:8%;right:6%}.spark.s2{top:38%;left:-2%;width:22px;height:22px}.spark.s3{bottom:16%;right:-3%;width:26px;height:26px}
 .now{margin-top:22px;display:flex;gap:12px;align-items:baseline}
 .now .trait{font-family:var(--display);font-style:italic;font-size:30px;line-height:1;color:var(--deep);display:inline-block;overflow:hidden;height:1.15em}
 .now .trait i{display:block;font-style:italic}
@@ -114,19 +114,6 @@ a:hover .roll span{transform:translateY(-50%)}
 .trait-row h3{font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(44px,5.4vw,88px);line-height:.9;margin:0 0 18px;letter-spacing:-.01em}
 .trait-row p{margin:0;max-width:48ch}
 
-/* ——— craft ——— */
-.craft{padding-block:clamp(60px,10vw,150px)}
-.craft-head{display:flex;justify-content:space-between;align-items:baseline;gap:24px;flex-wrap:wrap;margin-bottom:clamp(30px,4vw,60px)}
-.craft ul{list-style:none;margin:0;padding:0}
-.craft li{position:relative}
-.craft li a{display:flex;align-items:baseline;gap:clamp(16px,3vw,40px);padding-block:clamp(6px,1vw,14px);transition:opacity .5s var(--ease)}
-.craft li .big{font-family:var(--display);font-weight:300;font-size:clamp(48px,9vw,160px);line-height:.95;letter-spacing:-.02em;transition:transform .7s var(--ease),color .5s}
-.craft li .what{max-width:30ch;font-size:17px;opacity:0;transform:translateY(10px);transition:opacity .5s var(--ease),transform .6s var(--ease)}
-.craft ul:hover li a{opacity:.22}
-.craft ul li a:hover,.craft ul li a:focus-visible{opacity:1}
-.craft li a:hover .big,.craft li a:focus-visible .big{transform:translateX(3vw);font-style:italic;color:var(--deep)}
-.craft li a:hover .what,.craft li a:focus-visible .what{opacity:1;transform:none}
-@media (hover:none){.craft li .what{opacity:1;transform:none}.craft ul:hover li a{opacity:1}}
 
 /* ——— work ——— */
 .work{padding-block:clamp(60px,8vw,120px)}
@@ -176,7 +163,7 @@ footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;paddin
   <a href="#top" class="mono mag" style="color:var(--ink)" aria-label="Bruna Brandão, back to top"><span class="brand-full">Bruna Brandão</span><span class="brand-short">Bu</span></a>
   <span class="where-wrap mono" id="where" aria-hidden="true"><span class="n"><i>01</i></span><span class="n"><i>Intro</i></span></span>
   <div class="links">
-    <a href="#work" class="mag"><span class="roll"><span data-t="Work">Work</span></span></a>
+    <a href="#work" class="mag"><span class="roll"><span data-t="Projects">Projects</span></span></a>
     <a href="#about" class="mag"><span class="roll"><span data-t="About">About</span></span></a>
     <a href="#hello" class="mag"><span class="roll"><span data-t="Say hello">Say hello</span></span></a>
   </div>
@@ -192,7 +179,7 @@ footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;paddin
     </h1>
     <div class="hero-foot">
       <div class="typer" aria-live="off">I make <span class="w" id="typed">illustrations</span><span class="caret"></span></div>
-      <p class="intro fade">I turn the spark of an idea into something you can see, feel and wander through.</p>
+      <p class="intro fade">I turn the spark of an idea into something you can see, feel and wander through. My world is built from color, music, spirituality and the quiet details most people walk past. I’m here to make things that move people, and to leave a trace of wonder wherever I go.</p>
     </div>
     <a href="#about" class="cue mono"><i></i>Scroll to meet me</a>
   </section>
@@ -254,21 +241,9 @@ footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;paddin
     </div>
   </section>
 
-  <!-- 03 CRAFT -->
-  <section class="craft wrap" data-sec="03" data-label="Craft" data-aura="craft">
-    <div class="craft-head"><span class="mono">What I do</span><span class="mono">Five crafts, one studio</span></div>
-    <ul>
-      <li><a href="#work"><span class="big">Drawing</span><span class="what">Illustration and characters, from the first pencil line to the final file.</span></a></li>
-      <li><a href="#work"><span class="big">Websites</span><span class="what">Sites that feel as careful as the brands behind them.</span></a></li>
-      <li><a href="#work"><span class="big">Mobile apps</span><span class="what">Apps designed for the person holding the phone.</span></a></li>
-      <li><a href="#work"><span class="big">Video</span><span class="what">Editing and motion that keep people watching.</span></a></li>
-      <li><a href="#work"><span class="big">AI</span><span class="what">New tools, used to bring ideas to life faster.</span></a></li>
-    </ul>
-  </section>
-
   <!-- 04 WORK -->
-  <section class="work wrap" id="work" data-sec="04" data-label="Work" data-aura="work">
-    <h2 class="h2 rise"><span class="line"><span>Selected</span></span><span class="line"><span><em class="blue">work</em></span></span></h2>
+  <section class="work wrap" id="work" data-sec="03" data-label="Projects" data-aura="work">
+    <h2 class="h2 rise"><span class="line"><span>Bu</span></span><span class="line"><span><em class="blue">projects</em></span></span></h2>
     <div class="frames">
       <figure class="frame" style="margin:0"><div class="plane"><div class="ghost"><b>01</b><span class="mono" style="color:var(--ink)">In the studio</span></div></div><figcaption class="mono"><span>Project one</span><span>2026</span></figcaption></figure>
       <figure class="frame" style="margin-left:0;margin-right:0;margin-bottom:0"><div class="plane"><div class="ghost"><b>02</b><span class="mono" style="color:var(--ink)">In the studio</span></div></div><figcaption class="mono"><span>Project two</span><span>2026</span></figcaption></figure>
@@ -278,7 +253,7 @@ footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;paddin
   </section>
 
   <!-- 05 HELLO -->
-  <section class="hello wrap" id="hello" data-sec="05" data-label="Hello" data-aura="hello">
+  <section class="hello wrap" id="hello" data-sec="04" data-label="Hello" data-aura="hello">
     <span class="mono">Say hello</span>
     <h2 id="together" aria-label="Let’s create something together.">Let’s create <em>something</em> together.</h2>
     <p class="fade">Have an idea, a brand or a product that needs a face, a site, an app or a film? I’d love to hear about it.</p>
@@ -347,7 +322,6 @@ footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;paddin
   const spots = {
     hero:  () => mobile()? {x:.7,y:.24,s:.85} : {x:.7,y:.42,s:1},
     about: () => mobile()? {x:.4,y:.35,s:.8} : {x:.25,y:.52,s:.95},
-    craft: () => ({x:.82,y:.5,s:.75}),
     work:  () => ({x:.5,y:.4,s:.7}),
     hello: () => ({x:.5,y:.52,s:1.35})
   };
@@ -412,7 +386,7 @@ footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;paddin
     const loop = () => { rx+=(px-rx)*.16; ry+=(py-ry)*.16; ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`; requestAnimationFrame(loop); };
     loop();
     document.querySelectorAll('a, .frame').forEach(el => {
-      el.addEventListener('pointerenter', () => { document.body.classList.add('hovering'); label.textContent = el.classList.contains('frame') ? 'Soon' : (el.closest('.craft') ? 'See' : 'Go'); boost = 1; });
+      el.addEventListener('pointerenter', () => { document.body.classList.add('hovering'); label.textContent = el.classList.contains('frame') ? 'Soon' : 'Go'; boost = 1; });
       el.addEventListener('pointerleave', () => { document.body.classList.remove('hovering'); boost = 0; });
     });
     /* magnetic links */
@@ -516,9 +490,6 @@ footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;paddin
     gsap.from(r.querySelector('h3'),{x:-40,autoAlpha:0,duration:1.3,ease:'expo.out',scrollTrigger:{trigger:r,start:'top 86%'}});
     gsap.from([r.querySelector('p'), r.querySelector('.num')],{y:24,autoAlpha:0,duration:1.2,ease:'expo.out',delay:.12,scrollTrigger:{trigger:r,start:'top 86%'}});
   });
-
-  /* craft list cascades in */
-  gsap.from('.craft li .big',{yPercent:60,autoAlpha:0,duration:1.3,ease:'expo.out',stagger:.08,scrollTrigger:{trigger:'.craft ul',start:'top 85%'}});
 
   /* work frames fly in from depth */
   gsap.from('.frame',{z:-400,y:120,autoAlpha:0,duration:1.6,ease:'expo.out',stagger:.14,transformPerspective:1200,scrollTrigger:{trigger:'.frames',start:'top 85%'}});
