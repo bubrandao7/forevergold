@@ -857,9 +857,10 @@
 @media (max-width:1000px){.fgnav.bot{display:none}}
 @media (max-width:560px){.fgnav{display:none}}
 @media (prefers-reduced-motion:reduce){.fgnav h1 em{animation:none}}
+html.fg-cover .fgnav{display:none}
 </style>
 <nav class="fgnav top" aria-label="Portfolio"><a href="index.html#work"><span>←</span> Bruna Brandão</a><h1>Forevergold<br><em>mobile App</em></h1></nav>
-<div class="fgnav bot"><p><b>Try it.</b> Tap “Entrar como cliente” to see what customers see, or swipe the name to a store and choose any 4-digit code, twice, to enter the team side.</p></div>
+<div class="fgnav bot"><p><b>Try it.</b> The app opens on the BU profile and enters the code <b>2727</b> for you. Explore the team side: the daily gold quote, the profit game, the chat and the stores.</p></div>
 
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
@@ -907,10 +908,27 @@ class Component extends DCLogic {
     this.lastNotif = Date.now();
     this.unsub = C.db.subscribe(() => this.sync());
     this._tick = setInterval(() => this.tick(), 1000);
-    const s = C.sessao.get(), acc = C.CONTAS.find((a) => a.id === s);
+    /* portfolio: always start on the BU profile with the code 2727; "#cover" shows only the daily quote, on a loop */
+    const cover = this.coverMode = location.hash === '#cover';
+    if (cover) document.documentElement.classList.add('fg-cover');
+    C.sessao.del();
+    const BU = Math.max(0, C.CONTAS.findIndex((a) => a.id === 'foreverbu'));
     const up = { ready: true, vw: window.innerWidth, vh: window.innerHeight, now: Date.now() };
-    if (acc) Object.assign(up, { screen: 'app', user: acc.id, accIdx: C.CONTAS.indexOf(acc) });
-    this.setState(up, () => { if (!acc) this.setAcc(0); this.fx(); this.clock(); });
+    this.setState(up, async () => {
+      this.fx(); this.clock();
+      try { const salt = C.sal(), hash = await C.hashPin('2727', salt); this.commit((d) => { d.pins.foreverbu = { salt, hash, at: Date.now() }; }); C.bloqueio.set('foreverbu', { fails: 0, until: 0 }); } catch (e) {}
+      if (cover) {
+        this.loginOk('foreverbu'); setTimeout(() => this.openEquipa('cot'), 60);
+        this._replay = setInterval(() => {
+          document.querySelectorAll('[data-a]').forEach((el) => { el._fgA = 0; });
+          document.querySelectorAll('[data-count]').forEach((el) => { el._fgT = null; el._fgV = 0; });
+          this.fx();
+        }, 7000);
+        return;
+      }
+      this.setAcc(BU);
+      setTimeout(() => ['2', '7', '2', '7'].forEach((d, i) => setTimeout(() => this.keyPress(d), i * 420)), 1400);
+    });
   }
   tick() {
     const n = Date.now(), st = this.state, up = {};
@@ -1536,7 +1554,7 @@ class Component extends DCLogic {
     return C.DIAS_L[d.getDay()] + ', ' + d.getDate() + ' de ' + C.MESES[d.getMonth()];
   }
   frame() {
-    const st = this.state, framed = st.vw > 560, sc = framed ? Math.max(.55, Math.min(1, (st.vh - 40) / 864, (st.vw - 32) / 410)) : 1;
+    const st = this.state, framed = this.coverMode || st.vw > 560, sc = this.coverMode ? Math.min((st.vh - 28) / 864, (st.vw - 28) / 410) : framed ? Math.max(.55, Math.min(1, (st.vh - 40) / 864, (st.vw - 32) / 410)) : 1;
     const top = framed ? '54px' : 'env(safe-area-inset-top, 0px)', bot = framed ? '0px' : 'env(safe-area-inset-bottom, 0px)';
     return { framed, w: framed ? '390px' : '100vw', h: framed ? '844px' : st.vh + 'px', radius: framed ? '56px' : '0px',
       shadow: framed ? '0 0 0 10px #020403, 0 0 0 11px #2C332F, 0 50px 90px -30px rgba(0,0,0,.8)' : 'none', scale: 'scale(' + sc.toFixed(4) + ')',
