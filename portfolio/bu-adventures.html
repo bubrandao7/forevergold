@@ -122,6 +122,12 @@ body.hovering #ring b{opacity:1}
 .play i::after{content:"";margin-left:6px;border-left:22px solid var(--cream);border-top:14px solid transparent;border-bottom:14px solid transparent}
 .play:hover i{transform:scale(1.1)}
 .play[hidden]{display:none}
+.lightbox{position:fixed;inset:0;z-index:85;background:rgba(40,4,14,.94);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.lightbox[hidden]{display:none}
+.lightbox .stage{width:min(100%,calc((100vh - 120px) * 1280 / 674),1400px)}
+.lightbox video{width:100%;aspect-ratio:1280/674;background:#000}
+.lightbox .close{position:absolute;top:max(18px,env(safe-area-inset-top,0px));right:max(18px,env(safe-area-inset-right,0px));background:transparent;border:0;color:var(--cream);font:700 12px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;cursor:pointer;padding:14px}
+.lightbox .close:hover{color:var(--hot)}
 .fcap{width:min(100%,960px);display:flex;flex-direction:column;gap:4px;margin-top:14px;text-align:center}
 
 /* process */
@@ -289,8 +295,12 @@ body.hovering #ring b{opacity:1}
       <h2 class="h2 rise" style="margin-top:18px"><span class="ln"><span class="light">A story that needs</span> <span class="heavy" style="color:var(--red)">no language.</span></span></h2>
       <div class="filmgrid">
         <div class="player" id="player">
-          <video id="film" src="assets/bu-adventures/film-short-01.mp4" poster="assets/bu-adventures/film-poster.webp" playsinline preload="metadata" aria-label="Bu Adventures, the full short film"></video>
+          <video id="movie" src="assets/bu-adventures/film-short-01.mp4" poster="assets/bu-adventures/film-poster.webp" playsinline preload="metadata" aria-label="Bu Adventures, the full short film"></video>
           <button class="play" id="play" type="button" aria-label="Play the film"><i></i></button>
+        </div>
+        <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Bu Adventures, the full short film">
+          <button class="close" id="close" type="button">Close ✕</button>
+          <div class="stage" id="stage"></div>
         </div>
         <div class="fcap up"><span>Bu Adventures · Short 01</span><span>Images, animation and narration built with accessible AI tools</span></div>
       </div>
@@ -396,10 +406,30 @@ body.hovering #ring b{opacity:1}
   if (reduce) root.classList.add('reduce');
   if (!hasG) root.classList.add('no-gsap');
 
-  /* film: one big play button, then native controls */
-  const film = document.getElementById('film'), play = document.getElementById('play');
-  play.addEventListener('click', () => { film.controls = true; play.hidden = true; film.play().catch(()=>{}); });
-  film.addEventListener('play', () => { film.controls = true; play.hidden = true; });
+  /* always open a project at its first screen */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  const toTop = () => { if (!location.hash) { scrollTo(0,0); if (window.__lenis) window.__lenis.scrollTo(0,{immediate:true}); } };
+  toTop(); addEventListener('DOMContentLoaded', toTop); addEventListener('load', () => { toTop(); setTimeout(toTop, 60); });
+  addEventListener('pageshow', toTop);
+
+  /* film: the play button opens it in a still, full-screen viewer; the page stops moving until you close it */
+  const film = document.getElementById('movie'), play = document.getElementById('play');
+  const player = document.getElementById('player'), box = document.getElementById('lightbox'), stage = document.getElementById('stage'), closeBtn = document.getElementById('close');
+  const openFilm = () => {
+    box.hidden = false; stage.appendChild(film); film.controls = true;
+    if (window.__lenis) window.__lenis.stop(); document.documentElement.style.overflow = 'hidden';
+    film.muted = false;
+    film.play().catch(() => { film.muted = true; film.play().catch(()=>{}); });
+    closeBtn.focus();
+  };
+  const closeFilm = () => {
+    film.pause(); film.controls = false; player.insertBefore(film, play); box.hidden = true;
+    document.documentElement.style.overflow = ''; if (window.__lenis) window.__lenis.start(); play.focus();
+  };
+  play.addEventListener('click', openFilm);
+  closeBtn.addEventListener('click', closeFilm);
+  box.addEventListener('click', e => { if (e.target === box) closeFilm(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && !box.hidden) closeFilm(); });
 
   /* top bar hides on the way down */
   const bar = document.querySelector('.bar'); let lastY = 0;
@@ -415,7 +445,7 @@ body.hovering #ring b{opacity:1}
       el.addEventListener('pointerenter', () => { document.body.classList.add('hovering'); label.textContent = txt; });
       el.addEventListener('pointerleave', () => document.body.classList.remove('hovering'));
     });
-    hov('#play', 'Play'); hov('a', 'Go'); hov('.fr-3 .f, .portrait', 'Bu');
+    hov('#play', 'Play'); hov('#close', 'Close'); hov('a', 'Go'); hov('.fr-3 .f, .portrait', 'Bu');
     document.querySelectorAll('.mag').forEach(el => {
       el.addEventListener('pointermove', e => { const r=el.getBoundingClientRect(); el.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.3}px,${(e.clientY-r.top-r.height/2)*.4}px)`; });
       el.addEventListener('pointerleave', () => { el.style.transform=''; });
@@ -434,7 +464,7 @@ body.hovering #ring b{opacity:1}
 
   gsap.registerPlugin(ScrollTrigger);
   if (typeof Lenis !== 'undefined') {
-    const lenis = new Lenis({lerp:.09});
+    const lenis = new Lenis({lerp:.09}); window.__lenis = lenis; lenis.scrollTo(0,{immediate:true});
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add(t => lenis.raf(t*1000)); gsap.ticker.lagSmoothing(0);
   }
@@ -484,7 +514,7 @@ body.hovering #ring b{opacity:1}
   gsap.utils.toArray('.fr-3 .f').forEach((f,i) => gsap.to(f,{y:(i-1)*-50,ease:'none',scrollTrigger:{trigger:'.fr-3',start:'top bottom',end:'bottom top',scrub:true}}));
 
   /* the film grows into the screen */
-  gsap.fromTo('#player',{scale:.82},{scale:1,ease:'none',scrollTrigger:{trigger:'#player',start:'top bottom',end:'center center',scrub:true}});
+  gsap.from('#player',{y:80,autoAlpha:0,duration:1.4,ease:'expo.out',scrollTrigger:{trigger:'#player',start:'top 85%'}});
 
   /* process images slide in */
   gsap.utils.toArray('.step').forEach(step => {
