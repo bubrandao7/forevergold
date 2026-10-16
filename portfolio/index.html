@@ -1,0 +1,526 @@
+<title>Bruna Brandão</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Bruna Brandão, designer and digital creator based in Porto, Portugal.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400;1,500&family=Hanken+Grotesk:wght@300;400;500&family=DM+Mono:wght@400&display=swap">
+<style>
+/* Layout: a porcelain page with one living baby-blue aura that travels with the story — hero, about, work, hello. */
+:root{
+  --porcelain:#F4F6F9;   /* page */
+  --ink:#0F1420;         /* text */
+  --mist:#687286;        /* quiet text */
+  --baby:#A9D7F7;        /* the aura */
+  --ice:#DCEFFF;         /* soft highlight */
+  --deep:#3C7FC4;        /* accent word */
+  --display:"Cormorant", "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --text:"Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --mono:"DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --gut:max(16px, env(safe-area-inset-left, 0px));
+  --gutR:max(16px, env(safe-area-inset-right, 0px));
+  --ease:cubic-bezier(.16,1,.3,1);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{background:var(--porcelain);overflow-x:hidden;overflow-x:clip}
+main,footer{overflow-x:clip}
+body{background:var(--porcelain);color:var(--ink);font-family:var(--text);font-weight:300;font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--baby);color:var(--ink)}
+a{color:inherit;text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--deep);outline-offset:6px}
+.wrap{padding-left:calc(var(--gut) + 3vw);padding-right:calc(var(--gutR) + 3vw)}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mist);line-height:1.4}
+em,.it{font-family:var(--display);font-style:italic;font-weight:400}
+.blue{color:var(--deep)}
+
+/* ——— aura ——— */
+#aura{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;filter:blur(46px) saturate(1.15);opacity:.95}
+main,nav,footer{position:relative;z-index:2}
+
+/* ——— intro curtain ——— */
+#curtain{position:fixed;inset:0;z-index:50;background:var(--porcelain);display:grid;place-items:center;pointer-events:none}
+#curtain span{font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(90px,18vw,240px);line-height:1;color:var(--ink);display:inline-block}
+.no-js #curtain,.reduce #curtain{display:none}
+
+/* ——— cursor ——— */
+#dot,#ring{position:fixed;left:0;top:0;z-index:60;pointer-events:none;border-radius:50%;transform:translate(-50%,-50%)}
+#dot{width:6px;height:6px;background:var(--ink)}
+#ring{width:44px;height:44px;background:rgba(169,215,247,.35);backdrop-filter:blur(2px);display:grid;place-items:center;transition:width .5s var(--ease),height .5s var(--ease),background .4s}
+#ring b{font:400 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink);opacity:0;transition:opacity .3s}
+body.hovering #ring{width:84px;height:84px;background:rgba(169,215,247,.7)}
+body.hovering #ring b{opacity:1}
+@media (hover:none),(pointer:coarse){#dot,#ring{display:none}}
+
+/* ——— nav ——— */
+nav{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding-block:22px;transition:transform .8s var(--ease)}
+nav.away{transform:translateY(-120%)}
+nav .links{display:flex;gap:clamp(18px,4vw,56px)}
+nav a{display:inline-block;font-size:14px;font-weight:400;letter-spacing:.02em}
+.mag{display:inline-block;will-change:transform}
+.roll{display:inline-flex;overflow:hidden;height:1.4em;vertical-align:bottom}
+.roll span{display:block;transition:transform .6s var(--ease)}
+.roll span::after{content:attr(data-t);display:block}
+a:hover .roll span{transform:translateY(-50%)}
+#where{display:inline-flex;gap:10px;align-items:baseline}
+#where .n{display:inline-block;overflow:hidden;height:1.4em}
+#where .n i{display:block;font-style:normal;transition:transform .7s var(--ease)}
+
+/* ——— hero ——— */
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding-block:120px 80px}
+.hero .eyebrow{display:flex;gap:28px;flex-wrap:wrap;margin-bottom:clamp(20px,3vw,40px)}
+.name{font-family:var(--display);font-weight:300;font-size:clamp(64px,13.2vw,232px);line-height:.86;letter-spacing:-.025em;margin:0}
+.name .line{display:block;overflow:hidden;padding-bottom:.06em}
+.name .line:nth-child(2){padding-left:12vw}
+.name .ch{display:inline-block;will-change:transform}
+.name em{font-weight:300}
+.hero-foot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(24px,6vw,120px);align-items:end;margin-top:clamp(36px,5vw,72px)}
+.typer{font-family:var(--display);font-size:clamp(28px,3.4vw,50px);line-height:1.1;font-weight:300}
+.typer .w{font-style:italic;color:var(--deep)}
+.caret{display:inline-block;width:2px;height:.9em;background:var(--deep);margin-left:4px;vertical-align:-.08em;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.intro{max-width:46ch;margin:0}
+.cue{margin-top:clamp(40px,7vh,80px);display:flex;align-items:center;gap:14px}
+.cue i{width:10px;height:10px;border-radius:50%;background:var(--ink);opacity:.35;animation:bob 2.2s var(--ease) infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
+
+/* ——— marquee ——— */
+.marquee{overflow:hidden;padding-block:clamp(40px,8vw,110px);white-space:nowrap}
+.marquee .track{display:inline-flex;will-change:transform}
+.marquee span{font-family:var(--display);font-weight:300;font-size:clamp(56px,10vw,170px);line-height:1;padding-right:.35em;letter-spacing:-.02em}
+.marquee span:nth-child(even){font-style:italic;color:var(--deep)}
+
+/* ——— about ——— */
+.about{padding-block:clamp(60px,10vw,140px)}
+.h2{font-family:var(--display);font-weight:300;font-size:clamp(46px,7.4vw,124px);line-height:.95;letter-spacing:-.02em;margin:0 0 clamp(40px,6vw,90px);text-wrap:balance}
+.h2 .line{display:block;overflow:hidden;padding-bottom:.08em}
+.h2 .line>span{display:inline-block}
+.about-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(32px,7vw,130px)}
+.portrait{position:sticky;top:12vh;align-self:start}
+.portrait figure{margin:0;position:relative;will-change:transform}
+.portrait img{display:block;width:100%;height:auto;position:relative;z-index:1;-webkit-mask-image:linear-gradient(to bottom,#000 68%,transparent 97%),linear-gradient(to right,transparent 0,#000 14%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to bottom,#000 68%,transparent 97%),linear-gradient(to right,transparent 0,#000 14%);mask-composite:intersect}
+.spark{position:absolute;z-index:2;width:34px;height:34px;color:var(--deep)}
+.spark svg{width:100%;height:100%;display:block}
+.spark.s1{top:8%;right:6%}.spark.s2{top:38%;left:-2%;width:22px;height:22px;color:var(--baby)}.spark.s3{bottom:16%;right:-3%;width:26px;height:26px}
+.now{margin-top:22px;display:flex;gap:12px;align-items:baseline}
+.now .trait{font-family:var(--display);font-style:italic;font-size:30px;line-height:1;color:var(--deep);display:inline-block;overflow:hidden;height:1.15em}
+.now .trait i{display:block;font-style:italic}
+.lead{font-family:var(--display);font-weight:300;font-size:clamp(30px,3.3vw,52px);line-height:1.12;margin:0 0 clamp(50px,7vw,100px);text-wrap:balance}
+.lead .wd{opacity:.2;transition:opacity .2s}
+.traits{display:flex;flex-direction:column;gap:clamp(56px,8vw,110px)}
+.trait-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(20px,3vw,44px);align-items:start}
+.trait-row .num{padding-top:14px}
+.trait-row h3{font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(44px,5.4vw,88px);line-height:.9;margin:0 0 18px;letter-spacing:-.01em}
+.trait-row p{margin:0;max-width:48ch}
+
+/* ——— craft ——— */
+.craft{padding-block:clamp(60px,10vw,150px)}
+.craft-head{display:flex;justify-content:space-between;align-items:baseline;gap:24px;flex-wrap:wrap;margin-bottom:clamp(30px,4vw,60px)}
+.craft ul{list-style:none;margin:0;padding:0}
+.craft li{position:relative}
+.craft li a{display:flex;align-items:baseline;gap:clamp(16px,3vw,40px);padding-block:clamp(6px,1vw,14px);transition:opacity .5s var(--ease)}
+.craft li .big{font-family:var(--display);font-weight:300;font-size:clamp(48px,9vw,160px);line-height:.95;letter-spacing:-.02em;transition:transform .7s var(--ease),color .5s}
+.craft li .what{max-width:30ch;font-size:17px;opacity:0;transform:translateY(10px);transition:opacity .5s var(--ease),transform .6s var(--ease)}
+.craft ul:hover li a{opacity:.22}
+.craft ul li a:hover,.craft ul li a:focus-visible{opacity:1}
+.craft li a:hover .big,.craft li a:focus-visible .big{transform:translateX(3vw);font-style:italic;color:var(--deep)}
+.craft li a:hover .what,.craft li a:focus-visible .what{opacity:1;transform:none}
+@media (hover:none){.craft li .what{opacity:1;transform:none}.craft ul:hover li a{opacity:1}}
+
+/* ——— work ——— */
+.work{padding-block:clamp(60px,8vw,120px)}
+.work .frames{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,2.4vw,36px);perspective:1400px}
+.frame{display:block;position:relative}
+.frame .plane{aspect-ratio:4/5;max-width:100%;position:relative;overflow:hidden;transform-style:preserve-3d;will-change:transform;transition:transform .8s var(--ease);background:
+  radial-gradient(120% 90% at var(--mx,30%) var(--my,20%),#FFFFFF 0%,var(--ice) 34%,var(--baby) 70%,#8EC3EE 100%)}
+.frame .plane .ghost{position:absolute;inset:auto 0 0 0;padding:clamp(14px,1.6vw,24px);display:flex;justify-content:space-between;align-items:end}
+.frame .plane .ghost b{font-family:var(--display);font-weight:300;font-style:italic;font-size:clamp(70px,9vw,150px);line-height:.8;color:rgba(255,255,255,.85)}
+.frame figcaption{display:flex;justify-content:space-between;gap:12px;margin-top:16px}
+.frame:nth-child(2){margin-top:clamp(40px,8vw,140px)}
+.frame:nth-child(3){margin-top:clamp(20px,4vw,70px)}
+.soon{margin-top:clamp(36px,5vw,70px);max-width:46ch}
+
+/* ——— hello ——— */
+.hello{min-height:90svh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding-block:120px}
+.hello h2{font-family:var(--display);font-weight:300;font-size:clamp(54px,11vw,200px);line-height:.9;letter-spacing:-.025em;margin:0;text-wrap:balance}
+.hello h2 .ch{display:inline-block;will-change:transform}
+.hello p{margin:clamp(28px,4vw,48px) 0 0;max-width:40ch;text-wrap:pretty}
+footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:28px 34px}
+
+/* ——— small screens ——— */
+@media (max-width:860px){
+  .hero-foot,.about-grid{grid-template-columns:minmax(0,1fr)}
+  .portrait{position:relative;top:0;max-width:440px}
+  .name .line:nth-child(2){padding-left:8vw}
+  .work .frames{grid-template-columns:minmax(0,1fr)}
+  .frame:nth-child(n){margin-top:0}
+  #where.where-wrap{display:none}
+  nav .links{gap:18px}
+  nav .brand-full{display:none}
+  .name{font-size:19vw}
+}
+@media (min-width:861px){nav .brand-short{display:none}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .lead .wd{opacity:1}
+}
+</style>
+
+<canvas id="aura" aria-hidden="true"></canvas>
+<div id="curtain" aria-hidden="true"><span>Hi</span></div>
+<div id="dot" aria-hidden="true"></div>
+<div id="ring" aria-hidden="true"><b>View</b></div>
+
+<nav class="wrap" aria-label="Main">
+  <a href="#top" class="mono mag" style="color:var(--ink)" aria-label="Bruna Brandão, back to top"><span class="brand-full">Bruna Brandão</span><span class="brand-short">Bu</span></a>
+  <span class="where-wrap mono" id="where" aria-hidden="true"><span class="n"><i>01</i></span><span class="n"><i>Intro</i></span></span>
+  <div class="links">
+    <a href="#work" class="mag"><span class="roll"><span data-t="Work">Work</span></span></a>
+    <a href="#about" class="mag"><span class="roll"><span data-t="About">About</span></span></a>
+    <a href="#hello" class="mag"><span class="roll"><span data-t="Say hello">Say hello</span></span></a>
+  </div>
+</nav>
+
+<main id="top">
+  <!-- 01 HERO -->
+  <section class="hero wrap" data-sec="01" data-label="Intro" data-aura="hero">
+    <div class="eyebrow mono"><span>Portfolio · 2026</span><span>Porto, Portugal</span><span id="clock">Porto time</span></div>
+    <h1 class="name" aria-label="Bruna Brandão">
+      <span class="line" aria-hidden="true"><span class="split">Bruna</span></span>
+      <span class="line" aria-hidden="true"><em class="split">Brandão</em></span>
+    </h1>
+    <div class="hero-foot">
+      <div class="typer" aria-live="off">I make <span class="w" id="typed">illustrations</span><span class="caret"></span></div>
+      <p class="intro fade">I’m a designer and digital creator based in Porto, Portugal. I draw, build websites and mobile apps, edit video, and bring ideas to life with AI. From the first sketch to the final product, I do it all in one place.</p>
+    </div>
+    <a href="#about" class="cue mono"><i></i>Scroll to meet me</a>
+  </section>
+
+  <!-- marquee -->
+  <div class="marquee" aria-hidden="true"><div class="track" id="track">
+    <span>Draw</span><span>Build</span><span>Edit</span><span>Imagine</span><span>Draw</span><span>Build</span><span>Edit</span><span>Imagine</span>
+  </div></div>
+
+  <!-- 02 ABOUT -->
+  <section class="about wrap" id="about" data-sec="02" data-label="About" data-aura="about">
+    <h2 class="h2 rise"><span class="line"><span>The person behind</span></span><span class="line"><span>the work <em class="blue">(Bu)</em></span></span></h2>
+    <div class="about-grid">
+      <div class="portrait">
+        <figure id="fig">
+          <img src="assets/bu.webp" alt="Portrait of Bruna Brandão" width="900" height="827" loading="eager" decoding="async">
+          <span class="spark s1"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 0c.9 6.6 4.5 10.6 12 12-7.5 1.4-11.1 5.4-12 12-.9-6.6-4.5-10.6-12-12C7.5 10.6 11.1 6.6 12 0Z"/></svg></span>
+          <span class="spark s2"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 0c.9 6.6 4.5 10.6 12 12-7.5 1.4-11.1 5.4-12 12-.9-6.6-4.5-10.6-12-12C7.5 10.6 11.1 6.6 12 0Z"/></svg></span>
+          <span class="spark s3"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 0c.9 6.6 4.5 10.6 12 12-7.5 1.4-11.1 5.4-12 12-.9-6.6-4.5-10.6-12-12C7.5 10.6 11.1 6.6 12 0Z"/></svg></span>
+        </figure>
+        <div class="now"><span class="mono">Right now, reading</span><span class="trait" id="trait"><i>Dreamer</i></span></div>
+      </div>
+
+      <div>
+        <p class="lead" id="lead">I’m a dreamer, but the kind who draws the dream and makes it work.</p>
+        <div class="traits">
+          <article class="trait-row" data-trait="Dreamer">
+            <span class="num mono">01</span>
+            <div><h3>Dreamer</h3><p>I have real faith in the future and an ambition that won’t let me stand still. Every project is a step toward something bigger.</p></div>
+          </article>
+          <article class="trait-row" data-trait="Intense">
+            <span class="num mono">02</span>
+            <div><h3>Intense</h3><p>I’m intense. When I commit to an idea, I give it everything, and you can see it in the details.</p></div>
+          </article>
+          <article class="trait-row" data-trait="Sensitive">
+            <span class="num mono">03</span>
+            <div><h3>Sensitive</h3><p>I’m sensitive, and that’s my best tool. I understand how people feel when they see an illustration, open a website, or use an app. I design for the person using it, not just to look good.</p></div>
+          </article>
+          <article class="trait-row" data-trait="Intuitive">
+            <span class="num mono">04</span>
+            <div><h3>Intuitive</h3><p>I have strong intuition. I know when a color, a card, or a screen is right, even before I can explain why.</p></div>
+          </article>
+          <article class="trait-row" data-trait="Big-hearted">
+            <span class="num mono">05</span>
+            <div><h3>Big-hearted</h3><p>I have a big heart, and my clients feel it. I listen, I care, and I genuinely want things to go well.</p></div>
+          </article>
+          <article class="trait-row" data-trait="Curious">
+            <span class="num mono">06</span>
+            <div><h3>Curious</h3><p>I’m curious and driven by excitement. I’m always learning something new (AI, video, code) and combining it in ways people don’t expect.</p></div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 CRAFT -->
+  <section class="craft wrap" data-sec="03" data-label="Craft" data-aura="craft">
+    <div class="craft-head"><span class="mono">What I do</span><span class="mono">Five crafts, one studio</span></div>
+    <ul>
+      <li><a href="#work"><span class="big">Drawing</span><span class="what">Illustration and characters, from the first pencil line to the final file.</span></a></li>
+      <li><a href="#work"><span class="big">Websites</span><span class="what">Sites that feel as careful as the brands behind them.</span></a></li>
+      <li><a href="#work"><span class="big">Mobile apps</span><span class="what">Apps designed for the person holding the phone.</span></a></li>
+      <li><a href="#work"><span class="big">Video</span><span class="what">Editing and motion that keep people watching.</span></a></li>
+      <li><a href="#work"><span class="big">AI</span><span class="what">New tools, used to bring ideas to life faster.</span></a></li>
+    </ul>
+  </section>
+
+  <!-- 04 WORK -->
+  <section class="work wrap" id="work" data-sec="04" data-label="Work" data-aura="work">
+    <h2 class="h2 rise"><span class="line"><span>Selected</span></span><span class="line"><span><em class="blue">work</em></span></span></h2>
+    <div class="frames">
+      <figure class="frame" style="margin:0"><div class="plane"><div class="ghost"><b>01</b><span class="mono" style="color:var(--ink)">In the studio</span></div></div><figcaption class="mono"><span>Project one</span><span>2026</span></figcaption></figure>
+      <figure class="frame" style="margin-left:0;margin-right:0;margin-bottom:0"><div class="plane"><div class="ghost"><b>02</b><span class="mono" style="color:var(--ink)">In the studio</span></div></div><figcaption class="mono"><span>Project two</span><span>2026</span></figcaption></figure>
+      <figure class="frame" style="margin-left:0;margin-right:0;margin-bottom:0"><div class="plane"><div class="ghost"><b>03</b><span class="mono" style="color:var(--ink)">In the studio</span></div></div><figcaption class="mono"><span>Project three</span><span>2026</span></figcaption></figure>
+    </div>
+    <p class="soon fade">The first projects are being framed right now. They will live here, each one with its own story, motion and details.</p>
+  </section>
+
+  <!-- 05 HELLO -->
+  <section class="hello wrap" id="hello" data-sec="05" data-label="Hello" data-aura="hello">
+    <span class="mono">Say hello</span>
+    <h2 id="together" aria-label="Let’s create something together.">Let’s create <em>something</em> together.</h2>
+    <p class="fade">Have an idea, a brand or a product that needs a face, a site, an app or a film? I’d love to hear about it.</p>
+  </section>
+</main>
+
+<footer class="wrap mono"><span>© 2026 Bruna Brandão</span><span>Designed and built by Bu, in Porto</span></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const root = document.documentElement;
+  if (reduce) root.classList.add('reduce');
+  const hasG = typeof gsap !== 'undefined';
+  if (!hasG) { root.classList.add('no-js'); }
+
+  /* ---------- Porto clock ---------- */
+  const clock = document.getElementById('clock');
+  const tick = () => { try { clock.textContent = 'Porto ' + new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Lisbon'}).format(new Date()); } catch(e){} };
+  tick(); setInterval(tick, 20000);
+
+  /* ---------- split helpers ---------- */
+  const splitChars = el => {
+    const out = [];
+    const walk = node => {
+      [...node.childNodes].forEach(n => {
+        if (n.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach(word => {
+            if (!word) return;
+            if (/^\s+$/.test(word)) { frag.appendChild(document.createTextNode(word)); return; }
+            const w = document.createElement('span'); w.style.display='inline-block'; w.style.whiteSpace='nowrap';
+            [...word].forEach(c => { const s = document.createElement('span'); s.className='ch'; s.textContent=c; w.appendChild(s); out.push(s); });
+            frag.appendChild(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1) walk(n);
+      });
+    };
+    walk(el); return out;
+  };
+  const splitWords = el => {
+    const words = el.textContent.split(' ');
+    el.textContent = '';
+    return words.map((w,i) => { const s=document.createElement('span'); s.className='wd'; s.textContent=w; el.appendChild(s); if(i<words.length-1) el.appendChild(document.createTextNode(' ')); return s; });
+  };
+
+  /* ---------- typing roles ---------- */
+  const roles = ['illustrations','websites','mobile apps','videos','ideas real with AI','it all, in one place'];
+  const typed = document.getElementById('typed');
+  if (!reduce) {
+    let r = 0, i = roles[0].length, del = true;
+    const step = () => {
+      const word = roles[r];
+      if (del) { i--; typed.textContent = word.slice(0,i); if (i===0){ del=false; r=(r+1)%roles.length; } setTimeout(step, 38); }
+      else { const w = roles[r]; i++; typed.textContent = w.slice(0,i); if (i===w.length){ del=true; setTimeout(step, 1900); } else setTimeout(step, 70 + Math.random()*60); }
+    };
+    setTimeout(step, 3200);
+  }
+
+  /* ---------- aura (the baby-blue blob) ---------- */
+  const cv = document.getElementById('aura'), ctx = cv.getContext('2d');
+  let W=0,H=0; const S=.5;
+  const size = () => { W=innerWidth; H=innerHeight; cv.width=Math.round(W*S); cv.height=Math.round(H*S); };
+  size(); addEventListener('resize', size);
+  const mobile = () => innerWidth < 860;
+  const spots = {
+    hero:  () => mobile()? {x:.7,y:.24,s:.85} : {x:.7,y:.42,s:1},
+    about: () => mobile()? {x:.4,y:.35,s:.8} : {x:.25,y:.52,s:.95},
+    craft: () => ({x:.82,y:.5,s:.75}),
+    work:  () => ({x:.5,y:.4,s:.7}),
+    hello: () => ({x:.5,y:.52,s:1.35})
+  };
+  let target = spots.hero(), cur = {...target};
+  let mx=.5,my=.5, smx=.5, smy=.5, boost=0, sBoost=0, vel=0;
+  const blobs = [
+    {c:[169,215,247], r:.30, ax:.06, ay:.05, sp:.23, ph:0},
+    {c:[214,236,255], r:.24, ax:.08, ay:.06, sp:.31, ph:2},
+    {c:[128,182,238], r:.16, ax:.05, ay:.07, sp:.41, ph:4},
+    {c:[255,255,255], r:.12, ax:.07, ay:.05, sp:.37, ph:1},
+    {c:[196,214,255], r:.17, ax:.09, ay:.04, sp:.19, ph:3}
+  ];
+  addEventListener('pointermove', e => { mx=e.clientX/W; my=e.clientY/H; }, {passive:true});
+  let t0 = performance.now();
+  const draw = now => {
+    const t = (now - t0)/1000;
+    cur.x += (target.x-cur.x)*.035; cur.y += (target.y-cur.y)*.035; cur.s += (target.s-cur.s)*.04;
+    smx += (mx-smx)*.05; smy += (my-smy)*.05; sBoost += (boost-sBoost)*.06;
+    vel *= .92;
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const base = Math.min(W,H)*S;
+    blobs.forEach((b,k) => {
+      const pull = .12 + k*.03;
+      const x = (cur.x + Math.sin(t*b.sp+b.ph)*b.ax + (smx-cur.x)*pull) * cv.width;
+      const y = (cur.y + Math.cos(t*b.sp*1.3+b.ph)*b.ay + (smy-cur.y)*pull + vel*.002*(k-2)) * cv.height;
+      const r = base * b.r * 1.9 * cur.s * (1 + sBoost*.25) * (1 + Math.sin(t*.6+b.ph)*.06);
+      const g = ctx.createRadialGradient(x,y,0,x,y,r);
+      const [R,G,B] = b.c;
+      g.addColorStop(0,`rgba(${R},${G},${B},.95)`); g.addColorStop(.55,`rgba(${R},${G},${B},.45)`); g.addColorStop(1,`rgba(${R},${G},${B},0)`);
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+    });
+    if (!reduce) requestAnimationFrame(draw);
+  };
+  requestAnimationFrame(draw);
+
+  /* ---------- section tracking (aura + nav label) ---------- */
+  const whereN = document.querySelector('#where .n:first-child i'), whereL = document.querySelector('#where .n:last-child i');
+  const setWhere = (n,l) => {
+    [whereN, whereL].forEach((el,j) => {
+      el.style.transform='translateY(-110%)';
+      setTimeout(() => { el.textContent = j? l : n; el.style.transition='none'; el.style.transform='translateY(110%)'; requestAnimationFrame(()=>requestAnimationFrame(()=>{ el.style.transition=''; el.style.transform='translateY(0)'; })); }, 260);
+    });
+  };
+  let lastSec = '01';
+  const secs = [...document.querySelectorAll('[data-sec]')];
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (!e.isIntersecting) return;
+      const s = e.target;
+      target = spots[s.dataset.aura]();
+      if (s.dataset.sec !== lastSec) { lastSec = s.dataset.sec; setWhere(s.dataset.sec, s.dataset.label); }
+    });
+  }, {rootMargin:'-45% 0px -45% 0px'});
+  secs.forEach(s => io.observe(s));
+  addEventListener('resize', () => { const s = secs.find(s => { const r=s.getBoundingClientRect(); return r.top<H/2 && r.bottom>H/2; }); if (s) target = spots[s.dataset.aura](); });
+
+  /* ---------- cursor ---------- */
+  if (fine && !reduce) {
+    const dot = document.getElementById('dot'), ring = document.getElementById('ring'), label = ring.querySelector('b');
+    let rx=innerWidth/2, ry=innerHeight/2, px=rx, py=ry;
+    addEventListener('pointermove', e => { px=e.clientX; py=e.clientY; dot.style.transform=`translate(${px}px,${py}px) translate(-50%,-50%)`; }, {passive:true});
+    const loop = () => { rx+=(px-rx)*.16; ry+=(py-ry)*.16; ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`; requestAnimationFrame(loop); };
+    loop();
+    document.querySelectorAll('a, .frame').forEach(el => {
+      el.addEventListener('pointerenter', () => { document.body.classList.add('hovering'); label.textContent = el.classList.contains('frame') ? 'Soon' : (el.closest('.craft') ? 'See' : 'Go'); boost = 1; });
+      el.addEventListener('pointerleave', () => { document.body.classList.remove('hovering'); boost = 0; });
+    });
+    /* magnetic links */
+    document.querySelectorAll('.mag').forEach(el => {
+      el.addEventListener('pointermove', e => { const r=el.getBoundingClientRect(); el.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.35}px,${(e.clientY-r.top-r.height/2)*.45}px)`; });
+      el.addEventListener('pointerleave', () => { el.style.transition='transform .6s cubic-bezier(.16,1,.3,1)'; el.style.transform=''; setTimeout(()=>el.style.transition='',600); });
+    });
+    /* tilt + light on project planes */
+    document.querySelectorAll('.frame').forEach(f => {
+      const p = f.querySelector('.plane');
+      f.addEventListener('pointermove', e => { const r=p.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height; p.style.setProperty('--mx',x*100+'%'); p.style.setProperty('--my',y*100+'%'); p.style.transform=`rotateY(${(x-.5)*10}deg) rotateX(${(.5-y)*10}deg) scale(1.02)`; });
+      f.addEventListener('pointerleave', () => { p.style.transform=''; });
+    });
+    /* portrait follows the cursor a little */
+    const fig = document.getElementById('fig');
+    addEventListener('pointermove', e => { const r=fig.getBoundingClientRect(); if (r.bottom<0||r.top>innerHeight) return; const x=(e.clientX/innerWidth-.5), y=(e.clientY/innerHeight-.5); fig.style.transform=`translate(${x*-14}px,${y*-10}px)`; }, {passive:true});
+  }
+
+  /* ---------- nav hides on the way down, returns on the way up ---------- */
+  const nav = document.querySelector('nav'); let lastY = 0;
+  addEventListener('scroll', () => { const y = scrollY; nav.classList.toggle('away', y > lastY && y > 200); lastY = y; }, {passive:true});
+
+  /* ---------- trait label in about ---------- */
+  const traitEl = document.querySelector('#trait i');
+  let curTrait = 'Dreamer';
+  const tio = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return; const t = e.target.dataset.trait; if (t===curTrait) return; curTrait=t;
+    if (reduce || !hasG) { traitEl.textContent=t; return; }
+    gsap.to(traitEl,{yPercent:-110,duration:.3,ease:'power2.in',onComplete:()=>{ traitEl.textContent=t; gsap.fromTo(traitEl,{yPercent:110},{yPercent:0,duration:.6,ease:'expo.out'}); }});
+  }), {rootMargin:'-40% 0px -50% 0px'});
+  document.querySelectorAll('[data-trait]').forEach(a => tio.observe(a));
+
+  if (!hasG || reduce) return;
+
+  /* ================= GSAP choreography ================= */
+  gsap.registerPlugin(ScrollTrigger);
+  let lenis = null;
+  if (typeof Lenis !== 'undefined') {
+    lenis = new Lenis({lerp:.09, smoothWheel:true});
+    lenis.on('scroll', e => { ScrollTrigger.update(); vel = e.velocity || 0; });
+    gsap.ticker.add(t => lenis.raf(t*1000)); gsap.ticker.lagSmoothing(0);
+    document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => { const id=a.getAttribute('href'); const el = id==='#top'? 0 : document.querySelector(id); if (el===null) return; e.preventDefault(); lenis.scrollTo(el,{duration:1.6,offset: id==='#top'?0:-20}); }));
+  } else {
+    addEventListener('scroll', () => { vel = 0; }, {passive:true});
+  }
+
+  /* intro: "Hi" then the curtain lifts and the name rises */
+  const nameChars = [...document.querySelectorAll('.name .split')].flatMap(splitChars);
+  const tl = gsap.timeline({defaults:{ease:'expo.out'}});
+  const curtain = document.getElementById('curtain'), hi = curtain.querySelector('span');
+  gsap.set(nameChars,{yPercent:115});
+  gsap.set('.hero .eyebrow, .typer, .intro, .cue',{autoAlpha:0,y:24});
+  tl.fromTo(hi,{scale:.4,autoAlpha:0},{scale:1,autoAlpha:1,duration:.9,ease:'back.out(2.2)'})
+    .to(hi,{yPercent:-60,autoAlpha:0,duration:.6,ease:'power3.in'},'+=.35')
+    .to(curtain,{yPercent:-100,duration:1.1,ease:'expo.inOut'},'-=.2')
+    .to(nameChars,{yPercent:0,duration:1.4,stagger:.035},'-=.55')
+    .to('.hero .eyebrow, .typer, .intro, .cue',{autoAlpha:1,y:0,duration:1.2,stagger:.1},'-=1.1')
+    .set(curtain,{display:'none'});
+
+  /* name drifts apart as you leave the hero */
+  gsap.to('.name .line:nth-child(1)',{xPercent:-8,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
+  gsap.to('.name .line:nth-child(2)',{xPercent:10,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
+
+  /* marquee with scroll velocity */
+  const track = document.getElementById('track');
+  let mxp = 0, dir = 1;
+  gsap.ticker.add(() => {
+    const v = Math.max(-40, Math.min(40, vel));
+    if (v !== 0) dir = v > 0 ? 1 : -1;
+    mxp -= (0.06 + Math.abs(v)*.03) * dir;
+    if (mxp <= -50) mxp += 50; if (mxp > 0) mxp -= 50;
+    track.style.transform = `translateX(${mxp}%) skewX(${-v*.25}deg)`;
+  });
+
+  /* headings rise line by line */
+  document.querySelectorAll('.rise').forEach(h => {
+    gsap.from(h.querySelectorAll('.line>span'),{yPercent:110,duration:1.4,ease:'expo.out',stagger:.1,scrollTrigger:{trigger:h,start:'top 88%'}});
+  });
+  document.querySelectorAll('.fade').forEach(el => {
+    if (el.closest('.hero')) return;
+    gsap.from(el,{autoAlpha:0,y:30,duration:1.2,ease:'expo.out',scrollTrigger:{trigger:el,start:'top 92%'}});
+  });
+
+  /* about: lead lights up word by word */
+  const words = splitWords(document.getElementById('lead'));
+  gsap.to(words,{opacity:1,stagger:.1,ease:'none',scrollTrigger:{trigger:'#lead',start:'top 82%',end:'bottom 45%',scrub:true}});
+
+  /* about: portrait rises, sparkles pop */
+  gsap.from('#fig img',{yPercent:12,autoAlpha:0,duration:1.6,ease:'expo.out',scrollTrigger:{trigger:'.portrait',start:'top 85%'}});
+  gsap.from('.spark',{scale:0,duration:1.1,ease:'elastic.out(1,.45)',stagger:.18,scrollTrigger:{trigger:'.portrait',start:'top 70%'}});
+  gsap.to('.spark.s1',{scale:1.25,duration:1.6,ease:'sine.inOut',yoyo:true,repeat:-1,delay:2});
+  gsap.to('.spark.s3',{scale:.8,duration:1.9,ease:'sine.inOut',yoyo:true,repeat:-1,delay:2.4});
+
+  /* trait rows slide in */
+  document.querySelectorAll('.trait-row').forEach(r => {
+    gsap.from(r.querySelector('h3'),{x:-40,autoAlpha:0,duration:1.3,ease:'expo.out',scrollTrigger:{trigger:r,start:'top 86%'}});
+    gsap.from([r.querySelector('p'), r.querySelector('.num')],{y:24,autoAlpha:0,duration:1.2,ease:'expo.out',delay:.12,scrollTrigger:{trigger:r,start:'top 86%'}});
+  });
+
+  /* craft list cascades in */
+  gsap.from('.craft li .big',{yPercent:60,autoAlpha:0,duration:1.3,ease:'expo.out',stagger:.08,scrollTrigger:{trigger:'.craft ul',start:'top 85%'}});
+
+  /* work frames fly in from depth */
+  gsap.from('.frame',{z:-400,y:120,autoAlpha:0,duration:1.6,ease:'expo.out',stagger:.14,transformPerspective:1200,scrollTrigger:{trigger:'.frames',start:'top 85%'}});
+  gsap.utils.toArray('.frame').forEach((f,i) => gsap.to(f,{y:(i-1)*-40,ease:'none',scrollTrigger:{trigger:'.frames',start:'top bottom',end:'bottom top',scrub:true}}));
+
+  /* hello: scattered letters gather into the sentence */
+  const tchars = splitChars(document.getElementById('together'));
+  gsap.fromTo(tchars,
+    {x:() => gsap.utils.random(-260,260), y:() => gsap.utils.random(-160,160), opacity:0, filter:'blur(10px)'},
+    {x:0,y:0,opacity:1,filter:'blur(0px)',ease:'power3.out',stagger:{each:.015,from:'random'},
+     scrollTrigger:{trigger:'.hello',start:'top 80%',end:'center 55%',scrub:1}});
+})();
+</script>
