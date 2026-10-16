@@ -258,7 +258,7 @@ footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;paddin
     <h2 class="h2 rise"><span class="line"><span>Bu <em class="blue">projects</em></span></span></h2>
     <div class="frames">
       <a class="frame live" href="bu-adventures.html" aria-label="Open Bu Adventures"><div class="plane"><video src="assets/bu-adventures/hero-loop.mp4" poster="assets/bu-adventures/hero-poster.webp" autoplay muted loop playsinline aria-hidden="true"></video><div class="ghost"><b>01</b><span class="mono view">View project</span></div></div><div class="cap"><span class="ptitle">Bu Adventures</span><span class="mono">Character, 3D &amp; film · Oct 2026</span></div></a>
-      <figure class="frame" style="margin-left:0;margin-right:0;margin-bottom:0"><div class="plane"><div class="ghost"><b>02</b><span class="mono" style="color:var(--ink)">In the studio</span></div></div><figcaption class="mono"><span>Project two</span><span>2026</span></figcaption></figure>
+      <a class="frame live" href="forevergold.html" data-wipe="#070D0B" aria-label="Open Forevergold"><div class="plane" style="background:#070D0B"><video src="assets/forevergold/site-hero.mp4" poster="assets/forevergold/site-hero.webp" autoplay muted loop playsinline aria-hidden="true"></video><div class="ghost"><b>02</b><span class="mono view">View project</span></div></div><div class="cap"><span class="ptitle">Forevergold</span><span class="mono">Logo, website, team app &amp; motion · Oct 2026</span></div></a>
       <figure class="frame" style="margin-left:0;margin-right:0;margin-bottom:0"><div class="plane"><div class="ghost"><b>03</b><span class="mono" style="color:var(--ink)">In the studio</span></div></div><figcaption class="mono"><span>Project three</span><span>2026</span></figcaption></figure>
     </div>
     <p class="soon fade">More projects are being framed right now. Each one will live here with its own story, motion and details.</p>
@@ -516,7 +516,7 @@ footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;paddin
     e.preventDefault(); const href = a.getAttribute('href');
     const x = e.clientX || innerWidth/2, y = e.clientY || innerHeight/2;
     const r = Math.hypot(Math.max(x, innerWidth-x), Math.max(y, innerHeight-y)) / 5 + 4;
-    gsap.set(wipe,{left:x,top:y});
+    gsap.set(wipe,{left:x,top:y,background:a.dataset.wipe || '#FC90C6'});
     gsap.to(wipe,{scale:r,duration:.9,ease:'expo.in',onComplete:()=>{ location.href = href; }});
   }));
   addEventListener('pageshow', e => { if (e.persisted) gsap.set(wipe,{scale:0}); });
