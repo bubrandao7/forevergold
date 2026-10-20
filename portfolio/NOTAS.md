@@ -1,6 +1,6 @@
-# Portfólio da Bu: onde ficámos (16 out 2026)
+# Portfólio da Bu: onde ficámos (atualizado a 20 out 2026)
 
-**Link publicado:** https://claude.ai/artifact/APv4S97KYZv7vriNrWg6nW (versão 15, privado até a Bu o partilhar em Share)
+**Link publicado:** https://claude.ai/artifact/APv4S97KYZv7vriNrWg6nW (versão 19, **público**: qualquer pessoa com o link abre, e as alterações aparecem logo)
 **Código:** esta pasta `portfolio/`, ramo `claude/beautiful-keller-8rjnsl`.
 Para publicar de novo: Artifact com `file_path` = `portfolio/index.html` e as subpastas em `files`.
 
@@ -17,6 +17,11 @@ Para publicar de novo: Artifact com `file_path` = `portfolio/index.html` e as su
   - **Suco Bagaço website (escondido a 20 out, a pedido da Bu):** os ficheiros continuam em `suco/` e publicados. A moldura está comentada em `index.html` (procurar `HIDDEN PROJECT`). Para voltar a mostrar: tirar os sinais de comentário e renumerar (Forevergold website 04, Lia 05).
 - Todos os projetos abrem no topo e têm "← Bruna Brandão" para voltar a `index.html#work`.
 - Final: "Let's create something together." e o rodapé "© 2026 Bruna Brandão".
+
+## Feito a 20 out
+- Telemóvel: as molduras já não se sobrepõem (sem desvio no scroll e sem margem negativa) e entram com uma subida simples. As capas em iframe estão presas ao retângulo em ecrãs de toque (correção para o Safari). O computador ficou igual.
+- Suco Bagaço escondido e novo projeto Lia from space (04).
+- Lentidão: a causa principal é o desfoque da aura (60 vezes por segundo) e as 3 capas ao vivo. Expliquei à Bu; ela não quis mexer. Fica a ideia para mais tarde: aura sem filtro e capas em vídeo.
 
 ## Por decidir ou fazer
 - Contactos para o "Say hello" (email, Instagram, TikTok?). Ainda não há nenhum.
