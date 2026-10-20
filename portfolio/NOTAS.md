@@ -12,8 +12,8 @@ Para publicar de novo: Artifact com `file_path` = `portfolio/index.html` e as su
 - **Bu projects** (numa linha), grelha de 2 colunas:
   1. **Bu Adventures**: `bu-adventures.html` (case study aprovado, com motion; o filme abre num ecrã próprio).
   2. **Forevergold mobile App**: `forevergold.html`, que é a app real. Entra sozinha no perfil BU com o código 2727. Fundo verde escuro. A capa (`#cover`) mostra só a cotação diária animada.
-  3. **Suco Bagaço website**: `suco/index.html`. A capa mostra só os 3 copos 3D.
-  4. **Forevergold website**: `fg-site/index.html`, com o editor desligado. A capa mostra o símbolo a desenhar-se.
+  3. **Forevergold website**: `fg-site/index.html`, com o editor desligado. A capa mostra o símbolo a desenhar-se.
+  - **Suco Bagaço website (escondido a 20 out, a pedido da Bu):** os ficheiros continuam em `suco/` e publicados. A moldura está comentada em `index.html` (procurar `HIDDEN PROJECT`). Para voltar a mostrar: tirar os sinais de comentário e repor o número 04 no Forevergold website.
 - Todos os projetos abrem no topo e têm "← Bruna Brandão" para voltar a `index.html#work`.
 - Final: "Let's create something together." e o rodapé "© 2026 Bruna Brandão".
 
