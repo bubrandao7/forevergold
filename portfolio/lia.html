@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Lia from space</title>
+<meta name="description" content="Lia from space, a digital illustration by Bruna Brandão, and its animated version.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400;1,500&family=Hanken+Grotesk:wght@300;400;500&display=swap">
+<style>
+/* Layout: Lia's own sky. Baby-blue air, soft clouds drifting, gold and pink sparkles; the drawing first, then the drawing alive. */
+:root{
+  --sky:#C9DDF7; --sky2:#E7F0FC; --cloud:#FFFFFF; --ink:#2A1240; --lilac:#9B6FCF; --pink:#FF1F8E; --teal:#1E9C93; --gold:#F2C94C;
+  --disp:"Cormorant",Georgia,serif; --text:"Hanken Grotesk","Helvetica Neue",Arial,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{background:var(--sky);overflow-x:clip}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:var(--text);font-weight:300;font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:clip;
+  background:linear-gradient(180deg,#BBD3F4 0%,#D6E5FA 38%,#E9F1FC 70%,#F6EEFA 100%) fixed var(--sky)}
+img,video{display:block;max-width:100%}
+a{color:inherit}
+a:focus-visible{outline:2px solid var(--pink);outline-offset:4px}
+::selection{background:var(--pink);color:#fff}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px),4vw);padding-right:max(16px,env(safe-area-inset-right,0px),4vw)}
+
+/* sky */
+.sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.cloud{position:absolute;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.95),rgba(255,255,255,.6) 55%,rgba(255,255,255,0));filter:blur(6px);will-change:transform}
+.cloud::before,.cloud::after{content:"";position:absolute;border-radius:50%;background:inherit}
+.cloud::before{width:70%;height:90%;left:-30%;top:20%}
+.cloud::after{width:80%;height:100%;right:-35%;top:5%}
+.c1{width:340px;height:160px;left:-60px;top:12%;animation:drift 38s ease-in-out infinite alternate}
+.c2{width:420px;height:190px;right:-120px;top:38%;animation:drift 46s ease-in-out infinite alternate-reverse}
+.c3{width:300px;height:140px;left:18%;top:72%;animation:drift 52s ease-in-out infinite alternate}
+.c4{width:260px;height:120px;right:14%;top:4%;animation:drift 42s ease-in-out infinite alternate-reverse}
+@keyframes drift{to{transform:translateX(80px)}}
+.spark{position:absolute;width:22px;height:22px;color:var(--gold);animation:twinkle 3.2s ease-in-out infinite;filter:drop-shadow(0 0 8px rgba(242,201,76,.7))}
+.spark.p{color:#FF7FBE;filter:drop-shadow(0 0 8px rgba(255,31,142,.45))}
+.spark svg{width:100%;height:100%;display:block}
+@keyframes twinkle{0%,100%{transform:scale(.6);opacity:.45}50%{transform:scale(1.1);opacity:1}}
+main,nav,footer{position:relative;z-index:1}
+
+/* bar, curtain, cursor */
+.bar{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:20px max(16px,env(safe-area-inset-right,0px),4vw) 20px max(16px,env(safe-area-inset-left,0px),4vw);transition:transform .8s var(--ease)}
+.bar.away{transform:translateY(-120%)}
+.bar a{text-decoration:none;font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;display:inline-flex;gap:10px;align-items:center}
+.bar .arrow{display:inline-block;transition:transform .5s var(--ease)}
+.bar a:hover .arrow{transform:translateX(-6px)}
+.bar span{font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--lilac)}
+.mag{display:inline-block;will-change:transform}
+#curtain{position:fixed;inset:0;z-index:80;background:#C9DDF7;pointer-events:none}
+.reduce #curtain,.no-gsap #curtain{display:none}
+#dot,#ring{position:fixed;left:0;top:0;z-index:90;pointer-events:none;border-radius:50%}
+#dot{width:6px;height:6px;background:var(--ink)}
+#ring{width:44px;height:44px;background:rgba(255,31,142,.14);display:grid;place-items:center;transition:width .5s var(--ease),height .5s var(--ease),background .4s}
+#ring b{font:500 10px/1 var(--text);letter-spacing:.16em;text-transform:uppercase;color:#fff;opacity:0;transition:opacity .3s}
+body.hovering #ring{width:84px;height:84px;background:rgba(255,31,142,.88)}
+body.hovering #ring b{opacity:1}
+@media (hover:none),(pointer:coarse){#dot,#ring{display:none}}
+
+/* hero */
+.hero{padding-block:clamp(120px,16vw,200px) clamp(40px,6vw,80px)}
+.eye{font-size:12px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--lilac)}
+h1{font-family:var(--disp);font-weight:300;font-size:clamp(68px,13vw,200px);line-height:.88;letter-spacing:-.025em;margin:22px 0 0}
+h1 .ln{display:block;overflow:hidden;padding-bottom:.08em}
+h1 .ln>span{display:inline-block}
+h1 em{font-style:italic;font-weight:400;color:var(--pink)}
+h1 .ln:nth-child(2){padding-left:10vw}
+.lead{max-width:44ch;margin:clamp(28px,4vw,48px) 0 0}
+
+/* pieces */
+.piece{margin:0 0 clamp(70px,10vw,140px)}
+.art{position:relative;overflow:hidden;box-shadow:0 50px 90px -40px rgba(42,18,64,.45),0 0 0 1px rgba(255,255,255,.6);max-width:100%}
+.art img,.art video{width:100%;height:auto}
+.piece figcaption{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-top:18px}
+.piece figcaption b{font-family:var(--disp);font-weight:400;font-size:clamp(26px,2.6vw,36px);line-height:1.1}
+.piece figcaption b i{color:var(--pink)}
+.piece figcaption span{font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--lilac);align-self:flex-end}
+.piece--video{max-width:1060px;margin-left:auto}
+
+.back{display:block;text-decoration:none;margin-top:clamp(20px,4vw,40px)}
+.back small{display:block;font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--lilac);margin-bottom:10px}
+.back b{font-family:var(--disp);font-weight:300;font-size:clamp(46px,8vw,120px);line-height:.95;letter-spacing:-.03em;display:inline-block;transition:transform .8s var(--ease),color .4s}
+.back:hover b{transform:translateX(2vw);color:var(--pink);font-style:italic}
+footer{padding-block:clamp(40px,6vw,70px) 34px;font-size:13px;color:var(--lilac);letter-spacing:.08em}
+
+@media (max-width:760px){
+  h1 .ln:nth-child(2){padding-left:6vw}
+  .bar span{display:none}
+  .c2{width:280px;height:130px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="sky" aria-hidden="true">
+  <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div><div class="cloud c4"></div>
+  <span class="spark" style="left:8%;top:22%"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 0c.9 6.6 4.5 10.6 12 12-7.5 1.4-11.1 5.4-12 12-.9-6.6-4.5-10.6-12-12C7.5 10.6 11.1 6.6 12 0Z"/></svg></span>
+  <span class="spark p" style="right:12%;top:16%;animation-delay:-1.1s;width:16px;height:16px"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 0c.9 6.6 4.5 10.6 12 12-7.5 1.4-11.1 5.4-12 12-.9-6.6-4.5-10.6-12-12C7.5 10.6 11.1 6.6 12 0Z"/></svg></span>
+  <span class="spark" style="right:6%;top:58%;animation-delay:-2s;width:18px;height:18px"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 0c.9 6.6 4.5 10.6 12 12-7.5 1.4-11.1 5.4-12 12-.9-6.6-4.5-10.6-12-12C7.5 10.6 11.1 6.6 12 0Z"/></svg></span>
+  <span class="spark p" style="left:4%;top:70%;animation-delay:-.6s;width:14px;height:14px"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 0c.9 6.6 4.5 10.6 12 12-7.5 1.4-11.1 5.4-12 12-.9-6.6-4.5-10.6-12-12C7.5 10.6 11.1 6.6 12 0Z"/></svg></span>
+  <span class="spark" style="left:46%;top:88%;animation-delay:-1.6s;width:15px;height:15px"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 0c.9 6.6 4.5 10.6 12 12-7.5 1.4-11.1 5.4-12 12-.9-6.6-4.5-10.6-12-12C7.5 10.6 11.1 6.6 12 0Z"/></svg></span>
+</div>
+<div id="curtain" aria-hidden="true"></div>
+<div id="dot" aria-hidden="true"></div>
+<div id="ring" aria-hidden="true"><b>Lia</b></div>
+
+<nav class="bar" aria-label="Project">
+  <a href="index.html#work" class="mag leave"><span class="arrow">←</span> Bruna Brandão</a>
+  <span>Project 04 · Lia from space</span>
+</nav>
+
+<main>
+  <header class="hero wrap">
+    <span class="eye up0">Illustration · Animation</span>
+    <h1 aria-label="Lia from space"><span class="ln" aria-hidden="true"><span>Lia</span></span><span class="ln" aria-hidden="true"><span><em>from space</em></span></span></h1>
+  </header>
+
+  <section class="wrap">
+    <figure class="piece">
+      <div class="art reveal"><img src="assets/lia/lia.webp" alt="Lia from space: a purple girl with small horns and long dark hair, among clouds, pink flying saucers, a teal scaled serpent and a pink cactus" width="2000" height="1499"></div>
+      <figcaption class="up"><b>The <i>drawing</i></b><span>Digital illustration</span></figcaption>
+    </figure>
+    <figure class="piece piece--video">
+      <div class="art reveal"><video src="assets/lia/lia-loop.mp4" poster="assets/lia/lia-poster.webp" autoplay muted loop playsinline preload="metadata" aria-label="Lia from space, animated"></video></div>
+      <figcaption class="up"><b>The drawing, <i>alive</i></b><span>Animated with AI</span></figcaption>
+    </figure>
+    <a class="back leave" href="index.html#work"><small>Back to</small><b>All Bu projects</b></a>
+  </section>
+</main>
+<footer class="wrap">© 2026 Bruna Brandão</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const root = document.documentElement, hasG = typeof gsap !== 'undefined';
+  if (reduce) root.classList.add('reduce');
+  if (!hasG) root.classList.add('no-gsap');
+
+  /* always open at the top */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  const toTop = () => { if (!location.hash) { try { scrollTo({top:0,left:0,behavior:'instant'}); } catch (e) { scrollTo(0,0); } if (window.__lenis) window.__lenis.scrollTo(0,{immediate:true}); } };
+  toTop(); addEventListener('load', () => { toTop(); setTimeout(toTop, 60); }); addEventListener('pageshow', toTop);
+
+  /* the animation always plays without sound */
+  const vid = document.querySelector('video'); vid.muted = true; vid.volume = 0;
+
+  const bar = document.querySelector('.bar'); let lastY = 0;
+  addEventListener('scroll', () => { const y = scrollY; bar.classList.toggle('away', y > lastY && y > 200); lastY = y; }, {passive:true});
+
+  if (fine && !reduce) {
+    const dot = document.getElementById('dot'), ring = document.getElementById('ring'), label = ring.querySelector('b');
+    let px=innerWidth/2, py=innerHeight/2, rx=px, ry=py;
+    addEventListener('pointermove', e => { px=e.clientX; py=e.clientY; dot.style.transform=`translate(${px-3}px,${py-3}px)`; }, {passive:true});
+    const loop = () => { rx+=(px-rx)*.16; ry+=(py-ry)*.16; ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`; requestAnimationFrame(loop); }; loop();
+    const hov = (sel, txt) => document.querySelectorAll(sel).forEach(el => {
+      el.addEventListener('pointerenter', () => { document.body.classList.add('hovering'); label.textContent = txt; });
+      el.addEventListener('pointerleave', () => document.body.classList.remove('hovering'));
+    });
+    hov('a','Go'); hov('.art','Lia');
+    document.querySelectorAll('.mag').forEach(el => {
+      el.addEventListener('pointermove', e => { const r=el.getBoundingClientRect(); el.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.3}px,${(e.clientY-r.top-r.height/2)*.4}px)`; });
+      el.addEventListener('pointerleave', () => { el.style.transform=''; });
+    });
+  }
+
+  if (!hasG || reduce) return;
+
+  const curtain = document.getElementById('curtain');
+  document.querySelectorAll('a.leave').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault(); const href = a.getAttribute('href');
+    gsap.set(curtain,{display:'block',background:'#F4F6F9',yPercent:100,autoAlpha:1});
+    gsap.to(curtain,{yPercent:0,duration:.8,ease:'expo.inOut',onComplete:()=>{ location.href = href; }});
+  }));
+
+  gsap.registerPlugin(ScrollTrigger);
+  if (typeof Lenis !== 'undefined') {
+    const lenis = new Lenis({lerp:.09}); window.__lenis = lenis; lenis.scrollTo(0,{immediate:true});
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t => lenis.raf(t*1000)); gsap.ticker.lagSmoothing(0);
+  }
+
+  /* entrance: the sky clears, the title rises */
+  gsap.set('h1 .ln>span',{yPercent:110}); gsap.set('.up0',{autoAlpha:0,y:20});
+  gsap.timeline({defaults:{ease:'expo.out'}})
+    .to(curtain,{autoAlpha:0,duration:1,ease:'power2.inOut'})
+    .to('.up0',{autoAlpha:1,y:0,duration:1},'-=.5')
+    .to('h1 .ln>span',{yPercent:0,duration:1.4,stagger:.12},'-=.8')
+    .set(curtain,{display:'none'});
+
+  /* the clouds drift slower than the page, like real distance */
+  gsap.utils.toArray('.cloud').forEach((c,i) => gsap.to(c,{yPercent:-60 - i*25,ease:'none',scrollTrigger:{trigger:'main',start:'top top',end:'bottom bottom',scrub:true}}));
+
+  /* each piece opens from the bottom and settles */
+  gsap.utils.toArray('.reveal').forEach(box => {
+    gsap.fromTo(box,{clipPath:'inset(100% 0% 0% 0%)'},{clipPath:'inset(0% 0% 0% 0%)',duration:1.6,ease:'expo.inOut',scrollTrigger:{trigger:box,start:'top 85%'}});
+    gsap.fromTo(box.firstElementChild,{scale:1.12},{scale:1,duration:2,ease:'expo.out',scrollTrigger:{trigger:box,start:'top 85%'}});
+  });
+  gsap.utils.toArray('.up').forEach(el => gsap.from(el,{y:24,autoAlpha:0,duration:1.1,ease:'expo.out',scrollTrigger:{trigger:el,start:'top 92%'}}));
+})();
+</script>
+</body>
+</html>
