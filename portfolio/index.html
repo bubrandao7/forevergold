@@ -156,7 +156,8 @@ footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;paddin
   .portrait{position:relative;top:0;max-width:440px}
   .name .line:nth-child(2){padding-left:8vw}
   .work .frames{grid-template-columns:minmax(0,1fr)}
-  .frame:nth-child(n){margin-top:0}
+  .frame:nth-child(n),.frame:nth-child(odd):not(:first-child){margin-top:0}
+  .work .frames{gap:56px}
   #where.where-wrap{display:none}
   nav .links{gap:18px}
   nav .brand-full{display:none}
@@ -527,8 +528,13 @@ footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;paddin
   addEventListener('pageshow', e => { if (e.persisted) gsap.set(wipe,{scale:0}); });
 
   /* work frames fly in from depth */
-  gsap.from('.frame',{z:-400,y:120,autoAlpha:0,duration:1.6,ease:'expo.out',stagger:.14,transformPerspective:1200,scrollTrigger:{trigger:'.frames',start:'top 85%'}});
-  gsap.utils.toArray('.frame').forEach((f,i) => gsap.to(f,{y:(i-1)*-40,ease:'none',scrollTrigger:{trigger:'.frames',start:'top bottom',end:'bottom top',scrub:true}}));
+  if (matchMedia('(max-width:860px)').matches) {
+    /* phone: one column, so each frame simply rises in on its own, with no drift that could cover the captions */
+    gsap.utils.toArray('.frame').forEach(f => gsap.from(f,{y:50,autoAlpha:0,duration:1.1,ease:'expo.out',scrollTrigger:{trigger:f,start:'top 90%'}}));
+  } else {
+    gsap.from('.frame',{z:-400,y:120,autoAlpha:0,duration:1.6,ease:'expo.out',stagger:.14,transformPerspective:1200,scrollTrigger:{trigger:'.frames',start:'top 85%'}});
+    gsap.utils.toArray('.frame').forEach((f,i) => gsap.to(f,{y:(i-1)*-40,ease:'none',scrollTrigger:{trigger:'.frames',start:'top bottom',end:'bottom top',scrub:true}}));
+  }
 
   /* hello: scattered letters gather into the sentence */
   const tchars = splitChars(document.getElementById('together'));
