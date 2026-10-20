@@ -25,6 +25,10 @@ html.sb-cover .top,html.sb-cover .hero__copy,html.sb-cover #conteudo,html.sb-cov
 html.sb-cover .hero{height:100vh;min-height:0}
 html.sb-cover .hero__body{display:block;padding:0;margin:0;max-width:none;height:100%}
 html.sb-cover .stage--hero{position:absolute;inset:0 7%;height:100%;margin:0}
+@media (hover:none) and (pointer:coarse){
+  html.sb-cover,html.sb-cover body{width:100%;height:100%;max-width:100%;overflow:hidden!important}
+  html.sb-cover .hero{position:fixed!important;inset:0!important;width:auto!important;height:auto!important}
+}
 </style>
 <script src="js/boot.js"></script>
 <script type="application/ld+json">
